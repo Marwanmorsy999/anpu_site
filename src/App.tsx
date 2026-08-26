@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { ANPUSystemHeader } from "@/components/ANPUSystemHeader";
+import { ANPUSystemFooter } from "@/components/ANPUSystemFooter";
+import { BootSequence } from "@/components/BootSequence";
 import { HomePage } from "@/pages/HomePage";
 import { ScanPage } from "@/pages/ScanPage";
 import { ReportPage } from "@/pages/ReportPage";
@@ -15,8 +16,9 @@ import { GithubPage } from "@/pages/GithubPage";
 export function App() {
   return (
     <BrowserRouter>
-      <div className="flex min-h-svh flex-col bg-background">
-        <Navbar />
+      <div className="flex min-h-svh flex-col bg-background crt-screen">
+        <BootSequence />
+        <ANPUSystemHeader />
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -32,7 +34,7 @@ export function App() {
             <Route path="/github" element={<GithubPage />} />
           </Routes>
         </main>
-        <Footer />
+        <ANPUSystemFooter />
       </div>
     </BrowserRouter>
   );
