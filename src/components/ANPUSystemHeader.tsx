@@ -1,4 +1,4 @@
-import { Menu, X, ChevronDown, Github, ScanLine } from "lucide-react";
+import { Menu, X, ChevronDown, GitBranch, ScanLine } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { PharaohGuardian } from "./PharaohGuardian";
@@ -47,7 +47,7 @@ export function ANPUSystemHeader() {
 
         <div className="anpu-nav-actions">
           <span className="anpu-ready"><i /> System ready</span>
-          <a className="anpu-github-link" href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer"><Github /> GitHub</a>
+          <a className="anpu-github-link" href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer"><GitBranch /> GitHub</a>
           <Link className="anpu-nav-cta" to="/scan"><ScanLine /> Scan a website</Link>
         </div>
 
@@ -58,7 +58,7 @@ export function ANPUSystemHeader() {
         <div className="anpu-mobile-panel">
           <nav aria-label="Mobile navigation">
             {[...primaryNav, ...moreNav].map((item) => <Link key={item.path} to={item.path} onClick={() => setOpen(false)} className={isActive(item.path) ? "is-active" : ""}>{item.label}</Link>)}
-            <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}><Github /> GitHub</a>
+            <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}><GitBranch /> GitHub</a>
           </nav>
           <Link to="/scan" className="anpu-nav-cta anpu-mobile-cta" onClick={() => setOpen(false)}><ScanLine /> Scan a website</Link>
         </div>
