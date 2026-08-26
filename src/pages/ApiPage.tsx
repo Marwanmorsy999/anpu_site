@@ -7,7 +7,26 @@ import { Badge } from "@/components/ui/badge";
 
 export function ApiPage() {
   const baseUrl = "https://anpu.example/api/v1";
-  const apiStatus = "NOT YET IMPLEMENTED"; // Clearly mark as not implemented
+  const apiStatus = "NOT YET IMPLEMENTED";
+
+  const curlScan = `curl -X POST ${baseUrl}/scan \\
+  -H "Content-Type: application/json" \\
+  -d '{"url": "https://example.com", "profile": "standard"}'`;
+
+  const curlStatus = `curl -X GET ${baseUrl}/scan/scan-xxxxxxxx`;
+  const curlList = `curl -X GET ${baseUrl}/scans`;
+
+  const errorExample = `{
+  "error": {
+    "code": "INVALID_PARAMETER",
+    "message": "The 'url' parameter is required and must be a valid URL",
+    "details": {
+      "parameter": "url",
+      "expected": "valid URL string"
+    }
+  },
+  "request_id": "req-xxxxxxxx"
+}`;
 
   const endpoints = [
     {
@@ -16,20 +35,13 @@ export function ApiPage() {
       desc: "Initiate a new security scan",
       body: [
         { name: "url", type: "string", required: true, desc: "Target URL to scan (must include protocol)" },
-        { name: "profile", type: "string", required: false, desc: "Scan profile: 'surface', 'standard', or 'deep' (default: 'standard')" },
+        { name: "profile", type: "string", required: false, desc: "Scan profile: surface, standard, or deep (default: standard)" },
         { name: "timeout", type: "number", required: false, desc: "Request timeout in seconds (default: 30, max: 300)" },
         { name: "retries", type: "number", required: false, desc: "Number of retry attempts (default: 3, max: 5)" },
       ],
       response: {
         status: 202,
-        body: `{
-  "id": "scan-xxxxxxxx",
-  "url": "https://example.com",
-  "profile": "standard",
-  "status": "queued",
-  "queued_at": "2026-08-26T14:30:00Z",
-  "estimated_duration": "45-90 seconds"
-}`
+        body: `{\n  "id": "scan-xxxxxxxx",\n  "url": "https://example.com",\n  "profile": "standard",\n  "status": "queued",\n  "queued_at": "2026-08-26T14:30:00Z",\n  "estimated_duration": "45-90 seconds"\n}`
       }
     },
     {
@@ -39,24 +51,7 @@ export function ApiPage() {
       body: [],
       response: {
         status: 200,
-        body: `{
-  "id": "scan-xxxxxxxx",
-  "url": "https://example.com",
-  "status": "completed",
-  "score": 8.7,
-  "grade": "A",
-  "profile": "standard",
-  "scanned_at": "2026-08-26T14:30:45Z",
-  "completed_at": "2026-08-26T14:31:30Z",
-  "findings": [...],
-  "finding_counts": {
-    "critical": 0,
-    "high": 0,
-    "medium": 2,
-    "low": 4,
-    "info": 7
-  }
-}`
+        body: `{\n  "id": "scan-xxxxxxxx",\n  "url": "https://example.com",\n  "status": "completed",\n  "score": 8.7,\n  "grade": "A",\n  "profile": "standard",\n  "scanned_at": "2026-08-26T14:30:45Z",\n  "completed_at": "2026-08-26T14:31:30Z"\n}`
       }
     },
     {
@@ -66,12 +61,7 @@ export function ApiPage() {
       body: [],
       response: {
         status: 200,
-        body: `{
-  "id": "scan-xxxxxxxx",
-  "status": "running",
-  "progress": 65,
-  "current_step": "TLS analysis"
-}`
+        body: `{\n  "id": "scan-xxxxxxxx",\n  "status": "running",\n  "progress": 65,\n  "current_step": "TLS analysis"\n}`
       }
     },
     {
@@ -81,18 +71,13 @@ export function ApiPage() {
       body: [
         { name: "limit", type: "number", required: false, desc: "Maximum results (default: 50, max: 100)" },
         { name: "offset", type: "number", required: false, desc: "Pagination offset (default: 0)" },
-        { name: "status", type: "string", required: false, desc: "Filter by status: 'queued', 'running', 'completed', 'failed'" },
-        { name: "sort", type: "string", required: false, desc: "Sort by: 'created', 'completed', 'score' (default: 'created')" },
-        { name: "order", type: "string", required: false, desc: "Sort order: 'asc' or 'desc' (default: 'desc')" },
+        { name: "status", type: "string", required: false, desc: "Filter by status: queued, running, completed, failed" },
+        { name: "sort", type: "string", required: false, desc: "Sort by: created, completed, score (default: created)" },
+        { name: "order", type: "string", required: false, desc: "Sort order: asc or desc (default: desc)" },
       ],
       response: {
         status: 200,
-        body: `{
-  "total": 42,
-  "limit": 50,
-  "offset": 0,
-  "scans": [...]
-}`
+        body: `{\n  "total": 42,\n  "limit": 50,\n  "offset": 0,\n  "scans": [...]\n}`
       }
     },
     {
@@ -137,7 +122,6 @@ export function ApiPage() {
           REST API for programmatic access to ANPU security intelligence.
         </p>
         
-        {/* Status Badge */}
         <Badge variant="outline" className="mt-4 text-yellow-400 border-yellow-500/30">
           <AlertTriangle className="h-3 w-3 mr-1" />
           {apiStatus}
@@ -208,12 +192,10 @@ export function ApiPage() {
             START A SCAN
           </p>
           <pre 
-            className="p-3 bg-[#050505] rounded-md border border-border/50 text-xs text-primary font-mono overflow-x-auto"
+            className="p-3 bg-[#050505] rounded-md border border-border/50 text-xs text-primary font-mono overflow-x-auto whitespace-pre-wrap"
             style={{ fontFamily: "'IBM Plex Mono', 'Courier New', monospace" }}
           >
-{`curl -X POST ${baseUrl}/scan \\
-  -H "Content-Type: application/json" \\
-  -d '{"url": "https://example.com", "profile": "standard"}'`}
+{curlScan}
           </pre>
         </Card>
 
@@ -225,7 +207,7 @@ export function ApiPage() {
             className="p-3 bg-[#050505] rounded-md border border-border/50 text-xs text-primary font-mono overflow-x-auto"
             style={{ fontFamily: "'IBM Plex Mono', 'Courier New', monospace" }}
           >
-{`curl -X GET ${baseUrl}/scan/scan-xxxxxxxx`}
+{curlStatus}
           </pre>
         </Card>
 
@@ -237,7 +219,7 @@ export function ApiPage() {
             className="p-3 bg-[#050505] rounded-md border border-border/50 text-xs text-primary font-mono overflow-x-auto"
             style={{ fontFamily: "'IBM Plex Mono', 'Courier New', monospace" }}
           >
-{`curl -X GET ${baseUrl}/scans`}
+{curlList}
           </pre>
         </Card>
       </Card>
@@ -370,17 +352,7 @@ export function ApiPage() {
           className="p-4 bg-[#050505] rounded-md border border-border/50 text-xs text-primary font-mono overflow-x-auto"
           style={{ fontFamily: "'IBM Plex Mono', 'Courier New', monospace" }}
         >
-{`{
-  "error": {
-    "code": "INVALID_PARAMETER",
-    "message": "The 'url' parameter is required and must be a valid URL",
-    "details": {
-      "parameter": "url",
-      "expected": "valid URL string"
-    }
-  },
-  "request_id": "req-xxxxxxxx"
-}`}
+{errorExample}
         </pre>
         <p className="text-xs text-muted-foreground mt-3">
           Error codes include: INVALID_PARAMETER, NOT_FOUND, RATE_LIMITED, SERVER_ERROR
