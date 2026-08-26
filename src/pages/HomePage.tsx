@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, ChevronRight, Copy, FileText, GitBranch, LockKeyhole, Radar, ScanLine, ShieldCheck, Terminal, CheckCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { PharaohGuardian } from "@/components/PharaohGuardian";
+import { AnubisFigure } from "@/components/AnubisFigure";
+import { HorusEye } from "@/components/HorusEye";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,11 +66,17 @@ export function HomePage() {
       <section className="anpu-hero-v3">
         <div className="anpu-hero-noise" aria-hidden="true" />
         <div className="anpu-hero-glyphs" aria-hidden="true"><span>𓂀</span><span>𓆣</span><span>𓁹</span><span>𓆙</span></div>
+        <HorusEye className="anpu-hero-eye" />
+
         <div className="anpu-hero-main">
           <div className="anpu-hero-content">
-            <div className="anpu-brand-row"><span className="anpu-eyebrow"><span>𓂀</span> ANPU / WEB SECURITY INTELLIGENCE</span><Badge variant="secondary">OPEN SOURCE</Badge></div>
+            <div className="anpu-brand-row">
+              <span className="anpu-eyebrow"><span>𓂀</span> ANPU / WEB SECURITY INTELLIGENCE</span>
+              <Badge variant="secondary">OPEN SOURCE</Badge>
+            </div>
             <h1>Guard what<br /><span>you build.</span></h1>
             <p className="anpu-hero-description">Discover what your web application exposes, understand the security posture, and turn the result into intelligence you can act on.</p>
+
             <div className="anpu-launch-card">
               <div className="anpu-launch-header"><span>SCAN A WEBSITE</span><span className={scanning ? "anpu-state is-active" : "anpu-state"}><i /> {scanning ? "SCAN IN PROGRESS" : "DEMO READY"}</span></div>
               <div className="anpu-launch-row">
@@ -80,24 +87,32 @@ export function HomePage() {
               {scanning && <div className="anpu-scan-progress-panel"><div className="anpu-progress-top"><span>{scanSteps[activeStep]}</span><b>{progress}%</b></div><div className="anpu-progress-line"><span style={{ width: `${progress}%` }} /></div><div className="anpu-progress-list">{scanSteps.map((step, index) => <span key={step} className={index <= activeStep ? "is-done" : ""}>{index <= activeStep ? "✓" : "○"} {step}</span>)}</div></div>}
               {!scanning && progress === 100 && <div className="anpu-demo-complete"><CheckCheck className="h-4 w-4" /> Demo scan complete · <Link to="/reports/scan-001">View example report</Link></div>}
             </div>
+
             <div className="anpu-proof-row"><span><Check /> Go engine</span><span><Check /> CLI first</span><span><Check /> Permission-first</span><span><Check /> No lock-in</span></div>
           </div>
 
-          <div className="anpu-hero-art"><div className="anpu-art-frame">
-            <div className="anpu-art-topline"><span>THE GUARDIAN</span><span>ANPU CORE</span></div>
-            <div className="anpu-art-stage">
-              <div className="anpu-halo halo-one" /><div className="anpu-halo halo-two" /><div className="anpu-halo halo-three" />
-              <div className="anpu-glyph-ring" aria-hidden="true"><span>𓂀</span><span>𓆣</span><span>𓏏</span><span>𓁹</span><span>𓂻</span><span>𓆙</span></div>
-              <div className={`anpu-guardian-wrap ${scanning ? "is-scanning" : ""}`}><PharaohGuardian size={360} state={scanning ? "scanning" : "stable"} pulse={scanning} /></div>
-              <div className="anpu-guardian-state"><span>Guardian state</span><b>{scanning ? "ANALYZING" : "WATCHING"}</b></div>
+          <div className="anpu-hero-art">
+            <div className="anpu-art-frame">
+              <div className="anpu-art-topline"><span>THE GUARDIAN / A-01</span><span>ANPU CORE · LIVE</span></div>
+              <div className="anpu-art-stage">
+                <div className="anpu-halo halo-one" /><div className="anpu-halo halo-two" /><div className="anpu-halo halo-three" />
+                <div className="anpu-glyph-ring" aria-hidden="true"><span>𓂀</span><span>𓆣</span><span>𓏏</span><span>𓁹</span><span>𓂻</span><span>𓆙</span></div>
+                <AnubisFigure />
+                <div className="anpu-guardian-console">
+                  <span>GUARDIAN STATE</span>
+                  <b>{scanning ? "ANALYZING" : "WATCHING"}</b>
+                </div>
+                <div className="anpu-corner-readout top-left">SIG://PUBLIC</div>
+                <div className="anpu-corner-readout bottom-right">NODE 01 · READY</div>
+              </div>
+              <div className="anpu-art-metrics"><div><small>POSTURE</small><strong>A</strong></div><div><small>SIGNALS</small><strong>18</strong></div><div><small>MODE</small><strong>SAFE</strong></div></div>
             </div>
-            <div className="anpu-art-metrics"><div><small>POSTURE</small><strong>A</strong></div><div><small>SIGNALS</small><strong>18</strong></div><div><small>MODE</small><strong>SAFE</strong></div></div>
-          </div></div>
+          </div>
         </div>
         <div className="anpu-trust-strip"><span>BUILT AROUND THE ANPU GO CORE</span><span>OPEN SOURCE</span><span>DEVELOPER FOCUSED</span><span>AUTHORIZED TESTING</span></div>
       </section>
 
-      <section className="anpu-section anpu-section-intro"><div className="anpu-section-heading"><div className="anpu-eyebrow">01 / THE WORKFLOW</div><h2>See the surface.<br />Understand the signal.</h2><p>ANPU keeps the path simple: discover what is visible, analyze security-relevant signals, and explain what needs attention.</p></div><div className="anpu-module-grid">{capabilities.map(({ title, description, icon: Icon, accent }) => <Card key={title} className={`anpu-module-card accent-${accent}`}><div className="anpu-module-top"><div className="anpu-module-icon"><Icon /></div><span>0{capabilities.findIndex((item) => item.title === title) + 1}</span></div><h3>{title}</h3><p>{description}</p><div className="anpu-module-link">Explore <ChevronRight /></div></Card>)}</div></section>
+      <section className="anpu-section anpu-section-intro"><div className="anpu-section-heading"><div className="anpu-eyebrow">01 / THE WORKFLOW</div><h2>See the surface.<br />Understand the signal.</h2><p>ANPU keeps the path simple: discover what is visible, analyze security-relevant signals, and explain what needs attention.</p></div><div className="anpu-module-grid">{capabilities.map(({ title, description, icon: Icon, accent }, index) => <Card key={title} className={`anpu-module-card accent-${accent}`}><div className="anpu-module-top"><div className="anpu-module-icon"><Icon /></div><span>0{index + 1}</span></div><h3>{title}</h3><p>{description}</p><div className="anpu-module-link">Explore <ChevronRight /></div></Card>)}</div></section>
 
       <section className="anpu-section anpu-live-section"><div className="anpu-section-heading center"><div className="anpu-eyebrow">02 / LIVE SAMPLE</div><h2>A security report with context.</h2><p>Not just a number. ANPU keeps the evidence visible so the result is useful.</p></div><Card className="anpu-live-console"><div className="anpu-console-head"><div><span className="anpu-console-target">example.com</span><span className="anpu-console-meta">Deep profile · Demo</span></div><span className="anpu-console-score">8.7 <small>/10</small> <b>A</b></span></div><div className="anpu-console-grid"><div className="anpu-console-nav">{checks.map(([name, status], index) => <button key={name} type="button" className={selectedCheck === index ? "is-selected" : ""} onClick={() => setSelectedCheck(index)}><span className={status === "PASS" ? "dot-pass" : "dot-warn"} />{name}<ChevronRight /></button>)}</div><div className="anpu-console-detail"><div className="anpu-detail-label">{checks[selectedCheck][1]}</div><h3>{checks[selectedCheck][0]}</h3><p>{checks[selectedCheck][2]}. ANPU records the observation, explains why it matters, and points toward a practical next step.</p><div className="anpu-evidence"><span>OBSERVATION</span><code>response security policy detected</code></div><div className="anpu-detail-actions"><Button variant="outline" asChild><Link to="/reports/scan-001">Open full report <ArrowRight /></Link></Button><Badge variant="secondary">Demo data</Badge></div></div></div></Card></section>
 
