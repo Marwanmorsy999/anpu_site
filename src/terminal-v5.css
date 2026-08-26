@@ -1,0 +1,52 @@
+/* ANPU V5 — unified 1990s security terminal system */
+:root{
+ --v5-bg:#030604;--v5-panel:#071009;--v5-panel2:#0a130c;--v5-line:rgba(113,186,96,.22);
+ --v5-green:#69e85f;--v5-green2:#b6ff9d;--v5-dim:#58735a;--v5-gold:#d0a64b;--v5-cream:#e8e2cf;
+ --v5-red:#ff6058;--v5-amber:#ffb23e;--v5-mono:"IBM Plex Mono","Courier New",monospace
+}
+html,body,#root{background:var(--v5-bg)!important;color:var(--v5-cream)!important}
+body{font-family:var(--v5-mono)!important;background-image:radial-gradient(circle at 50% 0,rgba(90,180,75,.045),transparent 32%),repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 4px)!important}
+*{border-radius:0!important;box-sizing:border-box}
+a{color:inherit!important}
+.header{background:rgba(3,6,4,.95)!important;border-bottom:1px solid rgba(105,232,95,.18)!important;backdrop-filter:blur(10px)!important}
+.anpu-site-stage{background:transparent!important}.anpu-site-content{z-index:2}
+.anpu-terminal-rain{opacity:.08!important}
+/* Common page frame */
+main>div.mx-auto{position:relative;max-width:1400px!important;padding:30px 34px 80px!important}
+main>div.mx-auto:before{content:"ANPU SECURE TERMINAL // SESSION 01";display:block;margin:-4px 0 22px;color:#466047;font:600 9px/1 var(--v5-mono);letter-spacing:.16em}
+main>div.mx-auto h1,main>div.mx-auto h2{font-family:var(--v5-mono)!important;text-transform:uppercase;letter-spacing:.08em!important}
+main>div.mx-auto h1{font-size:clamp(28px,4vw,52px)!important;font-weight:700!important;color:var(--v5-cream)!important}
+main>div.mx-auto h2{font-size:19px!important;font-weight:700!important}
+main>div.mx-auto p{font-family:var(--v5-mono)!important}
+/* Replace rounded modern cards with terminal panels */
+.card,[class*="border-"]{border-color:var(--v5-line)!important}
+main .card{background:linear-gradient(180deg,rgba(8,16,10,.94),rgba(4,9,6,.98))!important;box-shadow:inset 0 1px rgba(182,255,157,.025),0 20px 50px rgba(0,0,0,.24)!important}
+main .card:hover{border-color:rgba(105,232,95,.34)!important}
+/* Buttons / inputs */
+button,[role="button"]{font-family:var(--v5-mono)!important;text-transform:uppercase;letter-spacing:.06em}
+input,textarea,select{font-family:var(--v5-mono)!important;background:#030704!important;color:var(--v5-cream)!important;border-color:rgba(105,232,95,.2)!important}
+button.bg-primary,.btn-default{background:var(--v5-green)!important;color:#041004!important;border-color:#56c94e!important}
+button.bg-primary:hover,.btn-default:hover{background:var(--v5-green2)!important}
+button[class*="outline"]{background:transparent!important;color:var(--v5-green)!important;border-color:rgba(105,232,95,.28)!important}
+/* Page section rhythm */
+main .grid{align-items:stretch}
+main .space-y-6>*+*{margin-top:14px!important}
+main .mb-8{margin-bottom:26px!important}.main .mb-6{margin-bottom:18px!important}
+/* Terminal labels */
+.anpu-eyebrow{font-family:var(--v5-mono)!important;color:var(--v5-green)!important;font-size:10px!important;letter-spacing:.18em!important}
+/* Scan page */
+main .grid.lg\:grid-cols-\[1\.25fr_\.75fr\]>.card:first-child{position:relative;overflow:hidden}
+main .grid.lg\:grid-cols-\[1\.25fr_\.75fr\]>.card:first-child:after{content:"READY // INPUT TARGET // AUTHORIZED USE ONLY";display:block;margin-top:18px;padding-top:10px;border-top:1px solid var(--v5-line);color:#466047;font:9px/1.6 var(--v5-mono);letter-spacing:.1em}
+/* Dashboard */
+main .grid.lg\:grid-cols-3{margin-top:4px}
+/* Documentation */
+main .sticky{position:sticky!important;background:rgba(4,9,6,.96)!important;backdrop-filter:blur(10px);border-color:rgba(105,232,95,.25)!important}
+main pre{background:#020503!important;border:1px solid rgba(105,232,95,.18)!important;color:var(--v5-green2)!important;box-shadow:inset 0 0 35px rgba(105,232,95,.025)!important}
+/* terminal window utility */
+.v5-terminal{border:1px solid rgba(105,232,95,.23);background:#020503;box-shadow:inset 0 0 40px rgba(105,232,95,.025)}
+.v5-terminal-bar{height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;border-bottom:1px solid rgba(105,232,95,.16);color:#68806a;font-size:9px;letter-spacing:.12em}
+.v5-terminal-body{padding:15px;color:#8bc58b;font-size:11px;line-height:1.75}
+/* responsive */
+@media(max-width:900px){main>div.mx-auto{padding:22px 18px 60px!important}main>div.mx-auto:before{margin-bottom:16px}.anpu-hero-main{grid-template-columns:1fr!important}.anpu-hero-content{padding:46px 28px!important}.anpu-hero-art{padding:24px!important}.anpu-art-frame{max-width:100%!important}.anpu-horus-eye{width:88px!important;right:4%!important;top:9%!important}.anpu-terminal-rain{opacity:.055!important}}
+@media(max-width:620px){main>div.mx-auto{padding:18px 12px 44px!important}main>div.mx-auto h1{font-size:29px!important}.anpu-hero-content h1{font-size:52px!important}.anpu-launch-row{grid-template-columns:1fr!important}.anpu-proof-row{gap:10px!important}.anpu-anubis-figure img{width:min(92%,300px)!important;height:390px!important}.anpu-art-frame{height:520px!important}.anpu-art-stage{height:420px!important}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important}.anpu-terminal-rain{display:none!important}}
