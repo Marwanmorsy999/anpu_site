@@ -1,104 +1,66 @@
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, Github, ScanLine } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { PharaohGuardian } from "./PharaohGuardian";
 
 type NavItem = { path: string; label: string };
-
-const navItems: NavItem[] = [
+const primaryNav: NavItem[] = [
   { path: "/", label: "Home" },
   { path: "/scan", label: "Scanner" },
   { path: "/dashboard", label: "Dashboard" },
   { path: "/reports", label: "Reports" },
-  { path: "/docs", label: "Docs" },
+  { path: "/badge", label: "Badge" },
+];
+const moreNav: NavItem[] = [
+  { path: "/docs", label: "Documentation" },
   { path: "/api", label: "API" },
+  { path: "/about", label: "About ANPU" },
+  { path: "/github", label: "Source Archive" },
 ];
 
 export function ANPUSystemHeader() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const isActive = (path: string) => path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
+  const moreActive = moreNav.some((item) => isActive(item.path));
 
   return (
-    <header className="header sticky top-0 z-50 w-full">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-5 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d6ae54]/22 bg-[#d6ae54]/7">
-            <PharaohGuardian size={28} state="awake" />
-          </div>
-          <div>
-            <div className="text-base font-semibold tracking-wide text-[#f2eee2]">ANPU</div>
-            <div className="hidden text-[10px] uppercase tracking-[.16em] text-[#817c72] sm:block">Web Security Intelligence</div>
-          </div>
+    <header className="header anpu-header">
+      <div className="anpu-nav-shell">
+        <Link to="/" className="anpu-brand" onClick={() => setOpen(false)}>
+          <span className="anpu-brand-mark"><PharaohGuardian size={30} state="awake" /></span>
+          <span><strong>ANPU</strong><small>Web Security Intelligence</small></span>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`rounded-lg px-3 py-2 text-sm transition-colors ${
-                isActive(item.path)
-                  ? "bg-[#d6ae54]/10 text-[#e7c46a]"
-                  : "text-[#aaa69e] hover:bg-white/[0.03] hover:text-[#f2eee2]"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="anpu-desktop-nav" aria-label="Primary navigation">
+          {primaryNav.map((item) => <Link key={item.path} to={item.path} className={isActive(item.path) ? "is-active" : ""}>{item.label}</Link>)}
+          <div className="anpu-more-wrap">
+            <button type="button" className={moreActive ? "is-active" : ""} onClick={() => setMoreOpen((value) => !value)} aria-expanded={moreOpen}>More <ChevronDown className={moreOpen ? "rotate" : ""} /></button>
+            {moreOpen && (
+              <div className="anpu-more-menu">
+                {moreNav.map((item) => <Link key={item.path} to={item.path} onClick={() => setMoreOpen(false)} className={isActive(item.path) ? "is-active" : ""}>{item.label}</Link>)}
+              </div>
+            )}
+          </div>
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
-          <div className="flex items-center gap-2 rounded-full border border-[#73d67a]/14 bg-[#73d67a]/5 px-3 py-1.5 text-xs text-[#99958d]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#73d67a]" /> Ready
-          </div>
-          <a
-            href="https://github.com/Marwanmorsy999/anpu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg border border-[#d6ae54]/24 bg-[#d6ae54]/8 px-3.5 py-2 text-sm font-medium text-[#e7c46a] transition-colors hover:bg-[#d6ae54]/13"
-          >
-            GitHub
-          </a>
+        <div className="anpu-nav-actions">
+          <span className="anpu-ready"><i /> System ready</span>
+          <a className="anpu-github-link" href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer"><Github /> GitHub</a>
+          <Link className="anpu-nav-cta" to="/scan"><ScanLine /> Scan a website</Link>
         </div>
 
-        <button
-          type="button"
-          className="rounded-lg border border-[#d6ae54]/20 p-2 text-[#d6ae54] lg:hidden"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <button type="button" className="anpu-mobile-menu" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X /> : <Menu />}</button>
       </div>
 
       {open && (
-        <div className="border-t border-[#d6ae54]/10 bg-[#080807]/96 px-4 py-3 backdrop-blur-xl lg:hidden">
-          <nav className="mx-auto grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setOpen(false)}
-                className={`rounded-lg border px-3 py-2.5 text-sm ${
-                  isActive(item.path)
-                    ? "border-[#d6ae54]/28 bg-[#d6ae54]/9 text-[#e7c46a]"
-                    : "border-white/6 text-[#aaa69e]"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <a
-              href="https://github.com/Marwanmorsy999/anpu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg border border-[#d6ae54]/22 bg-[#d6ae54]/7 px-3 py-2.5 text-sm text-[#e7c46a]"
-            >
-              GitHub
-            </a>
+        <div className="anpu-mobile-panel">
+          <nav aria-label="Mobile navigation">
+            {[...primaryNav, ...moreNav].map((item) => <Link key={item.path} to={item.path} onClick={() => setOpen(false)} className={isActive(item.path) ? "is-active" : ""}>{item.label}</Link>)}
+            <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}><Github /> GitHub</a>
           </nav>
+          <Link to="/scan" className="anpu-nav-cta anpu-mobile-cta" onClick={() => setOpen(false)}><ScanLine /> Scan a website</Link>
         </div>
       )}
     </header>

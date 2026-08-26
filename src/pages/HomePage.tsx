@@ -1,4 +1,5 @@
-import { ArrowRight, Check, Code2, FileText, Github, LockKeyhole, Radar, ShieldCheck, Terminal } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Check, ChevronRight, Code2, Copy, FileText, Github, LockKeyhole, Radar, ScanLine, ShieldCheck, Terminal, CheckCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { SecurityScore } from "@/components/SecurityScore";
@@ -7,196 +8,108 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const capabilities = [
-  {
-    title: "Discover exposure",
-    description: "Map publicly visible DNS, TLS, redirects, robots, sitemaps, and technology signals.",
-    icon: Radar,
-  },
-  {
-    title: "Analyze security",
-    description: "Inspect headers, cookies, transport configuration, and other security-relevant signals.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Explain the result",
-    description: "Turn raw observations into findings with evidence, impact, severity, and recommendations.",
-    icon: FileText,
-  },
+  { title: "Discover exposure", description: "Map public DNS, TLS, redirects, robots, sitemaps, technologies, and other visible signals.", icon: Radar, accent: "gold" },
+  { title: "Analyze security", description: "Inspect transport, headers, cookies, and configuration details that shape the public security posture.", icon: ShieldCheck, accent: "green" },
+  { title: "Explain the result", description: "Translate raw observations into findings with evidence, impact, severity, and recommendations.", icon: FileText, accent: "sand" },
 ];
 
-const demoChecks = [
+const checks = [
   ["HTTPS / TLS", "PASS", "Modern configuration"],
   ["HSTS", "PASS", "Enabled"],
   ["Content-Security-Policy", "WARN", "Review recommended"],
   ["Cookie flags", "WARN", "Review recommended"],
+  ["Public surface", "PASS", "No obvious exposure"],
 ];
 
+const scanSteps = ["Validating target", "Resolving DNS", "Inspecting TLS", "Reviewing headers", "Mapping public surface", "Preparing report"];
+const signals = [["DNS", 92], ["TLS", 96], ["HEADERS", 78], ["COOKIES", 68], ["ROBOTS", 84], ["SURFACE", 74]];
+
 export function HomePage() {
+  const [target, setTarget] = useState("https://example.com");
+  const [scanning, setScanning] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [selectedCheck, setSelectedCheck] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!scanning) return;
+    const interval = window.setInterval(() => setProgress((current) => Math.min(current + 12, 100)), 360);
+    return () => window.clearInterval(interval);
+  }, [scanning]);
+
+  useEffect(() => {
+    if (!scanning || progress < 100) return;
+    const timeout = window.setTimeout(() => setScanning(false), 650);
+    return () => window.clearTimeout(timeout);
+  }, [scanning, progress]);
+
+  const activeStep = Math.min(Math.floor(progress / 17), scanSteps.length - 1);
+
+  const startDemoScan = () => {
+    if (!target.trim() || scanning) return;
+    setProgress(0);
+    setScanning(true);
+  };
+
+  const copyCli = async () => {
+    try {
+      await navigator.clipboard.writeText("anpu scan https://example.com");
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8 lg:pt-12">
-      <section className="anpu-hero rounded-3xl px-5 py-7 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.02fr_.98fr]">
-          <div className="relative z-10">
-            <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="anpu-kicker">ANPU / WEB SECURITY INTELLIGENCE</span>
-              <Badge variant="secondary">Open source</Badge>
-            </div>
-
-            <h1 className="anpu-glow max-w-3xl text-5xl font-semibold leading-[.98] tracking-[-0.045em] text-[#f2eee2] sm:text-6xl lg:text-[76px]">
-              Guard what you build.
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-base leading-7 text-[#aaa79f] sm:text-lg">
-              ANPU discovers what your web application exposes, analyzes the public security posture, and turns the results into actionable intelligence.
-            </p>
-
-            <div className="mt-8 rounded-2xl border border-[#d6ae54]/18 bg-[#060605]/70 p-3 shadow-[0_20px_70px_rgba(0,0,0,.28)]">
-              <div className="mb-2 flex items-center justify-between px-2 text-[11px] uppercase tracking-[.15em] text-[#8b877e]">
-                <span>Target</span>
-                <span className="font-mono text-[#73d67a]">Demo mode</span>
+    <div className="anpu-home-shell">
+      <section className="anpu-hero-v3">
+        <div className="anpu-hero-noise" aria-hidden="true" />
+        <div className="anpu-hero-glyphs" aria-hidden="true"><span>𓂀</span><span>𓆣</span><span>𓁹</span><span>𓆙</span></div>
+        <div className="anpu-hero-main">
+          <div className="anpu-hero-content">
+            <div className="anpu-brand-row"><span className="anpu-eyebrow"><span>𓂀</span> ANPU / WEB SECURITY INTELLIGENCE</span><Badge variant="secondary">OPEN SOURCE</Badge></div>
+            <h1>Guard what<br /><span>you build.</span></h1>
+            <p className="anpu-hero-description">Discover what your web application exposes, understand the security posture, and turn the result into intelligence you can act on.</p>
+            <div className="anpu-launch-card">
+              <div className="anpu-launch-header"><span>SCAN A WEBSITE</span><span className={scanning ? "anpu-state is-active" : "anpu-state"}><i /> {scanning ? "SCAN IN PROGRESS" : "DEMO READY"}</span></div>
+              <div className="anpu-launch-row">
+                <div className="anpu-url-field"><span className="anpu-url-prefix">https://</span><input value={target.replace(/^https?:\/\//, "")} onChange={(event) => setTarget(`https://${event.target.value}`)} onKeyDown={(event) => event.key === "Enter" && startDemoScan()} aria-label="Target website" /></div>
+                <Button size="lg" onClick={startDemoScan} disabled={scanning}><ScanLine className="h-4 w-4" />{scanning ? "Analyzing…" : "Scan website"}<ArrowRight className="h-4 w-4" /></Button>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <div className="flex min-h-12 flex-1 items-center rounded-xl border border-white/7 bg-[#090908] px-4 font-mono text-sm text-[#d7d1bf]">
-                  https://example.com
-                  <span className="ml-1 h-4 w-px bg-[#d6ae54]/70" />
-                </div>
-                <Button asChild size="lg" className="h-12 w-full sm:w-auto">
-                  <Link to="/scan">
-                    Scan a website <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              <p className="px-2 pt-3 text-xs text-[#746f66]">Only scan systems you own or have permission to test.</p>
+              <div className="anpu-launch-footer"><LockKeyhole className="h-3.5 w-3.5" /> Only scan systems you own or have permission to test.</div>
+              {scanning && <div className="anpu-scan-progress-panel"><div className="anpu-progress-top"><span>{scanSteps[activeStep]}</span><b>{progress}%</b></div><div className="anpu-progress-line"><span style={{ width: `${progress}%` }} /></div><div className="anpu-progress-list">{scanSteps.map((step, index) => <span key={step} className={index <= activeStep ? "is-done" : ""}>{index <= activeStep ? "✓" : "○"} {step}</span>)}</div></div>}
+              {!scanning && progress === 100 && <div className="anpu-demo-complete"><CheckCheck className="h-4 w-4" /> Demo scan complete · <Link to="/reports/scan-001">View example report</Link></div>}
             </div>
-
-            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-[#8d8980]">
-              <span className="inline-flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#73d67a]" /> Go engine</span>
-              <span className="inline-flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#73d67a]" /> CLI first</span>
-              <span className="inline-flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[#73d67a]" /> Open source</span>
-            </div>
+            <div className="anpu-proof-row"><span><Check /> Go engine</span><span><Check /> CLI first</span><span><Check /> Permission-first</span><span><Check /> No lock-in</span></div>
           </div>
 
-          <div className="relative z-10 mx-auto w-full max-w-[540px]">
-            <div className="anpu-visual-frame rounded-3xl p-5 sm:p-7">
-              <div className="flex items-center justify-between text-[10px] uppercase tracking-[.15em] text-[#807b72]">
-                <span>Guardian</span>
-                <span className="inline-flex items-center gap-2 text-[#73d67a]"><span className="h-1.5 w-1.5 rounded-full bg-[#73d67a]" /> Stable</span>
-              </div>
-
-              <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden">
-                <div className="absolute h-56 w-56 rounded-full bg-[#d6ae54]/8 blur-3xl" />
-                <div className="absolute inset-x-10 bottom-5 h-px bg-gradient-to-r from-transparent via-[#d6ae54]/20 to-transparent" />
-                <div className="relative z-10 drop-shadow-[0_0_45px_rgba(214,174,84,.16)]">
-                  <PharaohGuardian size={290} state="stable" />
-                </div>
-                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-[#d6ae54]/20 bg-[#0a0a09]/90 px-4 py-2 font-mono text-[10px] tracking-[.12em] text-[#d6ae54]">
-                  𓂀 GUARDIAN ACTIVE
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl border border-white/6 bg-white/[0.018] p-3.5"><div className="text-[10px] uppercase tracking-wider text-[#77736b]">Posture</div><div className="mt-1 text-xl font-semibold text-[#f2eee2]">A</div></div>
-                <div className="rounded-xl border border-white/6 bg-white/[0.018] p-3.5"><div className="text-[10px] uppercase tracking-wider text-[#77736b]">Checks</div><div className="mt-1 text-xl font-semibold text-[#f2eee2]">18</div></div>
-                <div className="rounded-xl border border-white/6 bg-white/[0.018] p-3.5"><div className="text-[10px] uppercase tracking-wider text-[#77736b]">Target</div><div className="mt-1 truncate text-sm font-semibold text-[#f2eee2]">example.com</div></div>
-              </div>
+          <div className="anpu-hero-art"><div className="anpu-art-frame">
+            <div className="anpu-art-topline"><span>THE GUARDIAN</span><span>ANPU CORE</span></div>
+            <div className="anpu-art-stage">
+              <div className="anpu-halo halo-one" /><div className="anpu-halo halo-two" /><div className="anpu-halo halo-three" />
+              <div className="anpu-glyph-ring" aria-hidden="true"><span>𓂀</span><span>𓆣</span><span>𓏏</span><span>𓁹</span><span>𓂻</span><span>𓆙</span></div>
+              <div className={`anpu-guardian-wrap ${scanning ? "is-scanning" : ""}`}><PharaohGuardian size={360} state={scanning ? "scanning" : "stable"} pulse={scanning} /></div>
+              <div className="anpu-guardian-state"><span>Guardian state</span><b>{scanning ? "ANALYZING" : "WATCHING"}</b></div>
             </div>
-          </div>
+            <div className="anpu-art-metrics"><div><small>POSTURE</small><strong>A</strong></div><div><small>SIGNALS</small><strong>18</strong></div><div><small>MODE</small><strong>SAFE</strong></div></div>
+          </div></div>
         </div>
+        <div className="anpu-trust-strip"><span>BUILT AROUND THE ANPU GO CORE</span><span>OPEN SOURCE</span><span>DEVELOPER FOCUSED</span><span>AUTHORIZED TESTING</span></div>
       </section>
 
-      <section className="py-14 lg:py-20">
-        <div className="mb-8 max-w-2xl">
-          <div className="anpu-kicker">01 / WHAT ANPU DOES</div>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[#f2eee2] sm:text-4xl">Three steps. One clear picture.</h2>
-          <p className="mt-3 text-[#9a978e]">ANPU keeps the security workflow focused: discover the surface, analyze the signals, explain what matters.</p>
-        </div>
+      <section className="anpu-section anpu-section-intro"><div className="anpu-section-heading"><div className="anpu-eyebrow">01 / THE WORKFLOW</div><h2>See the surface.<br />Understand the signal.</h2><p>ANPU keeps the path simple: discover what is visible, analyze security-relevant signals, and explain what needs attention.</p></div><div className="anpu-module-grid">{capabilities.map(({ title, description, icon: Icon }, index) => <Card key={title} className={`anpu-module-card accent-${capabilities[index].accent}`}><div className="anpu-module-top"><div className="anpu-module-icon"><Icon /></div><span>0{index + 1}</span></div><h3>{title}</h3><p>{description}</p><div className="anpu-module-link">Explore <ChevronRight /></div></Card>)}</div></section>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          {capabilities.map(({ title, description, icon: Icon }, index) => (
-            <Card key={title} className="group rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1">
-              <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#d6ae54]/15 bg-[#d6ae54]/7 text-[#d6ae54]"><Icon className="h-5 w-5" /></div>
-                <span className="font-mono text-xs text-[#5f5b54]">0{index + 1}</span>
-              </div>
-              <h3 className="mt-7 text-lg font-semibold text-[#f2eee2]">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#96938b]">{description}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
+      <section className="anpu-section anpu-live-section"><div className="anpu-section-heading center"><div className="anpu-eyebrow">02 / LIVE SAMPLE</div><h2>A security report with context.</h2><p>Not just a number. ANPU keeps the evidence visible so the result is useful.</p></div><Card className="anpu-live-console"><div className="anpu-console-head"><div><span className="anpu-console-target">example.com</span><span className="anpu-console-meta">Deep profile · Demo</span></div><span className="anpu-console-score">8.7 <small>/10</small> <b>A</b></span></div><div className="anpu-console-grid"><div className="anpu-console-nav">{checks.map(([name, status], index) => <button key={name} type="button" className={selectedCheck === index ? "is-selected" : ""} onClick={() => setSelectedCheck(index)}><span className={status === "PASS" ? "dot-pass" : "dot-warn"} />{name}<ChevronRight /></button>)}</div><div className="anpu-console-detail"><div className="anpu-detail-label">{checks[selectedCheck][1]}</div><h3>{checks[selectedCheck][0]}</h3><p>{checks[selectedCheck][2]}. ANPU records the observation, explains why it matters, and points toward a practical next step.</p><div className="anpu-evidence"><span>OBSERVATION</span><code>response security policy detected</code></div><div className="anpu-detail-actions"><Button variant="outline" asChild><Link to="/reports/scan-001">Open full report <ArrowRight /></Link></Button><Badge variant="secondary">Demo data</Badge></div></div></div></Card></section>
 
-      <section className="grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
-        <Card className="rounded-3xl p-6 sm:p-8">
-          <div className="anpu-kicker">02 / SECURITY POSTURE</div>
-          <div className="mt-4 flex items-end justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-semibold text-[#f2eee2]">A signal you can understand.</h2>
-              <p className="mt-3 text-sm leading-6 text-[#96938b]">A simple posture assessment summarizes the result without hiding the underlying evidence.</p>
-            </div>
-          </div>
-          <div className="mt-8 flex justify-center"><SecurityScore score={8.7} grade="A" size={210} /></div>
-          <p className="mt-5 text-center text-xs text-[#726e66]">ANPU score is an internal posture assessment, not a certification.</p>
-        </Card>
+      <section className="anpu-section anpu-process-section-v3"><div className="anpu-section-heading center"><div className="anpu-eyebrow">03 / FROM TARGET TO REPORT</div><h2>One scan. Five clear stages.</h2></div><div className="anpu-process-v3">{["Target","Discover","Analyze","Score","Report"].map((step, index) => <div className="anpu-process-v3-step" key={step}><span>0{index + 1}</span><div><strong>{step}</strong><small>{["Choose an authorized target.","Collect public signals.","Evaluate relevant controls.","Prioritize the findings.","Make the result useful."][index]}</small></div>{index < 4 && <i />}</div>)}</div></section>
 
-        <Card className="rounded-3xl p-6 sm:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="anpu-kicker">03 / DEMO REPORT</div>
-              <h2 className="mt-3 text-2xl font-semibold text-[#f2eee2]">Evidence, not just a score.</h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-[#96938b]">Every result can be traced to a concrete observation and a practical recommendation.</p>
-            </div>
-            <Badge variant="secondary">Demo</Badge>
-          </div>
+      <section className="anpu-section anpu-monitor-section"><div className="anpu-monitor-copy"><div className="anpu-eyebrow">04 / SIGNAL MONITOR</div><h2>Built to make the invisible visible.</h2><p>ANPU brings disparate public signals into one place so developers can understand their external security posture without drowning in noise.</p><Link to="/scan" className="anpu-inline-link">Open scanner <ArrowRight /></Link></div><Card className="anpu-monitor-card"><div className="anpu-monitor-head"><span>PUBLIC SIGNALS</span><span><i /> NOMINAL</span></div><div className="anpu-signal-list">{signals.map(([name, value]) => <div key={name}><span>{name}</span><div><i style={{ width: `${value}%` }} /></div><b>{value}%</b></div>)}</div><div className="anpu-monitor-foot">Signal visualization · representative demo data</div></Card></section>
 
-          <div className="anpu-terminal mt-7 overflow-hidden rounded-2xl">
-            <div className="flex flex-col gap-2 border-b border-white/6 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <span className="font-mono text-xs text-[#aaa79f]">example.com · standard scan</span>
-              <span className="font-mono text-sm font-medium text-[#e7c46a]">8.7 / 10 · A</span>
-            </div>
-            <div className="divide-y divide-white/6">
-              {demoChecks.map(([name, status, result]) => (
-                <div key={name} className="grid gap-1 px-4 py-4 sm:grid-cols-[1.35fr_.45fr_1fr] sm:items-center">
-                  <span className="text-sm text-[#e9e5da]">{name}</span>
-                  <span className={`font-mono text-[11px] font-semibold ${status === "PASS" ? "text-[#73d67a]" : "text-[#e7c46a]"}`}>{status}</span>
-                  <span className="text-xs text-[#77736e]">{result}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+      <section className="anpu-section anpu-cli-section"><div className="anpu-cli-card"><div className="anpu-cli-header"><span>ANPU CLI</span><span>GO · OPEN SOURCE</span></div><div className="anpu-cli-body"><div className="anpu-cli-copy"><div className="anpu-eyebrow">05 / THE CORE</div><h2>The web is the front door.</h2><p>The original ANPU project is the open-source Go security engine. Run it from your terminal, automate it in your workflow, and keep the core inspectable.</p><div className="anpu-cli-actions"><Button asChild><a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer"><Github /> Open ANPU repository</a></Button><Button variant="outline" asChild><Link to="/docs"><Terminal /> Read the docs</Link></Button></div></div><div className="anpu-cli-terminal"><div className="anpu-terminal-bar"><span>ANPU TERMINAL</span><button type="button" onClick={copyCli} aria-label="Copy CLI command">{copied ? <CheckCheck /> : <Copy />}</button></div><pre><span className="prompt">$</span> anpu scan https://example.com{"\n\n"}<span className="good">✓</span> DNS reconnaissance{"\n"}<span className="good">✓</span> TLS analysis{"\n"}<span className="good">✓</span> Security headers{"\n"}<span className="good">✓</span> Public surface{"\n\n"}<span className="gold">Risk Score: 8.7/10{"\n"}Grade: A</span>{"\n"}<span className="cursor">█</span></pre></div></div></div></section>
 
-          <Link to="/reports" className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#d6ae54]">Explore reports <ArrowRight className="h-4 w-4" /></Link>
-        </Card>
-      </section>
-
-      <section className="py-14 lg:py-20">
-        <div className="grid items-center gap-8 rounded-3xl border border-[#d6ae54]/14 bg-[radial-gradient(circle_at_80%_20%,rgba(214,174,84,.10),transparent_24%),linear-gradient(135deg,#14130f,#0b0b09_60%,#090908)] p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:p-10">
-          <div>
-            <div className="anpu-kicker">04 / OPEN SOURCE</div>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[#f2eee2] sm:text-4xl">The core lives in Go.</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-[#96938b]">The website is the front door. The original ANPU repository contains the Go CLI and security engine used for real analysis.</p>
-            <div className="mt-5 flex flex-wrap gap-3 text-xs text-[#77736b]"><span className="rounded-full border border-white/6 px-3 py-1.5">Go</span><span className="rounded-full border border-white/6 px-3 py-1.5">CLI</span><span className="rounded-full border border-white/6 px-3 py-1.5">Open source</span></div>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <Button asChild size="lg"><a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer"><Github className="h-4 w-4" /> Open ANPU repository</a></Button>
-            <Button variant="outline" asChild size="lg"><Link to="/docs"><Terminal className="h-4 w-4" /> Read CLI docs</Link></Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-white/6 bg-white/[0.015] p-5"><LockKeyhole className="h-5 w-5 text-[#d6ae54]" /><h3 className="mt-4 font-semibold text-[#f2eee2]">Permission first</h3><p className="mt-1 text-sm leading-6 text-[#858178]">Only assess systems you own or have authorization to test.</p></div>
-        <div className="rounded-2xl border border-white/6 bg-white/[0.015] p-5"><Code2 className="h-5 w-5 text-[#d6ae54]" /><h3 className="mt-4 font-semibold text-[#f2eee2]">Developer ready</h3><p className="mt-1 text-sm leading-6 text-[#858178]">A practical Go CLI with a web interface around it.</p></div>
-        <div className="rounded-2xl border border-white/6 bg-white/[0.015] p-5"><Sparkles className="hidden" /><span className="text-xl text-[#d6ae54]">𓂀</span><h3 className="mt-4 font-semibold text-[#f2eee2]">Guardian by design</h3><p className="mt-1 text-sm leading-6 text-[#858178]">A distinct Egyptian identity without sacrificing clarity.</p></div>
-      </section>
-
-      <section className="py-16">
-        <div className="overflow-hidden rounded-3xl border border-[#d6ae54]/15 bg-[#0b0b0a] px-6 py-11 text-center sm:px-10">
-          <PharaohGuardian size={58} state="awake" className="mx-auto" />
-          <h2 className="mt-6 text-3xl font-semibold tracking-tight text-[#f2eee2] sm:text-4xl">Know your attack surface.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[#96938b]">Start with the scanner, inspect the intelligence, and keep the core open.</p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row"><Button asChild size="lg"><Link to="/scan">Scan a website</Link></Button><Button variant="outline" asChild size="lg"><Link to="/github">Explore the source</Link></Button></div>
-        </div>
-      </section>
+      <section className="anpu-section anpu-source-banner"><div><div className="anpu-eyebrow">06 / OPEN SOURCE SECURITY</div><h2>Guard it. Understand it. Improve it.</h2><p>ANPU combines a recognizable identity with a practical security workflow. The source stays public; the product stays clear.</p></div><div className="anpu-source-mark"><span>𓂀</span><small>ANPU</small></div></section>
+      <section className="anpu-final-cta-v3"><div className="anpu-final-glyph">𓂀</div><div><div className="anpu-eyebrow">ANPU / GUARDIAN READY</div><h2>Know what your web surface reveals.</h2><p>Start with an authorized scan and see the result in context.</p></div><Button asChild size="lg"><Link to="/scan">Open the scanner <ArrowRight /></Link></Button></section>
     </div>
   );
 }
