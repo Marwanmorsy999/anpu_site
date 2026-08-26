@@ -1,8 +1,8 @@
-import { useState } from "react";
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Copy, ExternalLink } from "lucide-react";
+import { ArrowLeft, Copy, ExternalLink, ShieldCheck } from "lucide-react";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
+import { GuardianStatus } from "@/components/GuardianStatus";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,9 +43,10 @@ export function BadgePage() {
         <ArrowLeft className="h-4 w-4" /> BACK HOME
       </Link>
 
-      {/* Header */}
+      {/* Module Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
+          <ShieldCheck className="h-10 w-10 text-primary" />
           <PharaohGuardian size={48} state="stable" />
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
@@ -59,7 +60,7 @@ export function BadgePage() {
       {/* Badge Preview */}
       <Card className="p-6 mb-6 border-border">
         <p className="text-xs uppercase tracking-wider text-secondary mb-4">
-          PREVIEW
+          ANPU SECURITY SEAL
         </p>
         <div className="flex justify-center gap-8">
           {[
@@ -82,6 +83,12 @@ export function BadgePage() {
               <p className="text-xs mt-1 text-muted-foreground">ANPU Security</p>
             </div>
           ))}
+        </div>
+        <div className="mt-4 pt-4 border-t border-border/50 text-center">
+          <GuardianStatus status="stable" size={32} showLabel={false} />
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mt-2">
+            GUARDIAN: STABLE
+          </p>
         </div>
       </Card>
 
@@ -143,23 +150,15 @@ export function BadgePage() {
         </div>
       </Card>
 
-      {/* Features */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { icon: "✅", title: "REAL-TIME UPDATES", desc: "Badges update automatically when new scans are run." },
-          { icon: "🔗", title: "CLICKABLE", desc: "Clicking the badge links to the full report." },
-          { icon: "📊", title: "SCORE DISPLAY", desc: "Shows the current ANPU security score." },
-          { icon: "🎯", title: "GRADE BADGE", desc: "Displays the security grade (A+, A, B, etc.)." },
-        ].map((feature) => (
-          <Card key={feature.title} className="p-4 text-center border-border">
-            <p className="text-2xl mb-2">{feature.icon}</p>
-            <p className="text-sm font-semibold text-foreground mb-1">{feature.title}</p>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {feature.desc}
-            </p>
-          </Card>
-        ))}
-      </div>
+      {/* Demo Warning */}
+      <Card className="p-4 mb-6 border-amber/30 bg-amber/5">
+        <p className="text-amber mb-2">
+          ⚠️ BADGE GENERATION NOT YET IMPLEMENTED
+        </p>
+        <p className="text-xs text-muted-foreground">
+          This is a preview of the badge system. The actual badge generation API is planned for future development.
+        </p>
+      </Card>
 
       {/* Usage instructions */}
       <Card className="p-6 mb-8 border-border">
@@ -184,16 +183,6 @@ export function BadgePage() {
             </div>
           ))}
         </div>
-      </Card>
-
-      {/* Note */}
-      <Card className="p-4 mb-6 border-amber/30 bg-amber/5">
-        <p className="text-amber mb-2">
-          ⚠️ BADGE GENERATION IS NOT YET IMPLEMENTED
-        </p>
-        <p className="text-xs text-muted-foreground">
-          This is a preview of the badge system. The actual badge generation API is planned for future development.
-        </p>
       </Card>
 
       {/* Actions */}

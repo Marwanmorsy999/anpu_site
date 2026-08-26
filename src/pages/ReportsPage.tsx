@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, FileText, ExternalLink, Search, Plus } from "lucide-react";
-import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,31 +17,54 @@ export function ReportsPage() {
 
   const getTimeAgo = (id: string) => {
     switch (id) {
-      case "scan-001": return "2 hours ago";
-      case "scan-002": return "Yesterday";
-      case "scan-003": return "Aug 24";
-      case "scan-004": return "Aug 23";
-      default: return "Unknown";
+      case "scan-001": return "2 HOURS AGO";
+      case "scan-002": return "1 DAY AGO";
+      case "scan-003": return "2 DAYS AGO";
+      case "scan-004": return "4 DAYS AGO";
+      default: return "UNKNOWN";
     }
   };
 
+  // Calculate stats
+  const totalReports = mockScanHistory.length;
+  const avgScore = mockScanHistory.reduce((sum, r) => sum + r.score, 0) / mockScanHistory.length;
+  const bestGrade = mockScanHistory.reduce((best, r) => 
+    r.grade > best ? r.grade : best, "F"
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Header */}
-      <div className="mb-8">
-        <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
-          <ArrowLeft className="h-4 w-4" /> BACK TO DASHBOARD
-        </Link>
+      {/* Back link */}
+      <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <ArrowLeft className="h-4 w-4" /> BACK TO COMMAND CENTER
+      </Link>
 
-        <div className="flex items-center gap-2 mb-2">
-          <PharaohGuardian size={40} state="stable" />
-          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">
-            ANPU // SCAN REPORTS
-          </h1>
-        </div>
+      {/* Module Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-2">
+          ANPU // REPORT ARCHIVE
+        </h1>
         <p className="text-muted-foreground">
-          Browse and manage your security reports.
+          Browse and manage security intelligence reports.
         </p>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        {[
+          { label: "TOTAL REPORTS", value: totalReports, icon: "𓄿" },
+          { label: "AVERAGE SCORE", value: avgScore.toFixed(1), icon: "⭐" },
+          { label: "BEST GRADE", value: bestGrade, icon: "🏆" },
+          { label: "DEMO REPORTS", value: totalReports, icon: "📋" },
+        ].map((stat) => (
+          <Card key={stat.label} className="p-4 text-center border-border">
+            <p className="text-2xl mb-2 hieroglyph">{stat.icon}</p>
+            <p className="text-2xl font-bold text-primary">{stat.value}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mt-1">
+              {stat.label}
+            </p>
+          </Card>
+        ))}
       </div>
 
       {/* Search */}
@@ -51,7 +73,7 @@ export function ReportsPage() {
           <Search className="h-4 w-4 text-primary" />
           <Input
             type="text"
-            placeholder="Search reports by domain..."
+            placeholder="Filter reports by domain..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1"
@@ -60,7 +82,7 @@ export function ReportsPage() {
       </Card>
 
       {/* Report list */}
-      <div className="space-y-4">
+      <div className="space-y-4 mb-8">
         {filteredReports.length > 0 ? (
           filteredReports.map((report) => (
             <Card
@@ -123,33 +145,15 @@ export function ReportsPage() {
             </p>
             {searchQuery && (
               <Button variant="outline" size="sm" onClick={() => setSearchQuery("")} className="mt-4">
-                CLEAR SEARCH
+                CLEAR FILTER
               </Button>
             )}
           </Card>
         )}
       </div>
 
-      {/* Stats */}
-      <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "TOTAL REPORTS", value: mockScanHistory.length, icon: "𓄿" },
-          { label: "AVERAGE SCORE", value: "8.4", icon: "⭐" },
-          { label: "BEST GRADE", value: "A+", icon: "🏆" },
-          { label: "DEMO REPORTS", value: mockScanHistory.length, icon: "📋" },
-        ].map((stat) => (
-          <Card key={stat.label} className="p-4 text-center border-border">
-            <p className="text-2xl mb-2 hieroglyph">{stat.icon}</p>
-            <p className="text-2xl font-bold text-primary">{stat.value}</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mt-1">
-              {stat.label}
-            </p>
-          </Card>
-        ))}
-      </div>
-
       {/* Actions */}
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="flex justify-center gap-4">
         <Button size="lg" onClick={() => navigate("/scan")} className="gap-2">
           <Plus className="h-4 w-4" />
           NEW SCAN

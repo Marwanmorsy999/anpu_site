@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Lock, AlertTriangle, Loader2 } from "lucide-react";
+import { ArrowRight, Lock, AlertTriangle, Loader2, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
+import { GuardianStatus } from "@/components/GuardianStatus";
 import { demoReport, scanProgressSteps } from "@/lib/mockData";
 import type { ScanProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -66,9 +67,10 @@ export function ScanPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      {/* Header */}
+      {/* Module Header */}
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 mb-4">
+          <Terminal className="h-10 w-10 text-primary" />
           <PharaohGuardian size={48} state={guardianState} />
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
@@ -85,7 +87,7 @@ export function ScanPage() {
           {/* URL Input */}
           <div>
             <Label htmlFor="url" className="text-sm font-medium mb-2 block text-secondary">
-              TARGET
+              TARGET DOMAIN
             </Label>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-primary">&gt;</span>
@@ -157,6 +159,7 @@ export function ScanPage() {
               </>
             ) : (
               <>
+                <Terminal className="h-4 w-4" />
                 EXECUTE SCAN
               </>
             )}
@@ -175,7 +178,7 @@ export function ScanPage() {
               <p className="text-lg font-semibold text-foreground mt-1">{url || "example.com"}</p>
             </div>
             <Badge variant="outline" className="text-yellow-400 border-yellow-500/30">
-              Demo Mode
+              DEMO MODE
             </Badge>
           </div>
 
@@ -183,7 +186,7 @@ export function ScanPage() {
           <div className="bg-[#050505] rounded-md border border-border/50 p-4 font-mono text-sm">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-primary">[ANPU]</span>
-              <span className="text-muted-foreground">Establishing connection...</span>
+              <span className="text-muted-foreground">INITIALIZING...</span>
             </div>
             
             <div className="space-y-1">
@@ -213,14 +216,14 @@ export function ScanPage() {
               <div className="mt-4 pt-4 border-t border-border/50">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-primary">[ANPU]</span>
-                  <span className="text-[#7CFF4F]">Scan complete</span>
+                  <span className="text-[#7CFF4F]">SCAN COMPLETE</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">Risk Score:</span>
+                  <span className="text-muted-foreground">RISK SCORE:</span>
                   <span className="text-primary font-bold">{demoReport.score}/10</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">Grade:</span>
+                  <span className="text-muted-foreground">GRADE:</span>
                   <span className="text-secondary font-bold">{demoReport.grade}</span>
                 </div>
               </div>
@@ -229,15 +232,7 @@ export function ScanPage() {
 
           {/* Guardian Status */}
           <div className="mt-6 pt-4 border-t border-border/50">
-            <div className="flex items-center justify-center gap-4">
-              <PharaohGuardian size={64} state={guardianState} />
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">GUARDIAN STATUS</p>
-                <p className="text-lg font-bold text-primary">
-                  {guardianState.toUpperCase()}
-                </p>
-              </div>
-            </div>
+            <GuardianStatus status={guardianState} size={64} showLabel={true} className="mx-auto" />
           </div>
 
           {completed && !scanning && (
