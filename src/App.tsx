@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ANPUSystemHeader } from "@/components/ANPUSystemHeader";
 import { ANPUSystemFooter } from "@/components/ANPUSystemFooter";
-import { BootSequence } from "@/components/BootSequence";
 import { HomePage } from "@/pages/HomePage";
 import { ScanPage } from "@/pages/ScanPage";
 import { ReportPage } from "@/pages/ReportPage";
@@ -16,10 +15,9 @@ import { GithubPage } from "@/pages/GithubPage";
 export function App() {
   return (
     <BrowserRouter>
-      <div className="flex min-h-svh flex-col bg-background crt-screen">
-        <BootSequence />
+      <div className="min-h-svh bg-background text-foreground">
         <ANPUSystemHeader />
-        <main className="flex-1">
+        <main className="min-h-[calc(100svh-4rem)]">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/scan" element={<ScanPage />} />
