@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { BootSequence } from "@/components/BootSequence";
 import { HomePage } from "@/pages/HomePage";
 import { ScanPage } from "@/pages/ScanPage";
 import { ReportPage } from "@/pages/ReportPage";
@@ -15,7 +16,8 @@ import { GithubPage } from "@/pages/GithubPage";
 export function App() {
   return (
     <BrowserRouter>
-      <div className="flex min-h-svh flex-col bg-background">
+      <div className="flex min-h-svh flex-col bg-background crt-screen">
+        <BootSequence />
         <Navbar />
         <main className="flex-1">
           <Routes>

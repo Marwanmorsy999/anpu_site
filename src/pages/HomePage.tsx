@@ -79,10 +79,10 @@ function Hero() {
               <span className="text-2xl font-bold tracking-[0.2em] text-foreground">ANPU</span>
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
-              Guard what<br />you build.
+              GUARD WHAT<br />YOU BUILD.
             </h1>
             <p className="mt-5 text-lg text-muted-foreground max-w-md leading-relaxed">
-              Open-source web security intelligence for developers and security researchers.
+              OPEN-SOURCE WEB SECURITY INTELLIGENCE FOR DEVELOPERS AND SECURITY RESEARCHERS.
             </p>
             <div className="mt-8 w-full max-w-md">
               <div className="flex flex-col sm:flex-row gap-2">
@@ -108,19 +108,19 @@ function Hero() {
               <Button variant="outline" size="lg" asChild>
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="gap-2">
                   <GitBranch className="h-4 w-4" />
-                  View GitHub
+                  VIEW GITHUB
                 </a>
               </Button>
               <Button variant="ghost" size="lg" asChild>
                 <a href="#docs" className="gap-2">
                   <BookOpen className="h-4 w-4" />
-                  Docs
+                  DOCS
                 </a>
               </Button>
             </div>
             <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-primary" /> Open Source</span>
-              <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-primary" /> Developer First</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-primary" /> OPEN SOURCE</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-primary" /> DEVELOPER FIRST</span>
               <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-primary" /> No API Key</span>
             </div>
           </div>
@@ -128,7 +128,7 @@ function Hero() {
           <div className="flex justify-center lg:justify-end">
             <Card className="p-8 bg-card/60 backdrop-blur-sm border-border/60 w-full max-w-sm">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Security Score</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">SECURITY SCORE</span>
                 <Badge variant="outline" className="text-primary border-primary/30">Demo Data</Badge>
               </div>
               <div className="flex justify-center mb-6">
@@ -159,8 +159,8 @@ function Hero() {
 function LiveScanPreview() {
   const categories = [
     { name: "HTTPS / TLS", status: "PASS", icon: Lock },
-    { name: "Security Headers", status: "WARN", icon: Shield },
-    { name: "Cookies", status: "PASS", icon: Server },
+    { name: "SECURITY HEADERS", status: "WARN", icon: Shield },
+    { name: "COOKIES", status: "PASS", icon: Server },
     { name: "DNS", status: "PASS", icon: Server },
     { name: "Redirects", status: "PASS", icon: GitBranch },
     { name: "robots.txt", status: "INFO", icon: FileText },
@@ -174,9 +174,9 @@ function LiveScanPreview() {
     <section className="border-b border-border/50 py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Live Scan Preview</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">LIVE SCAN PREVIEW</h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            ANPU produces a clear, actionable security intelligence report for every target.
+            ANPU PRODUCES A CLEAR, ACTIONABLE SECURITY INTELLIGENCE REPORT FOR EVERY TARGET.
           </p>
         </div>
         <Card className="mx-auto max-w-3xl p-6 lg:p-8 bg-card/60 backdrop-blur-sm">
@@ -225,17 +225,17 @@ function LiveScanPreview() {
 
 function WhyAnpu() {
   const features = [
-    { icon: GitBranch, title: "Open Source", desc: "Auditable security tooling built in Go. Inspect every line of the scanning engine." },
-    { icon: Code2, title: "Developer First", desc: "CLI, automation, reports, and integrations designed for developer workflows." },
-    { icon: FileText, title: "Actionable Reports", desc: "Turn technical findings into understandable remediation guidance." },
-    { icon: Zap, title: "Fast Reconnaissance", desc: "Collect useful public security intelligence without complicated setup." },
+    { icon: GitBranch, title: "OPEN SOURCE", desc: "AUDITABLE SECURITY TOOLING BUILT IN GO. INSPECT EVERY LINE OF THE SCANNING ENGINE." },
+    { icon: Code2, title: "DEVELOPER FIRST", desc: "CLI, AUTOMATION, REPORTS, AND INTEGRATIONS DESIGNED FOR DEVELOPER WORKFLOWS." },
+    { icon: FileText, title: "ACTIONABLE REPORTS", desc: "TURN TECHNICAL FINDINGS INTO UNDERSTANDABLE REMEDIATION GUIDANCE." },
+    { icon: Zap, title: "FAST RECONNAISSANCE", desc: "COLLECT USEFUL PUBLIC SECURITY INTELLIGENCE WITHOUT COMPLICATED SETUP." },
   ];
   return (
     <section className="border-b border-border/50 py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Why ANPU</h2>
-          <p className="mt-3 text-muted-foreground">Built for developers who care about security.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">WHY ANPU</h2>
+          <p className="mt-3 text-muted-foreground">BUILT FOR DEVELOPERS WHO CARE ABOUT SECURITY.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {features.map((f) => {
@@ -262,8 +262,8 @@ function HowItWorks() {
     <section className="border-b border-border/50 py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">How It Works</h2>
-          <p className="mt-3 text-muted-foreground">From target to report in five steps.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">HOW IT WORKS</h2>
+          <p className="mt-3 text-muted-foreground">FROM TARGET TO REPORT IN FIVE STEPS.</p>
         </div>
         <div className="flex flex-col items-center gap-2">
           {steps.map((step, i) => (
@@ -303,8 +303,8 @@ function ReportPreview() {
     <section className="border-b border-border/50 py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Report Preview</h2>
-          <p className="mt-3 text-muted-foreground">Professional reports suitable for sending to clients.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">REPORT PREVIEW</h2>
+          <p className="mt-3 text-muted-foreground">PROFESSIONAL REPORTS SUITABLE FOR SENDING TO CLIENTS.</p>
         </div>
         <Card className="mx-auto max-w-5xl p-6 lg:p-8 bg-card/40">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border/50">
@@ -350,12 +350,12 @@ function ReportPreview() {
             ))}
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5"><FileTextIcon className="h-3.5 w-3.5" /> Export PDF</Button>
-            <Button variant="outline" size="sm" className="gap-1.5"><FileJson className="h-3.5 w-3.5" /> Export JSON</Button>
-            <Button variant="outline" size="sm" className="gap-1.5"><FileTextIcon className="h-3.5 w-3.5" /> Export Markdown</Button>
-            <Button variant="outline" size="sm" className="gap-1.5"><Share2 className="h-3.5 w-3.5" /> Share Report</Button>
+            <Button variant="outline" size="sm" className="gap-1.5"><FileTextIcon className="h-3.5 w-3.5" /> EXPORT PDF</Button>
+            <Button variant="outline" size="sm" className="gap-1.5"><FileJson className="h-3.5 w-3.5" /> EXPORT JSON</Button>
+            <Button variant="outline" size="sm" className="gap-1.5"><FileTextIcon className="h-3.5 w-3.5" /> EXPORT MARKDOWN</Button>
+            <Button variant="outline" size="sm" className="gap-1.5"><Share2 className="h-3.5 w-3.5" /> SHARE REPORT</Button>
             <Button size="sm" className="gap-1.5 ml-auto" onClick={() => navigate("/reports/demo-scan-001")}>
-              View Full Report <ArrowRight className="h-3.5 w-3.5" />
+              VIEW FULL REPORT <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </Card>
@@ -371,11 +371,11 @@ function ScanHistory() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-10">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Scan History</h2>
-            <p className="mt-2 text-muted-foreground">Track and compare previous scans.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">SCAN HISTORY</h2>
+            <p className="mt-2 text-muted-foreground">TRACK AND COMPARE PREVIOUS SCANS.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/dashboard")} className="gap-2">
-            View Dashboard <ArrowRight className="h-4 w-4" />
+            VIEW DASHBOARD <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -414,9 +414,9 @@ function SecurityScoreSection() {
     <section className="border-b border-border/50 py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Security Score</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">SECURITY SCORE</h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            ANPU converts individual findings into an understandable security posture score.
+            ANPU CONVERTS INDIVIDUAL FINDINGS INTO AN UNDERSTANDABLE SECURITY POSTURE SCORE.
           </p>
         </div>
         <Card className="mx-auto max-w-2xl p-6 lg:p-8 bg-card/40">
@@ -457,12 +457,12 @@ function BadgeSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">ANPU Security Badge</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">ANPU SECURITY BADGE</h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              Websites and GitHub repositories can display the ANPU security badge, linking to a public ANPU report.
+              WEBSITES AND GITHUB REPOSITORIES CAN DISPLAY THE ANPU SECURITY BADGE, LINKING TO A PUBLIC ANPU REPORT.
             </p>
             <p className="mt-3 text-xs text-muted-foreground/80">
-              Example only — badge generation is not yet implemented.
+              EXAMPLE ONLY — BADGE GENERATION IS NOT YET IMPLEMENTED.
             </p>
             <div className="mt-6">
               <pre className="p-4 rounded-md bg-muted/30 border border-border/50 text-xs text-muted-foreground font-mono overflow-x-auto">
@@ -470,11 +470,11 @@ function BadgeSection() {
               </pre>
               <Button variant="outline" size="sm" onClick={copyCode} className="mt-2 gap-1.5">
                 <Copy className="h-3.5 w-3.5" />
-                {copied ? "Copied!" : "Copy code"}
+                {copied ? "COPIED!" : "COPY CODE"}
               </Button>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate("/badge")} className="mt-4 gap-1.5">
-              Learn more <ArrowRight className="h-3.5 w-3.5" />
+              LEARN MORE <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </div>
           <div className="flex justify-center">
@@ -502,16 +502,16 @@ function CliSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <Badge variant="outline" className="text-primary border-primary/30 mb-4">Developer Experience</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">CLI + Developer Experience</h2>
+            <Badge variant="outline" className="text-primary border-primary/30 mb-4">DEVELOPER EXPERIENCE</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">CLI + DEVELOPER EXPERIENCE</h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              ANPU is not only a website. The Go-based CLI runs the same scanning engine locally, in CI, or in automation.
+              ANPU IS NOT ONLY A WEBSITE. THE GO-BASED CLI RUNS THE SAME SCANNING ENGINE LOCALLY, IN CI, OR IN AUTOMATION.
             </p>
             <div className="mt-6">
               <Button variant="outline" size="lg" asChild>
                 <a href="#docs" className="gap-2">
                   <Terminal className="h-4 w-4" />
-                  View CLI Documentation
+                  VIEW CLI DOCUMENTATION
                 </a>
               </Button>
             </div>
@@ -555,9 +555,9 @@ function ApiSection() {
     <section className="border-b border-border/50 py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">API / CI/CD Integration</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">API / CI/CD INTEGRATION</h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-            ANPU is designed to integrate into your development pipeline.
+            ANPU IS DESIGNED TO INTEGRATE INTO YOUR DEVELOPMENT PIPELINE.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-2 mb-10">
@@ -577,7 +577,7 @@ function ApiSection() {
             ))}
           </div>
           <p className="mt-6 text-center text-xs text-muted-foreground/80">
-            API and GitHub integrations are planned. Not yet live.
+            API AND GITHUB INTEGRATIONS ARE PLANNED. NOT YET LIVE.
           </p>
         </Card>
       </div>
@@ -595,12 +595,12 @@ function OpenSourceSection() {
               <GitBranch className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Open Source</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">OPEN SOURCE</h2>
           <p className="mt-4 text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            ANPU is open-source, built in Go, and developed in the open. Contribute, audit, or self-host.
+            ANPU IS OPEN-SOURCE, BUILT IN GO, AND DEVELOPED IN THE OPEN. CONTRIBUTE, AUDIT, OR SELF-HOST.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {["Go", "Open Source", "Documentation", "Contributing", "MIT License"].map((t) => (
+            {["Go", "OPEN SOURCE", "Documentation", "Contributing", "MIT License"].map((t) => (
               <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
             ))}
           </div>
@@ -608,7 +608,7 @@ function OpenSourceSection() {
             <Button size="lg" asChild>
               <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="gap-2">
                 <GitBranch className="h-4 w-4" />
-                View ANPU on GitHub
+                VIEW ANPU ON GITHUB
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             </Button>

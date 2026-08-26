@@ -1,161 +1,443 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* ===================================================================
+   ANPU - 1997 Pharaoh Cyber Intelligence Terminal
+   A complete visual transformation of the existing UI
+   =================================================================== */
 
-@custom-variant dark (&:is(.dark *));
+/* ===================================================================
+   FONT IMPORTS
+   =================================================================== */
 
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-gold: var(--gold);
-  --color-gold-foreground: var(--gold-foreground);
-  --color-gold-muted: var(--gold-muted);
-  --color-surface: var(--surface);
-  --color-surface-hover: var(--surface-hover);
-}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
-/* ANPU — Premium dark security intelligence theme */
+/* ===================================================================
+   TAILWIND IMPORTS
+   =================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================================================
+   CRT COLOR SYSTEM
+   =================================================================== */
+
 :root {
-  --radius: 0.5rem;
-  --background: oklch(0.07 0 0);
-  --foreground: oklch(0.96 0 0);
-  --card: oklch(0.11 0 0);
-  --card-foreground: oklch(0.96 0 0);
-  --popover: oklch(0.13 0 0);
-  --popover-foreground: oklch(0.96 0 0);
-  --primary: oklch(0.78 0.13 75);
-  --primary-foreground: oklch(0.09 0 0);
-  --secondary: oklch(0.15 0 0);
-  --secondary-foreground: oklch(0.90 0 0);
-  --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.64 0 0);
-  --accent: oklch(0.18 0 0);
-  --accent-foreground: oklch(0.92 0 0);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.20 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.78 0.13 75);
-  --chart-1: oklch(0.78 0.13 75);
-  --chart-2: oklch(0.65 0.18 25);
-  --chart-3: oklch(0.70 0.14 150);
-  --chart-4: oklch(0.60 0.15 220);
-  --chart-5: oklch(0.72 0.16 300);
-  --sidebar: oklch(0.09 0 0);
-  --sidebar-foreground: oklch(0.90 0 0);
-  --sidebar-primary: oklch(0.78 0.13 75);
-  --sidebar-primary-foreground: oklch(0.09 0 0);
-  --sidebar-accent: oklch(0.15 0 0);
-  --sidebar-accent-foreground: oklch(0.90 0 0);
-  --sidebar-border: oklch(0.20 0 0);
-  --sidebar-ring: oklch(0.78 0.13 75);
-  --gold: oklch(0.78 0.13 75);
-  --gold-foreground: oklch(0.09 0 0);
-  --gold-muted: oklch(0.78 0.08 75 / 0.12);
-  --surface: oklch(0.09 0 0);
-  --surface-hover: oklch(0.13 0 0);
+  /* CRT Blacks */
+  --crt-black-1: #050505;
+  --crt-black-2: #090909;
+  --crt-black-3: #0D0D0D;
+  --crt-black-4: #111111;
+  --crt-black-5: #151515;
+  
+  /* CRT Phosphor Green */
+  --crt-green-1: #7CFF4F;
+  --crt-green-2: #49D84A;
+  --crt-green-3: #35B83A;
+  --crt-green-4: #2A5A2A;
+  --crt-green-dim: #1F5F1F;
+  
+  /* Amber Phosphor */
+  --crt-amber-1: #FFB000;
+  --crt-amber-2: #D88900;
+  --crt-amber-3: #B87300;
+  --crt-amber-4: #A86600;
+  --crt-amber-dim: #664000;
+  
+  /* Dirty Egyptian Gold */
+  --egypt-gold-1: #C89B3C;
+  --egypt-gold-2: #D6AE54;
+  --egypt-gold-3: #B88632;
+  --egypt-gold-dim: #7A5A28;
+  
+  /* Warning colors */
+  --warning-orange: #FF8C00;
+  --warning-red: #FF2A2A;
+  --warning-yellow: #FFD200;
+  
+  /* Text colors */
+  --text-primary: #D8FFD0;
+  --text-secondary: #F5D27A;
+  --text-muted: #B8B8B8;
+  --text-dim: #6A6A6A;
+  
+  /* Tailwind overrides */
+  --background: #050505;
+  --foreground: #D8FFD0;
+  --card: #090909;
+  --card-foreground: #D8FFD0;
+  --popover: #0D0D0D;
+  --popover-foreground: #D8FFD0;
+  --primary: #7CFF4F;
+  --primary-foreground: #050505;
+  --secondary: #FFB000;
+  --secondary-foreground: #050505;
+  --muted: #151515;
+  --muted-foreground: #B8B8B8;
+  --accent: #0D0D0D;
+  --accent-foreground: #D8FFD0;
+  --destructive: #FF2A2A;
+  --destructive-foreground: #000000;
+  --border: #2A5A2A;
+  --input: #090909;
+  --ring: #7CFF4F;
+  --gold: #C89B3C;
+  --gold-foreground: #050505;
+  --surface: #050505;
+  --surface-hover: #0D0D0D;
+  --chart-1: #7CFF4F;
+  --chart-2: #FFB000;
+  --chart-3: #C89B3C;
+  --chart-4: #49D84A;
+  --chart-5: #D88900;
+  
+  /* Remove rounded corners */
+  --radius: 0rem;
+  --radius-sm: 0rem;
+  --radius-md: 0rem;
+  --radius-lg: 0rem;
+  --radius-xl: 0rem;
+  
+  /* Sidebar colors */
+  --sidebar: #050505;
+  --sidebar-foreground: #D8FFD0;
+  --sidebar-primary: #7CFF4F;
+  --sidebar-primary-foreground: #050505;
+  --sidebar-accent: #0D0D0D;
+  --sidebar-accent-foreground: #D8FFD0;
+  --sidebar-border: #2A5A2A;
+  --sidebar-ring: #7CFF4F;
 }
 
 .dark {
-  --background: oklch(0.07 0 0);
-  --foreground: oklch(0.96 0 0);
-  --card: oklch(0.11 0 0);
-  --card-foreground: oklch(0.96 0 0);
-  --popover: oklch(0.13 0 0);
-  --popover-foreground: oklch(0.96 0 0);
-  --primary: oklch(0.78 0.13 75);
-  --primary-foreground: oklch(0.09 0 0);
-  --secondary: oklch(0.15 0 0);
-  --secondary-foreground: oklch(0.90 0 0);
-  --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.64 0 0);
-  --accent: oklch(0.18 0 0);
-  --accent-foreground: oklch(0.92 0 0);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.20 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.78 0.13 75);
-  --chart-1: oklch(0.78 0.13 75);
-  --chart-2: oklch(0.65 0.18 25);
-  --chart-3: oklch(0.70 0.14 150);
-  --chart-4: oklch(0.60 0.15 220);
-  --chart-5: oklch(0.72 0.16 300);
-  --sidebar: oklch(0.09 0 0);
-  --sidebar-foreground: oklch(0.90 0 0);
-  --sidebar-primary: oklch(0.78 0.13 75);
-  --sidebar-primary-foreground: oklch(0.09 0 0);
-  --sidebar-accent: oklch(0.15 0 0);
-  --sidebar-accent-foreground: oklch(0.90 0 0);
-  --sidebar-border: oklch(0.20 0 0);
-  --sidebar-ring: oklch(0.78 0.13 75);
-  --gold: oklch(0.78 0.13 75);
-  --gold-foreground: oklch(0.09 0 0);
-  --gold-muted: oklch(0.78 0.08 75 / 0.12);
-  --surface: oklch(0.09 0 0);
-  --surface-hover: oklch(0.13 0 0);
+  --background: #050505;
+  --foreground: #D8FFD0;
+  --card: #090909;
+  --card-foreground: #D8FFD0;
+  --popover: #0D0D0D;
+  --popover-foreground: #D8FFD0;
+  --primary: #7CFF4F;
+  --primary-foreground: #050505;
+  --secondary: #FFB000;
+  --secondary-foreground: #050505;
+  --muted: #151515;
+  --muted-foreground: #B8B8B8;
+  --accent: #0D0D0D;
+  --accent-foreground: #D8FFD0;
+  --destructive: #FF2A2A;
+  --destructive-foreground: #000000;
+  --border: #2A5A2A;
+  --input: #090909;
+  --ring: #7CFF4F;
 }
 
-@layer base {
-  * {
-    @apply border-border;
+/* ===================================================================
+   GLOBAL STYLES
+   =================================================================== */
+
+* {
+  border-radius: 0 !important;
+}
+
+html {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-feature-settings: "ss01", "cv01";
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===================================================================
+   CRT SCREEN EFFECT
+   =================================================================== */
+
+.crt-screen::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.05) 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 2px
+    ),
+    radial-gradient(ellipse at 20% 20%, rgba(124, 255, 79, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 176, 0, 0.03) 0%, transparent 50%);
+  animation: crt-flicker 8s ease-in-out infinite alternate;
+  z-index: 9999;
+}
+
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  2% { opacity: 0.98; }
+  4% { opacity: 1; }
+  6% { opacity: 0.99; }
+  50% { opacity: 1; }
+  52% { opacity: 0.97; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen::before {
+    animation: none;
   }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "ss01", "cv01";
-  }
 }
 
-/* Score ring animation */
-@keyframes score-fill {
-  from { stroke-dashoffset: var(--circumference); }
-  to { stroke-dashoffset: var(--target-offset); }
+/* ===================================================================
+   COMPONENT STYLES - Cards
+   =================================================================== */
+
+.card {
+  background: #090909 !important;
+  border: 1px solid #2A5A2A !important;
+  box-shadow: 0 0 0 1px #2A5A2A inset, 0 0 20px rgba(124, 255, 79, 0.05) !important;
 }
 
-/* Section reveal on scroll */
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ===================================================================
+   COMPONENT STYLES - Buttons
+   =================================================================== */
+
+.btn {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-radius: 0 !important;
 }
 
-.reveal {
-  animation: reveal-up 0.6s ease-out forwards;
+.btn-default {
+  background: #7CFF4F !important;
+  color: #050505 !important;
+  border: 1px solid #49D84A !important;
+  box-shadow: 0 2px 0 #2A5A2A, 0 0 10px rgba(124, 255, 79, 0.2) !important;
 }
 
-/* Terminal cursor blink */
+.btn-default:hover {
+  background: #49D84A !important;
+  box-shadow: 0 2px 0 #2A5A2A, 0 0 20px rgba(124, 255, 79, 0.3) !important;
+}
+
+.btn-secondary {
+  background: #0D0D0D !important;
+  color: #7CFF4F !important;
+  border: 1px solid #2A5A2A !important;
+  box-shadow: 0 2px 0 #2A5A2A, inset 0 0 10px rgba(124, 255, 79, 0.05) !important;
+}
+
+.btn-secondary:hover {
+  background: #151515 !important;
+  border-color: #49D84A !important;
+  box-shadow: 0 2px 0 #49D84A, inset 0 0 15px rgba(124, 255, 79, 0.08) !important;
+}
+
+.btn-outline {
+  background: transparent !important;
+  color: #7CFF4F !important;
+  border: 1px solid #2A5A2A !important;
+}
+
+.btn-outline:hover {
+  background: #0D0D0D !important;
+  border-color: #49D84A !important;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  color: #7CFF4F !important;
+  border: 1px solid transparent !important;
+}
+
+.btn-ghost:hover {
+  background: #0D0D0D !important;
+  border-color: #2A5A2A !important;
+}
+
+/* ===================================================================
+   COMPONENT STYLES - Input
+   =================================================================== */
+
+.input {
+  background: #090909 !important;
+  border: 1px solid #2A5A2A !important;
+  color: #D8FFD0 !important;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace !important;
+}
+
+.input:focus {
+  border-color: #49D84A !important;
+  box-shadow: 0 0 10px rgba(124, 255, 79, 0.2) !important;
+}
+
+.input::placeholder {
+  color: #6A6A6A !important;
+}
+
+/* ===================================================================
+   COMPONENT STYLES - Badges
+   =================================================================== */
+
+.badge {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-radius: 0 !important;
+  padding: 0.125rem 0.5rem !important;
+  font-size: 0.75rem !important;
+}
+
+.badge-default {
+  background: #0D0D0D !important;
+  color: #7CFF4F !important;
+  border: 1px solid #2A5A2A !important;
+}
+
+.badge-primary {
+  background: #2A5A2A !important;
+  color: #7CFF4F !important;
+  border: 1px solid #49D84A !important;
+}
+
+.badge-secondary {
+  background: #5A4A20 !important;
+  color: #FFB000 !important;
+  border: 1px solid #A86600 !important;
+}
+
+.badge-destructive {
+  background: #5A0000 !important;
+  color: #FF2A2A !important;
+  border: 1px solid #CC0000 !important;
+}
+
+/* ===================================================================
+   TEXT STYLES
+   =================================================================== */
+
+.text-foreground {
+  color: #D8FFD0 !important;
+}
+
+.text-muted-foreground {
+  color: #B8B8B8 !important;
+}
+
+.text-primary {
+  color: #7CFF4F !important;
+  text-shadow: 0 0 10px rgba(124, 255, 79, 0.5) !important;
+}
+
+.text-secondary {
+  color: #FFB000 !important;
+  text-shadow: 0 0 10px rgba(255, 176, 0, 0.5) !important;
+}
+
+.text-destructive {
+  color: #FF2A2A !important;
+}
+
+/* ===================================================================
+   LAYOUT STYLES
+   =================================================================== */
+
+/* Remove all rounded corners */
+.rounded-md,
+.rounded-lg,
+.rounded-xl,
+.rounded-full {
+  border-radius: 0 !important;
+}
+
+/* Header */
+.header {
+  border-bottom: 1px solid rgba(42, 90, 42, 0.5) !important;
+  background: rgba(5, 5, 5, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid rgba(42, 90, 42, 0.3) !important;
+  background: #050505 !important;
+}
+
+/* Links */
+a {
+  color: #7CFF4F !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  color: #49D84A !important;
+}
+
+/* ===================================================================
+   CUSTOM UTILITY CLASSES
+   =================================================================== */
+
+.text-glow-green {
+  text-shadow: 0 0 10px #7CFF4F, 0 0 20px #7CFF4F, 0 0 40px #7CFF4F;
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 10px #FFB000, 0 0 20px #FFB000, 0 0 40px #FFB000;
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 10px #C89B3C, 0 0 20px #C89B3C, 0 0 40px #C89B3C;
+}
+
+.gold-glow {
+  box-shadow: 0 0 24px rgba(200, 155, 60, 0.15);
+}
+
+/* ===================================================================
+   SCROLLBAR
+   =================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+  border: 1px solid #2A5A2A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2A5A2A;
+  border: 1px solid #49D84A;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #49D84A;
+}
+
+/* ===================================================================
+   SELECTION
+   =================================================================== */
+
+::selection {
+  background: #2A5A2A;
+  color: #7CFF4F;
+}
+
+::-moz-selection {
+  background: #2A5A2A;
+  color: #7CFF4F;
+}
+
+/* ===================================================================
+   ANIMATIONS
+   =================================================================== */
+
 @keyframes cursor-blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
@@ -165,14 +447,134 @@
   animation: cursor-blink 1s step-end infinite;
 }
 
-/* Subtle gold glow */
-.gold-glow {
-  box-shadow: 0 0 24px oklch(0.78 0.13 75 / 0.15);
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Reduced motion support */
+.reveal {
+  animation: reveal-up 0.6s ease-out forwards;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .terminal-cursor {
-    animation: none;
+  .reveal,
+  .terminal-cursor,
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===================================================================
+   BOOT SEQUENCE
+   =================================================================== */
+
+.boot-sequence {
+  position: fixed;
+  inset: 0;
+  background: #050505;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 9999;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  overflow-y: auto;
+}
+
+.boot-sequence::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(124, 255, 79, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 176, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.boot-line {
+  color: #D8FFD0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.boot-line-success {
+  color: #7CFF4F;
+}
+
+.boot-cursor {
+  display: inline-block;
+  width: 0.75em;
+  height: 1em;
+  background: #7CFF4F;
+  animation: cursor-blink 0.8s step-end infinite;
+  vertical-align: middle;
+}
+
+/* ===================================================================
+   PHARAOH GUARDIAN
+   =================================================================== */
+
+.pharaoh-svg {
+  filter: 
+    drop-shadow(0 0 10px var(--crt-green-1))
+    drop-shadow(0 0 20px var(--crt-green-1))
+    drop-shadow(0 0 40px var(--crt-green-1));
+  transition: filter 0.3s ease;
+}
+
+.pharaoh-svg:hover {
+  filter: 
+    drop-shadow(0 0 15px var(--crt-green-1))
+    drop-shadow(0 0 30px var(--crt-green-1))
+    drop-shadow(0 0 60px var(--crt-green-1));
+}
+
+.pharaoh-active .pharaoh-svg {
+  filter: 
+    drop-shadow(0 0 10px var(--crt-amber-1))
+    drop-shadow(0 0 20px var(--crt-amber-1))
+    drop-shadow(0 0 40px var(--crt-amber-1));
+}
+
+/* ===================================================================
+   HIEROGLYPHICS
+   =================================================================== */
+
+@font-face {
+  font-family: 'Egyptian Hieroglyphs';
+  src: local('Segoe UI Historic'), local('Noto Sans Egyptian Hieroglyphs');
+  unicode-range: U+13000-U+1342F;
+}
+
+.hieroglyph {
+  font-family: 'Egyptian Hieroglyphs', 'Segoe UI Historic', sans-serif;
+}
+
+/* ===================================================================
+   RESPONSIVE
+   =================================================================== */
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
   }
 }
