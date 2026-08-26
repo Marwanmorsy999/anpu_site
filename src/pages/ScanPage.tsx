@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Lock, AlertTriangle, Loader2, Terminal } from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, ExternalLink, Loader2, Lock, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,273 +9,110 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { GuardianStatus } from "@/components/GuardianStatus";
+import { SecurityScore } from "@/components/SecurityScore";
 import { demoReport, scanProgressSteps } from "@/lib/mockData";
 import type { ScanProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+const profileOptions = [
+  { value: "surface", label: "Surface", desc: "Quick public-surface check" },
+  { value: "standard", label: "Standard", desc: "Balanced recommended scan" },
+  { value: "deep", label: "Deep", desc: "Broader, more detailed analysis" },
+];
+
 export function ScanPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [url, setUrl] = useState(searchParams.get("url") ?? "");
   const [profile, setProfile] = useState<ScanProfile>("standard");
   const [scanning, setScanning] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [guardianState, setGuardianState] = useState<'dormant' | 'scanning' | 'analyzing' | 'stable'>('dormant');
-  const navigate = useNavigate();
-  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startScan = () => {
-    if (!url.trim()) return;
+    if (!url.trim() || scanning) return;
     setScanning(true);
     setCompleted(false);
     setCurrentStep(0);
-    setGuardianState('scanning');
-    
+    setGuardianState("scanning");
+    if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
       setCurrentStep((prev) => {
-        if (prev >= scanProgressSteps.length - 1) {
+        const next = Math.min(prev + 1, scanProgressSteps.length - 1);
+        if (next >= Math.floor(scanProgressSteps.length / 2)) setGuardianState("analyzing");
+        if (next === scanProgressSteps.length - 1) {
+          window.setTimeout(() => {
+            setScanning(false);
+            setCompleted(true);
+            setGuardianState("stable");
+          }, 450);
           if (intervalRef.current) clearInterval(intervalRef.current);
-          setScanning(false);
-          setCompleted(true);
-          setGuardianState('stable');
-          return prev;
         }
-        // Change guardian state halfway through
-        if (prev >= scanProgressSteps.length / 2) {
-          setGuardianState('analyzing');
-        }
-        return prev + 1;
+        return next;
       });
-    }, 300);
+    }, 480);
   };
 
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
+  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current); }, []);
 
   useEffect(() => {
-    if (searchParams.get("url")) startScan();
+    const queryUrl = searchParams.get("url");
+    if (queryUrl) {
+      setUrl(queryUrl);
+      const timer = window.setTimeout(() => startScan(), 300);
+      return () => window.clearTimeout(timer);
+    }
   }, [searchParams]);
 
-  const profileOptions = [
-    { value: "surface", label: "SURFACE", desc: "Quick check" },
-    { value: "standard", label: "STANDARD", desc: "Recommended" },
-    { value: "deep", label: "DEEP", desc: "Thorough" },
-  ];
+  const completionPercent = completed ? 100 : Math.round(((currentStep + 1) / scanProgressSteps.length) * 100);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      {/* Module Header */}
-      <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 mb-4">
-          <Terminal className="h-10 w-10 text-primary" />
-          <PharaohGuardian size={48} state={guardianState} />
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+      <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="anpu-eyebrow">ANPU / SCANNER</div>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[#f2eee2] sm:text-5xl">Scan a website.</h1>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#9c978c]">Use the demo interface to see how ANPU moves from a target URL to a security intelligence report.</p>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          ANPU // SCAN TERMINAL
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          Analyze a website's publicly exposed security posture.
-        </p>
+        <Badge variant="secondary">Demo interface</Badge>
       </div>
 
-      {/* Scan form */}
-      <Card className="p-6 lg:p-8 bg-card/40 mb-6 border-border">
-        <div className="space-y-6">
-          {/* URL Input */}
-          <div>
-            <Label htmlFor="url" className="text-sm font-medium mb-2 block text-secondary">
-              TARGET DOMAIN
-            </Label>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-primary">&gt;</span>
-              <span className="text-muted-foreground">_</span>
-            </div>
-            <Input
-              id="url"
-              type="text"
-              placeholder="https://example.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              disabled={scanning}
-              className="h-11 w-full bg-input"
-              aria-label="Target URL"
-            />
+      <div className="grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
+        <Card className="p-6 sm:p-8">
+          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d6ae54]/18 bg-[#d6ae54]/6 text-[#d6ae54]"><ScanLine className="h-5 w-5" /></div><div><h2 className="text-lg font-semibold text-[#f2eee2]">Target & scan profile</h2><p className="text-xs text-[#777168]">Configure a target for the demo workflow.</p></div></div>
+
+          <div className="mt-7">
+            <Label htmlFor="url" className="text-sm font-medium text-[#d6ae54]">Target URL</Label>
+            <Input id="url" value={url} onChange={(e) => setUrl(e.target.value)} disabled={scanning} placeholder="https://example.com" className="mt-2 h-12 font-mono" />
+            <p className="mt-2 text-xs text-[#6d685f]">Only scan systems you own or have explicit permission to test.</p>
           </div>
 
-          {/* Scan Profile */}
-          <div>
-            <Label className="text-sm font-medium mb-3 block text-secondary">
-              SCAN PROFILE
-            </Label>
-            <RadioGroup
-              value={profile}
-              onValueChange={(v) => setProfile(v as ScanProfile)}
-              className="grid grid-cols-3 gap-3"
-            >
-              {profileOptions.map((p) => (
-                <div key={p.value}>
-                  <Label
-                    htmlFor={p.value}
-                    className={cn(
-                      "flex flex-col items-center gap-1 p-4 rounded-md border cursor-pointer transition-all",
-                      profile === p.value
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                        : "border-border/50 hover:border-primary/30 bg-card/40"
-                    )}
-                  >
-                    <RadioGroupItem value={p.value} id={p.value} className="sr-only" />
-                    <span className="text-sm font-semibold text-foreground">{p.label}</span>
-                    <span className="text-xs text-muted-foreground">{p.desc}</span>
-                  </Label>
-                </div>
-              ))}
+          <div className="mt-7">
+            <Label className="text-sm font-medium text-[#d6ae54]">Scan profile</Label>
+            <RadioGroup value={profile} onValueChange={(value) => setProfile(value as ScanProfile)} className="mt-3 grid gap-3 sm:grid-cols-3">
+              {profileOptions.map((option) => <Label key={option.value} htmlFor={`profile-${option.value}`} className={cn("cursor-pointer border p-4 transition-all", profile === option.value ? "border-[#d6ae54]/45 bg-[#d6ae54]/7" : "border-white/6 bg-white/[0.01] hover:border-[#d6ae54]/22")}>
+                <RadioGroupItem id={`profile-${option.value}`} value={option.value} className="sr-only" /><span className="block text-sm font-semibold text-[#eee8da]">{option.label}</span><span className="mt-1 block text-xs leading-5 text-[#777168]">{option.desc}</span>
+              </Label>)}
             </RadioGroup>
           </div>
 
-          {/* Warning */}
-          <div className="p-3 rounded-md border border-yellow-500/20 bg-yellow-500/5 flex gap-2.5">
-            <AlertTriangle className="h-4 w-4 text-yellow-400 shrink-0 mt-0.5" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-yellow-400 font-medium">Authorization required.</span> 
-              Only scan systems you own or have explicit permission to test. 
-              Unauthorized scanning may be illegal.
-            </p>
-          </div>
+          <div className="mt-7 flex gap-3 border border-yellow-500/15 bg-yellow-500/[0.03] p-4"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[#e7c46a]" /><p className="text-xs leading-5 text-[#908a7f]"><strong className="text-[#e7c46a]">Authorization required.</strong> This web UI is a demo and does not send a real scan to the Go engine yet.</p></div>
 
-          {/* Scan Button */}
-          <Button
-            size="lg"
-            className="w-full h-11 gap-2"
-            onClick={startScan}
-            disabled={scanning || !url.trim()}
-          >
-            {scanning ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                SCANNING...
-              </>
-            ) : (
-              <>
-                <Terminal className="h-4 w-4" />
-                EXECUTE SCAN
-              </>
-            )}
-          </Button>
-        </div>
-      </Card>
-
-      {/* Progress / Results */}
-      {(scanning || completed) && (
-        <Card className="p-6 lg:p-8 bg-card/40 border-border">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/50">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                ANPU SCAN {scanning ? "IN PROGRESS" : "COMPLETE"}
-              </p>
-              <p className="text-lg font-semibold text-foreground mt-1">{url || "example.com"}</p>
-            </div>
-            <Badge variant="outline" className="text-yellow-400 border-yellow-500/30">
-              DEMO MODE
-            </Badge>
-          </div>
-
-          {/* Scan Output Terminal */}
-          <div className="bg-[#050505] rounded-md border border-border/50 p-4 font-mono text-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-primary">[ANPU]</span>
-              <span className="text-muted-foreground">INITIALIZING...</span>
-            </div>
-            
-            <div className="space-y-1">
-              {scanProgressSteps.map((step, i) => (
-                <div key={step} className="flex items-center gap-2">
-                  {i < currentStep ? (
-                    <span className="text-[#7CFF4F]">[+]</span>
-                  ) : i === currentStep && scanning ? (
-                    <span className="text-[#FFB000] animate-pulse">[...]</span>
-                  ) : (
-                    <span className="text-[#6A6A6A]">[ ]</span>
-                  )}
-                  <span 
-                    className={cn(
-                      "text-sm",
-                      i < currentStep ? "text-[#7CFF4F]" : 
-                      i === currentStep && scanning ? "text-[#FFB000]" : "text-[#6A6A6A]"
-                    )}
-                  >
-                    {step}
-                  </span>
-                </div>
-              ))}
-            </div>
-            
-            {completed && !scanning && (
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-primary">[ANPU]</span>
-                  <span className="text-[#7CFF4F]">SCAN COMPLETE</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">RISK SCORE:</span>
-                  <span className="text-primary font-bold">{demoReport.score}/10</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">GRADE:</span>
-                  <span className="text-secondary font-bold">{demoReport.grade}</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Guardian Status */}
-          <div className="mt-6 pt-4 border-t border-border/50">
-            <GuardianStatus status={guardianState} size={64} showLabel={true} className="mx-auto" />
-          </div>
-
-          {completed && !scanning && (
-            <>
-              {/* Quick Stats */}
-              <div className="mt-6 grid grid-cols-5 gap-2 text-center">
-                {[
-                  { label: "CRITICAL", count: demoReport.findingCounts.critical, color: "text-[#FF2A2A]" },
-                  { label: "HIGH", count: demoReport.findingCounts.high, color: "text-[#FF8C00]" },
-                  { label: "MEDIUM", count: demoReport.findingCounts.medium, color: "text-[#FFD200]" },
-                  { label: "LOW", count: demoReport.findingCounts.low, color: "text-[#7CFF4F]" },
-                  { label: "INFO", count: demoReport.findingCounts.info, color: "text-muted-foreground" },
-                ].map((f) => (
-                  <div key={f.label} className="p-2 rounded-md bg-muted/20">
-                    <p className={`text-xl font-bold ${f.color}`}>{f.count}</p>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mt-0.5">
-                      {f.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Warning */}
-              <div className="mt-4 p-3 rounded-md border border-border/50 bg-muted/20 flex gap-2">
-                <Lock className="h-4 w-4 text-secondary shrink-0 mt-0.5" />
-                <p className="text-xs text-muted-foreground">
-                  This is demo data. ANPU's web interface is not yet connected to the Go scanning engine. 
-                  The CLI performs real scans.
-                </p>
-              </div>
-
-              {/* View Report Button */}
-              <Button 
-                size="lg" 
-                className="w-full gap-2 mt-4"
-                onClick={() => navigate("/reports/demo-scan-001")}
-              >
-                VIEW FULL REPORT <ArrowRight className="h-4 w-4" />
-              </Button>
-            </>
-          )}
+          <Button size="lg" className="mt-6 h-12 w-full gap-2" onClick={startScan} disabled={scanning || !url.trim()}>{scanning ? <><Loader2 className="h-4 w-4 animate-spin" /> Running demo scan…</> : <><ScanLine className="h-4 w-4" /> Run demo scan <ArrowRight className="h-4 w-4" /></>}</Button>
         </Card>
-      )}
+
+        <Card className="p-6 sm:p-8">
+          <div className="flex items-center justify-between"><div><div className="anpu-eyebrow">GUARDIAN</div><h2 className="mt-2 text-xl font-semibold text-[#f2eee2]">ANPU is watching.</h2></div><span className={scanning ? "text-xs text-[#d6ae54]" : "text-xs text-[#73d67a]"}>● {scanning ? "Active" : "Ready"}</span></div>
+          <div className="flex min-h-[260px] items-center justify-center"><div className="anpu-scan-guardian-halo"><PharaohGuardian size={245} state={guardianState} pulse={scanning} /></div></div>
+          <GuardianStatus status={guardianState} size={58} showLabel={true} className="mx-auto" />
+        </Card>
+      </div>
+
+      {(scanning || completed) && <Card className="mt-6 overflow-hidden p-0"><div className="flex flex-col gap-2 border-b border-white/6 p-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="anpu-eyebrow">SCAN ACTIVITY</p><h2 className="mt-1 text-lg font-semibold text-[#eee8da]">{url || "example.com"}</h2></div><span className="font-mono text-sm text-[#d6ae54]">{completionPercent}%</span></div><div className="grid gap-6 p-5 lg:grid-cols-[1.1fr_.9fr]"><div><div className="h-2 overflow-hidden bg-[#1b1a16]"><div className="h-full bg-gradient-to-r from-[#9b7837] to-[#f0d27a] transition-all duration-300" style={{ width: `${completionPercent}%` }} /></div><div className="mt-5 grid gap-2">{scanProgressSteps.map((step, index) => <div key={step} className={cn("flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm", index <= currentStep ? "border-[#d6ae54]/12 bg-[#d6ae54]/[0.035] text-[#d7cfbd]" : "border-white/4 text-[#5f5b53]")}>{index < currentStep || completed ? <CheckCircle2 className="h-4 w-4 text-[#73d67a]" /> : index === currentStep ? <Loader2 className="h-4 w-4 animate-spin text-[#d6ae54]" /> : <span className="h-4 w-4 rounded-full border border-current" />}{step}</div>)}</div></div><div className="flex flex-col justify-center rounded-xl border border-[#d6ae54]/10 bg-[#0b0b09] p-5"><div className="anpu-eyebrow">RESULT</div><div className="mt-3 flex items-end gap-4"><SecurityScore score={demoReport.score} grade={demoReport.grade} size={150} /><div><div className="text-xs uppercase tracking-wider text-[#69645b]">Findings</div><div className="mt-2 text-3xl font-semibold text-[#eee8da]">{demoReport.findings.length}</div><div className="mt-1 text-xs text-[#827d73]">across public signals</div></div></div>{completed && <Button className="mt-5 w-full" onClick={() => navigate("/reports/demo-scan-001")}><ExternalLink className="h-4 w-4" /> View full report</Button>}</div></div></Card>}
+
+      {!scanning && !completed && <div className="mt-6 grid gap-4 sm:grid-cols-3"><div className="p-5 border border-white/5 bg-white/[0.012]"><div className="text-sm font-semibold text-[#eee8da]">Surface first</div><p className="mt-2 text-xs leading-5 text-[#777168]">Start with publicly visible signals before deeper analysis.</p></div><div className="p-5 border border-white/5 bg-white/[0.012]"><div className="text-sm font-semibold text-[#eee8da]">Evidence matters</div><p className="mt-2 text-xs leading-5 text-[#777168]">Findings are easier to act on when the observation is visible.</p></div><div className="p-5 border border-white/5 bg-white/[0.012]"><div className="text-sm font-semibold text-[#eee8da]">Open core</div><p className="mt-2 text-xs leading-5 text-[#777168]">The real ANPU engine remains open-source and CLI-first.</p></div></div>}
     </div>
   );
 }
