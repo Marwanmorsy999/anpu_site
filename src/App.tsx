@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ANPUSystemHeader } from "@/components/ANPUSystemHeader";
 import { ANPUSystemFooter } from "@/components/ANPUSystemFooter";
+import { TerminalRain } from "@/components/TerminalRain";
 import { HomePage } from "@/pages/HomePage";
 import { ScanPage } from "@/pages/ScanPage";
 import { ReportPage } from "@/pages/ReportPage";
@@ -15,9 +16,10 @@ import { GithubPage } from "@/pages/GithubPage";
 export function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-svh bg-background text-foreground">
+      <div className="anpu-site-stage">
+        <TerminalRain />
         <ANPUSystemHeader />
-        <main className="min-h-[calc(100svh-4rem)]">
+        <main className="anpu-site-content min-h-[calc(100svh-4rem)]">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/scan" element={<ScanPage />} />

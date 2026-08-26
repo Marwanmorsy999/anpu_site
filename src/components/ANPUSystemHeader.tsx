@@ -1,7 +1,6 @@
 import { Menu, X, ChevronDown, GitBranch, ScanLine } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { PharaohGuardian } from "./PharaohGuardian";
 
 type NavItem = { path: string; label: string };
 const primaryNav: NavItem[] = [
@@ -28,8 +27,10 @@ export function ANPUSystemHeader() {
   return (
     <header className="header anpu-header">
       <div className="anpu-nav-shell">
-        <Link to="/" className="anpu-brand" onClick={() => setOpen(false)}>
-          <span className="anpu-brand-mark"><PharaohGuardian size={30} state="awake" /></span>
+        <Link to="/" className="anpu-brand" onClick={() => { setOpen(false); setMoreOpen(false); }}>
+          <span className="anpu-brand-mark">
+            <img src="/anpu-icon.svg" alt="ANPU" />
+          </span>
           <span><strong>ANPU</strong><small>Web Security Intelligence</small></span>
         </Link>
 

@@ -1,0 +1,36 @@
+.anpu-art-stage { position: relative; }
+.anpu-guardian-console {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 4;
+  display: grid;
+  gap: 3px;
+  padding: 7px 9px;
+  background: rgba(3,7,4,.86);
+  border-left: 2px solid rgba(124,255,79,.55);
+  font-family: var(--anpu-mono);
+  line-height: 1;
+}
+.anpu-guardian-console span { color: #667269; font-size: 7px; letter-spacing: .14em; }
+.anpu-guardian-console b { color: var(--anpu-green); font-size: 9px; letter-spacing: .12em; }
+.anpu-corner-readout {
+  position: absolute;
+  z-index: 4;
+  color: rgba(124,255,79,.42);
+  font: 600 7px/1 var(--anpu-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.anpu-corner-readout.top-left { top: 18px; left: 18px; }
+.anpu-corner-readout.bottom-right { right: 18px; bottom: 18px; }
+.anpu-hero-eye { opacity: .66; }
+.anpu-hero-eye .anpu-horus-readout { letter-spacing: .16em; }
+
+@media (max-width: 640px) {
+  .anpu-corner-readout { font-size: 6px; }
+  .anpu-guardian-console { left: 12px; bottom: 12px; }
+  .anpu-corner-readout.top-left { top: 12px; left: 12px; }
+  .anpu-corner-readout.bottom-right { right: 12px; bottom: 12px; }
+}
