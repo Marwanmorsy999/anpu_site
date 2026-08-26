@@ -1,4 +1,4 @@
-import { Github } from "lucide-react";
+import { GitBranch } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { PharaohGuardian } from "./PharaohGuardian";
 
@@ -51,7 +51,7 @@ export function ANPUSystemFooter() {
             <div className="mt-3 grid gap-2 text-sm text-[#a8a39a]">
               <Link to="/about">About ANPU</Link>
               <Link to="/github">Source Archive</Link>
-              <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> Original ANPU repository</a>
+              <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2"><GitBranch className="h-4 w-4" /> Original ANPU repository</a>
               <span className="text-xs text-[#66625b]">Current module: {moduleName}</span>
             </div>
           </div>
