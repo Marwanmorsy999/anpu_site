@@ -1,14 +1,25 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
+import path from "path"
 import tailwindcss from "@tailwindcss/vite"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
 
-// Production-safe Vite config for Cloudflare Pages and local development.
-// Keep deployment concerns out of the config; Pages runs the normal Vite build.
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/",
-  build: {
-    outDir: "dist",
-    sourcemap: false,
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    strictPort: true,
+    fs: {
+      strict: false,
+    },
+    cors: true,
+    allowedHosts: ["all"],
+    origin: "http://5173-iqne3ply414krh1j3nkqp.e2b.app",
   },
 })
