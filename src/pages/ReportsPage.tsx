@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText, Clock, ExternalLink, Search, Plus } from "lucide-react";
+import { ArrowLeft, FileText, ExternalLink, Search, Plus } from "lucide-react";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

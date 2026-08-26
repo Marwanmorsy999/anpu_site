@@ -1,9 +1,11 @@
 import { useState } from "react";
+import type { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Copy, ExternalLink } from "lucide-react";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { demoReport } from "@/lib/mockData";
 
 export function BadgePage() {
@@ -115,7 +117,7 @@ export function BadgePage() {
               type="text"
               placeholder="https://example.com"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
               className="w-full"
             />
           </div>

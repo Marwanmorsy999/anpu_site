@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Plus, Search, Clock, ExternalLink, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Plus, Search, ExternalLink, ArrowRight } from "lucide-react";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,15 +16,6 @@ export function DashboardPage() {
   const filteredScans = mockScanHistory.filter((scan) =>
     scan.target.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const getStatusBadge = (score: number) => {
-    if (score >= 9) return { label: "EXCELLENT", severity: "pass" as const, color: "text-[#7CFF4F]" };
-    if (score >= 8) return { label: "GOOD", severity: "pass" as const, color: "text-[#7CFF4F]" };
-    if (score >= 6) return { label: "NEEDS ATTENTION", severity: "warn" as const, color: "text-[#FFD200]" };
-    if (score >= 4) return { label: "POOR", severity: "warn" as const, color: "text-[#FF8C00]" };
-    if (score >= 2) return { label: "HIGH RISK", severity: "fail" as const, color: "text-[#FF8C00]" };
-    return { label: "CRITICAL", severity: "critical" as const, color: "text-[#FF2A2A]" };
-  };
 
   const getTimeAgo = (id: string) => {
     switch (id) {
@@ -103,7 +94,6 @@ export function DashboardPage() {
       <div className="space-y-4">
         {filteredScans.length > 0 ? (
           filteredScans.map((scan) => {
-            const status = getStatusBadge(scan.score);
             return (
               <Card
                 key={scan.id}

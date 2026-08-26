@@ -6,7 +6,6 @@ interface PharaohGuardianProps {
   size?: number;
   state?: 'dormant' | 'active' | 'scanning' | 'analyzing' | 'alert' | 'stable' | 'awake';
   pulse?: boolean;
-  scanningProgress?: number; // 0-100
 }
 
 export function PharaohGuardian({
@@ -14,14 +13,12 @@ export function PharaohGuardian({
   size = 200,
   state = 'dormant',
   pulse = false,
-  scanningProgress = 0,
 }: PharaohGuardianProps) {
   const width = size;
   const height = size * 1.2;
   
   // State-based animations
   const [eyePulse, setEyePulse] = useState(false);
-  const [scanProgress, setScanProgress] = useState(0);
 
   useEffect(() => {
     // Pulse eyes based on state
@@ -35,11 +32,7 @@ export function PharaohGuardian({
     }
   }, [state]);
 
-  useEffect(() => {
-    if (state === 'scanning' || state === 'analyzing') {
-      setScanProgress(scanningProgress);
-    }
-  }, [scanningProgress, state]);
+
 
   // Color schemes based on state
   const getColors = () => {

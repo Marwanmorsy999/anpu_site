@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, GitBranch, Star, Eye, Fork, Code2, Download, Bug, PullRequest, Commit, Users } from "lucide-react";
+import { ArrowLeft, ExternalLink, GitBranch, Star, Eye, Code2, Download, Bug, GitPullRequest, GitCommit, GitFork, Users } from "lucide-react";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 export function GithubPage() {
   const repoStats = [
     { label: "STARS", value: "1,000+", icon: <Star className="h-5 w-5" />, color: "text-yellow-400" },
-    { label: "FORKS", value: "100+", icon: <GitBranch className="h-5 w-5" />, color: "text-purple-400" },
+    { label: "FORKS", value: "100+", icon: <GitFork className="h-5 w-5" />, color: "text-purple-400" },
     { label: "WATCHERS", value: "50+", icon: <Eye className="h-5 w-5" />, color: "text-blue-400" },
     { label: "OPEN ISSUES", value: "5", icon: <Bug className="h-5 w-5" />, color: "text-red-400" },
-    { label: "OPEN PRS", value: "3", icon: <PullRequest className="h-5 w-5" />, color: "text-green-400" },
-    { label: "COMMITS", value: "200+", icon: <Commit className="h-5 w-5" />, color: "text-orange-400" },
+    { label: "OPEN PRS", value: "3", icon: <GitPullRequest className="h-5 w-5" />, color: "text-green-400" },
+    { label: "COMMITS", value: "200+", icon: <GitCommit className="h-5 w-5" />, color: "text-orange-400" },
   ];
 
   const features = [
@@ -289,7 +289,7 @@ export function GithubPage() {
               title: "PULL REQUESTS",
               href: "https://github.com/Marwanmorsy999/anpu/pulls",
               desc: "View open pull requests",
-              icon: <PullRequest className="h-4 w-4" />
+              icon: <GitPullRequest className="h-4 w-4" />
             },
             {
               title: "RELEASES",

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Info, ShieldCheck, Users, Heart, Award, Clock, GitBranch } from "lucide-react";
+import { ArrowLeft, ExternalLink, Info, ShieldCheck, Users, Heart, Award, Clock, GitBranch, BookOpen } from "lucide-react";
 import { PharaohGuardian } from "@/components/PharaohGuardian";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
