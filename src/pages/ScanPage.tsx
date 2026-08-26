@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowRight, CheckCircle2, ExternalLink, Loader2, Lock, ScanLine } from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, ExternalLink, Loader2, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +28,7 @@ export function ScanPage() {
   const [scanning, setScanning] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const [guardianState, setGuardianState] = useState<'dormant' | 'scanning' | 'analyzing' | 'stable'>('dormant');
+  const [guardianState, setGuardianState] = useState<"dormant" | "scanning" | "analyzing" | "stable">("dormant");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startScan = () => {
@@ -55,15 +55,16 @@ export function ScanPage() {
     }, 480);
   };
 
-  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current); }, []);
+  useEffect(() => () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  }, []);
 
   useEffect(() => {
     const queryUrl = searchParams.get("url");
-    if (queryUrl) {
-      setUrl(queryUrl);
-      const timer = window.setTimeout(() => startScan(), 300);
-      return () => window.clearTimeout(timer);
-    }
+    if (!queryUrl) return;
+    setUrl(queryUrl);
+    const timer = window.setTimeout(() => startScan(), 300);
+    return () => window.clearTimeout(timer);
   }, [searchParams]);
 
   const completionPercent = completed ? 100 : Math.round(((currentStep + 1) / scanProgressSteps.length) * 100);
@@ -73,7 +74,7 @@ export function ScanPage() {
       <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="anpu-eyebrow">ANPU / SCANNER</div>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[#f2eee2] sm:text-5xl">Scan a website.</h1>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[#f2eee1] sm:text-5xl">Scan a website.</h1>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#9c978c]">Use the demo interface to see how ANPU moves from a target URL to a security intelligence report.</p>
         </div>
         <Badge variant="secondary">Demo interface</Badge>
@@ -81,7 +82,7 @@ export function ScanPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
         <Card className="p-6 sm:p-8">
-          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d6ae54]/18 bg-[#d6ae54]/6 text-[#d6ae54]"><ScanLine className="h-5 w-5" /></div><div><h2 className="text-lg font-semibold text-[#f2eee2]">Target & scan profile</h2><p className="text-xs text-[#777168]">Configure a target for the demo workflow.</p></div></div>
+          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d6ae54]/18 bg-[#d6ae54]/6 text-[#d6ae54]"><ScanLine className="h-5 w-5" /></div><div><h2 className="text-lg font-semibold text-[#f2eee2]">Target &amp; scan profile</h2><p className="text-xs text-[#777168]">Configure a target for the demo workflow.</p></div></div>
 
           <div className="mt-7">
             <Label htmlFor="url" className="text-sm font-medium text-[#d6ae54]">Target URL</Label>
