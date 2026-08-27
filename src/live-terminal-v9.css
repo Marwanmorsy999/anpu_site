@@ -1,0 +1,36 @@
+/* ANPU live-terminal mechanics: instant hardware feedback over the CRT protocol. */
+:root{--anpu-green:#22FF66;--anpu-green-dim:#14421E;--anpu-gold:#FFC83B;--anpu-black:#050805}
+
+.crt-terminal{animation:anpu-crt-jitter .15s steps(2,end) infinite}
+@keyframes anpu-crt-jitter{0%,100%{opacity:.98;transform:translateY(0)}50%{opacity:1;transform:translateY(.3px)}75%{opacity:.97;transform:translateY(-.3px)}}
+
+.cursor-blink{animation:anpu-cursor-blink 1s step-end infinite}
+@keyframes anpu-cursor-blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.terminal-btn,.v7-audio-toggle,.v7-ascii-button,.v6-pill,.anpu-inline-link,.anpu-v6-btn-primary,.anpu-v6-btn-secondary,.v6-action-icon,a,button{transition:none!important}
+.terminal-btn:hover,.v7-ascii-button:hover:not(:disabled){background:var(--anpu-gold)!important;color:#000!important;border-color:var(--anpu-gold)!important;box-shadow:none!important}
+
+.v7-ascii-button{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:0!important;background:var(--anpu-black)!important;color:var(--anpu-green)!important;border:0!important;font-family:'JetBrains Mono',monospace!important;padding:0!important;line-height:1.15!important;min-height:92px!important}
+.v7-ascii-button:disabled{opacity:.45;cursor:not-allowed}
+.v7-button-line{display:block;white-space:pre}
+
+.v7-terminal-feed{margin-top:18px;border:1px solid var(--anpu-green-dim);background:#020502;box-shadow:inset 0 0 24px rgba(34,255,102,.035)}
+.v7-terminal-feed-head{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--anpu-green-dim);padding:8px 10px;color:var(--anpu-gold);font:10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.v7-terminal-feed-body{height:240px;overflow:auto;padding:12px;font:11px/1.65 'JetBrains Mono',monospace;color:#8fbe96;scrollbar-color:var(--anpu-green-dim) #020502}
+.v7-terminal-feed-body>div:not(.v7-terminal-cursor){white-space:pre-wrap}
+.v7-terminal-feed-body .warn{color:var(--anpu-gold);text-shadow:0 0 6px rgba(255,200,59,.16)}
+.v7-terminal-feed-body .done{color:var(--anpu-green);text-shadow:0 0 7px rgba(34,255,102,.18)}
+.v7-terminal-cursor{position:sticky;bottom:0;display:block;color:var(--anpu-green);height:17px}
+.v7-terminal-cursor span{animation:anpu-cursor-blink .75s step-end infinite}
+
+.v7-radar-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:.9}
+.v7-guardian-screen .v7-ascii-anubis{position:relative;z-index:2}
+
+.v7-audio-toggle{background:transparent;border:1px solid var(--anpu-green-dim);color:#7b9f80;padding:7px 10px;font:10px 'JetBrains Mono',monospace}
+.v7-audio-toggle:hover{background:var(--anpu-gold)!important;color:#000!important;border-color:var(--anpu-gold)!important}
+
+/* Route-level CRT shell. */
+.anpu-site-content{animation:anpu-route-pulse .15s steps(2,end)}
+@keyframes anpu-route-pulse{0%{opacity:.97;transform:translateY(.3px)}100%{opacity:1;transform:translateY(0)}}
+
+@media(prefers-reduced-motion:reduce){.crt-terminal,.cursor-blink,.anpu-site-content{animation:none!important}.v7-terminal-feed-body{scroll-behavior:auto}}

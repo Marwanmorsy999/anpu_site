@@ -5,16 +5,16 @@ export function TerminalRadar({ active = true }: { active?: boolean }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let raf = 0;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    let frame = 0;
     let angle = 0;
     let last = performance.now();
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(rect.width * dpr));
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -26,15 +26,17 @@ export function TerminalRadar({ active = true }: { active?: boolean }) {
       const h = rect.height;
       const cx = w / 2;
       const cy = h / 2;
-      const radius = Math.min(w, h) * 0.38;
-      const delta = Math.min(40, time - last);
+      const radius = Math.max(20, Math.min(w, h) * 0.42);
+      const delta = Math.min(48, time - last);
       last = time;
-      angle += delta * (active ? 0.0014 : 0.00035);
+      angle += delta * (active ? 0.0018 : 0.0005);
 
       ctx.clearRect(0, 0, w, h);
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(34,255,102,.18)";
+      ctx.fillStyle = "rgba(5, 8, 5, 0.16)";
+      ctx.fillRect(0, 0, w, h);
 
+      ctx.strokeStyle = "rgba(20, 66, 30, 0.9)";
+      ctx.lineWidth = 1;
       for (let i = 1; i <= 4; i += 1) {
         ctx.beginPath();
         ctx.arc(cx, cy, (radius * i) / 4, 0, Math.PI * 2);
@@ -46,31 +48,37 @@ export function TerminalRadar({ active = true }: { active?: boolean }) {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(angle);
-      const gradient = ctx.createLinearGradient(0, 0, radius, 0);
-      gradient.addColorStop(0, "rgba(34,255,102,.02)");
-      gradient.addColorStop(.6, "rgba(34,255,102,.08)");
-      gradient.addColorStop(1, "rgba(34,255,102,.75)");
-      ctx.strokeStyle = gradient;
+      const sweep = ctx.createLinearGradient(0, 0, radius, 0);
+      sweep.addColorStop(0, "rgba(34,255,102,0)");
+      sweep.addColorStop(0.72, "rgba(34,255,102,0.16)");
+      sweep.addColorStop(1, "rgba(34,255,102,0.88)");
+      ctx.strokeStyle = sweep;
       ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(radius, 0); ctx.stroke();
       ctx.restore();
 
-      const blips = [[.68, -.12], [-.36, .42], [.22, .58], [-.5, -.28]];
-      ctx.fillStyle = "#22FF66";
+      const blips = [[0.55, -0.2], [-0.32, 0.42], [0.18, 0.54], [-0.58, -0.24]];
       blips.forEach(([x, y], index) => {
-        ctx.globalAlpha = active ? .65 + Math.sin(angle * 4 + index) * .3 : .45;
-        ctx.beginPath(); ctx.arc(cx + x * radius, cy + y * radius, 2.2, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = active ? Math.max(0.18, 0.55 + Math.sin(angle * 4 + index) * 0.35) : 0.35;
+        ctx.fillStyle = "#22FF66";
+        ctx.beginPath();
+        ctx.arc(cx + x * radius, cy + y * radius, 2.2, 0, Math.PI * 2);
+        ctx.fill();
       });
       ctx.globalAlpha = 1;
-      raf = requestAnimationFrame(draw);
+
+      frame = requestAnimationFrame(draw);
     };
 
     resize();
     window.addEventListener("resize", resize);
-    raf = requestAnimationFrame(draw);
-    return () => { window.removeEventListener("resize", resize); cancelAnimationFrame(raf); };
+    frame = requestAnimationFrame(draw);
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(frame);
+    };
   }, [active]);
 
-  return <canvas ref={canvasRef} className="v7-radar-canvas" aria-label="ANPU radar sweep" role="img" />;
+  return <canvas ref={canvasRef} className="v7-radar-canvas" aria-label="ANPU live radar sweep" role="img" />;
 }
 
 export default TerminalRadar;

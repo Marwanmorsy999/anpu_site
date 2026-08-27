@@ -40,7 +40,7 @@ export function TerminalLogFeed({ running, target }: { running: boolean; target:
       const timer = window.setTimeout(() => {
         setVisibleLines((current) => [...current, line]);
         setCursor(index + 1);
-      }, index * 430);
+      }, index * 360);
       timers.current.push(timer);
     });
 
@@ -51,13 +51,16 @@ export function TerminalLogFeed({ running, target }: { running: boolean; target:
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [visibleLines]);
 
-  const fallback = logs.slice(0, 1);
+  const standby = `[${pad(new Date().getHours())}:${pad(new Date().getMinutes())}:${pad(new Date().getSeconds())}] > STANDBY -- AWAITING RUN COMMAND...`;
 
   return (
     <div className="v7-terminal-feed" aria-live="polite" aria-label="ANPU terminal output">
-      <div className="v7-terminal-feed-head"><span>ANPU://ENGINE/STDOUT</span><span>{running ? "STREAMING" : cursor >= logs.length ? "COMPLETE" : "STANDBY"}</span></div>
+      <div className="v7-terminal-feed-head">
+        <span>ANPU://ENGINE/STDOUT</span>
+        <span>{running ? "STREAMING" : cursor >= logs.length ? "COMPLETE" : "STANDBY"}</span>
+      </div>
       <div className="v7-terminal-feed-body">
-        {(visibleLines.length ? visibleLines : running ? [] : fallback).map((line, index) => (
+        {(visibleLines.length ? visibleLines : [standby]).map((line, index) => (
           <div key={`${line}-${index}`} className={line.includes("[!]") ? "warn" : line.includes("SCORE GENERATED") ? "done" : ""}>{line}</div>
         ))}
         <div className="v7-terminal-cursor"><span>█</span></div>
