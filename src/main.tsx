@@ -6,6 +6,7 @@ import "./visual-polish.css"
 import "./refine-v4.css"
 import "./refine-v4-hotfix.css"
 import "./terminal-v5.css"
+import "./system-v6.css"
 import App from "./App.tsx"
 
 createRoot(document.getElementById("root")!).render(

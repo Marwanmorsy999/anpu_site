@@ -1,170 +1,27 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText, ExternalLink, Search, Plus } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { useMemo, useState } from "react";
+import { ArrowRight, FileText, Plus, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockScanHistory } from "@/lib/mockData";
+
+const times: Record<string, string> = { "scan-001": "2 hours ago", "scan-002": "1 day ago", "scan-003": "2 days ago", "scan-004": "4 days ago" };
 
 export function ReportsPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredReports = mockScanHistory.filter((report) =>
-    report.target.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const getTimeAgo = (id: string) => {
-    switch (id) {
-      case "scan-001": return "2 HOURS AGO";
-      case "scan-002": return "1 DAY AGO";
-      case "scan-003": return "2 DAYS AGO";
-      case "scan-004": return "4 DAYS AGO";
-      default: return "UNKNOWN";
-    }
-  };
-
-  // Calculate stats
-  const totalReports = mockScanHistory.length;
-  const avgScore = mockScanHistory.reduce((sum, r) => sum + r.score, 0) / mockScanHistory.length;
-  const bestGrade = mockScanHistory.reduce((best, r) => 
-    r.grade > best ? r.grade : best, "F"
-  );
+  const [query, setQuery] = useState("");
+  const reports = useMemo(() => mockScanHistory.filter((r) => r.target.toLowerCase().includes(query.toLowerCase())), [query]);
+  const avg = mockScanHistory.reduce((s, r) => s + r.score, 0) / mockScanHistory.length;
+  const best = [...mockScanHistory].sort((a, b) => b.score - a.score)[0]?.grade ?? "—";
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Back link */}
-      <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
-        <ArrowLeft className="h-4 w-4" /> BACK TO COMMAND CENTER
-      </Link>
-
-      {/* Module Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-2">
-          ANPU // REPORT ARCHIVE
-        </h1>
-        <p className="text-muted-foreground">
-          Browse and manage security intelligence reports.
-        </p>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "TOTAL REPORTS", value: totalReports, icon: "𓄿" },
-          { label: "AVERAGE SCORE", value: avgScore.toFixed(1), icon: "⭐" },
-          { label: "BEST GRADE", value: bestGrade, icon: "🏆" },
-          { label: "DEMO REPORTS", value: totalReports, icon: "📋" },
-        ].map((stat) => (
-          <Card key={stat.label} className="p-4 text-center border-border">
-            <p className="text-2xl mb-2 hieroglyph">{stat.icon}</p>
-            <p className="text-2xl font-bold text-primary">{stat.value}</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mt-1">
-              {stat.label}
-            </p>
-          </Card>
-        ))}
-      </div>
-
-      {/* Search */}
-      <Card className="p-4 mb-6 border-border">
-        <div className="flex items-center gap-2">
-          <Search className="h-4 w-4 text-primary" />
-          <Input
-            type="text"
-            placeholder="Filter reports by domain..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1"
-          />
-        </div>
-      </Card>
-
-      {/* Report list */}
-      <div className="space-y-4 mb-8">
-        {filteredReports.length > 0 ? (
-          filteredReports.map((report) => (
-            <Card
-              key={report.id}
-              className="p-4 hover:border-primary/30 transition-all cursor-pointer border-border"
-              onClick={() => navigate(`/reports/${report.id}`)}
-            >
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-6 w-6 text-primary" />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground truncate">{report.target}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{report.url}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-primary">{report.score}</p>
-                    <p className="text-xs text-muted-foreground">/ 10</p>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className={`text-xs ${
-                      report.grade === 'A+' || report.grade === 'A' ? 'text-[#7CFF4F] border-[#49D84A]' :
-                      report.grade === 'B' ? 'text-[#FFD200] border-[#D88900]' :
-                      'text-[#FF8C00] border-[#CC6600]'
-                    }`}
-                  >
-                    {report.grade}
-                  </Badge>
-                  <div className="text-center">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                      SCANNED
-                    </p>
-                    <p className="text-xs text-muted-foreground">{getTimeAgo(report.id)}</p>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/reports/${report.id}`);
-                    }}
-                  >
-                    VIEW REPORT
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))
-        ) : (
-          <Card className="p-8 text-center border-border">
-            <FileText className="h-12 w-12 text-primary opacity-50 mx-auto mb-4" />
-            <p className="text-primary mb-2">NO REPORTS FOUND</p>
-            <p className="text-sm text-muted-foreground">
-              {searchQuery ? `No reports match "${searchQuery}"` : "No reports have been generated yet."}
-            </p>
-            {searchQuery && (
-              <Button variant="outline" size="sm" onClick={() => setSearchQuery("")} className="mt-4">
-                CLEAR FILTER
-              </Button>
-            )}
-          </Card>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-center gap-4">
-        <Button size="lg" onClick={() => navigate("/scan")} className="gap-2">
-          <Plus className="h-4 w-4" />
-          NEW SCAN
-        </Button>
-        <Button variant="outline" size="lg" asChild>
-          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="gap-2">
-            <ExternalLink className="h-4 w-4" />
-            VIEW ON GITHUB
-          </a>
-        </Button>
-      </div>
+    <div className="anpu-v6-shell">
+      <header className="anpu-v6-page-head"><div><div className="anpu-v6-kicker">ANPU / REPORT ARCHIVE</div><h1 className="anpu-v6-title">Evidence, not just scores.</h1><p className="anpu-v6-subtitle">Browse the report archive and jump directly into the findings behind each security posture.</p></div><div className="anpu-v6-page-actions"><button className="anpu-v6-btn-primary px-4 py-2" onClick={() => navigate("/scan")}><Plus className="mr-2 inline h-4 w-4" /> NEW SCAN</button></div></header>
+      <div className="v6-report-grid mb-4">{[
+        ["TOTAL REPORTS", mockScanHistory.length, "Archive size"],
+        ["AVERAGE SCORE", avg.toFixed(1), "/ 10 posture"],
+        ["BEST GRADE", best, "Current high"],
+        ["DEMO REPORTS", mockScanHistory.length, "Visualization data"],
+      ].map(([label, value, note]) => <div className="v6-metric" key={label as string}><div className="v6-metric-top"><span>{label}</span><FileText className="h-4 w-4 text-slate-500" /></div><div className="v6-metric-value">{value}</div><div className="v6-metric-note">{note}</div></div>)}</div>
+      <section className="anpu-v6-panel mt-4 overflow-hidden"><div className="flex items-center gap-3 border-b border-white/10 p-4"><Search className="h-4 w-4 text-slate-500" /><input className="v6-input h-10 border-0 bg-transparent p-0 shadow-none" placeholder="Search reports by domain..." value={query} onChange={(e) => setQuery(e.target.value)} /></div><div>{reports.map((report) => <div className="v6-report-row" key={report.id}><div className="v6-report-domain"><span className="v6-favicon">{report.target.replace(/^www\./, "").slice(0, 2).toUpperCase()}</span><div className="min-w-0"><b>{report.target}</b><small>{report.url}</small></div></div><span className="v6-status"><span className="v6-status-dot" /> Completed</span><div className="text-right"><span className="v6-score-chip">{report.score} / 10</span><div className="mt-1 text-[9px] font-mono text-slate-500">{times[report.id] ?? "recent"}</div></div><div className={`v6-grade-chip ${report.grade === "F" ? "danger" : ""}`}>{report.grade}</div><button className="v6-action-icon" onClick={() => navigate(`/reports/${report.id}`)} aria-label="View report"><ArrowRight className="h-4 w-4" /></button></div>)}{reports.length === 0 && <div className="p-12 text-center text-sm text-slate-500">No matching reports.</div>}</div></section>
     </div>
   );
 }

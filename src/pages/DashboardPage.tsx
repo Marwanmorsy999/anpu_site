@@ -1,299 +1,70 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { ArrowRight, Plus, Search, ShieldCheck, Target, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ArrowRight, AlertTriangle, CheckCircle, XCircle, Info } from "lucide-react";
-import { PharaohGuardian } from "@/components/PharaohGuardian";
-import { GuardianStatus } from "@/components/GuardianStatus";
-import { ThreatIndex } from "@/components/ThreatIndex";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { mockScanHistory } from "@/lib/mockData";
+
+const timeAgo: Record<string, string> = {
+  "scan-001": "2h ago",
+  "scan-002": "1d ago",
+  "scan-003": "2d ago",
+  "scan-004": "4d ago",
+};
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [query, setQuery] = useState("");
+  const [risk, setRisk] = useState("all");
 
-  const filteredScans = mockScanHistory.filter((scan) =>
-    scan.target.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Calculate average score from mock data
   const avgScore = mockScanHistory.reduce((sum, scan) => sum + scan.score, 0) / mockScanHistory.length;
-  const avgGrade = avgScore >= 9 ? "A+" : avgScore >= 8 ? "A" : avgScore >= 6 ? "B" : avgScore >= 4 ? "C" : "D";
-
-  const getTimeAgo = (id: string) => {
-    switch (id) {
-      case "scan-001": return "2 HOURS AGO";
-      case "scan-002": return "1 DAY AGO";
-      case "scan-003": return "2 DAYS AGO";
-      case "scan-004": return "4 DAYS AGO";
-      default: return "UNKNOWN";
-    }
-  };
-
-  const getSeverityBadge = (severity: string, count: number) => {
-    if (count === 0) return null;
-    const icons = {
-      critical: <XCircle className="h-3 w-3" />,
-      high: <AlertTriangle className="h-3 w-3" />,
-      medium: <AlertTriangle className="h-3 w-3" />,
-      low: <CheckCircle className="h-3 w-3" />,
-      info: <Info className="h-3 w-3" />,
-    };
-    const colors = {
-      critical: "text-[#FF2A2A]",
-      high: "text-[#FF8C00]",
-      medium: "text-[#FFD200]",
-      low: "text-[#7CFF4F]",
-      info: "text-muted-foreground",
-    };
-    const icon = icons[severity as keyof typeof icons] || <Info className="h-3 w-3" />;
-    const color = colors[severity as keyof typeof colors] || "text-muted-foreground";
-    return (
-      <Badge key={severity} variant="outline" className={`gap-1 ${color} border-current/30`}>
-        {icon}
-        {severity.toUpperCase()} {count > 1 ? `(${count})` : ""}
-      </Badge>
-    );
-  };
+  const totalFindings = mockScanHistory.reduce((sum, scan) => sum + Object.values(scan.findingCounts).reduce((a, b) => a + b, 0), 0);
+  const visible = useMemo(() => mockScanHistory.filter((scan) => {
+    const matchesQuery = scan.target.toLowerCase().includes(query.toLowerCase());
+    const matchesRisk = risk === "all" || (risk === "high" && scan.score < 7) || (risk === "medium" && scan.score >= 7 && scan.score < 8.5) || (risk === "low" && scan.score >= 8.5);
+    return matchesQuery && matchesRisk;
+  }), [query, risk]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Module Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-2">
-          ANPU // COMMAND CENTER
-        </h1>
-        <p className="text-muted-foreground">
-          Central operations room for ANPU Security Intelligence.
-        </p>
-      </div>
-
-      {/* System Status Matrix */}
-      <Card className="p-6 mb-6 border-border">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          SYSTEM STATUS
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: "CORE", status: "ONLINE", color: "text-[#7CFF4F]", barColor: "bg-[#7CFF4F]" },
-            { label: "SCAN ENGINE", status: "READY", color: "text-[#7CFF4F]", barColor: "bg-[#7CFF4F]" },
-            { label: "REPORT ENGINE", status: "READY", color: "text-[#7CFF4F]", barColor: "bg-[#7CFF4F]" },
-            { label: "GUARDIAN", status: "AWAKE", color: "text-[#FFB000]", barColor: "bg-[#FFB000]" },
-          ].map((item, i) => (
-            <Card key={i} className="p-4 bg-muted/20 border-border/30">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
-                  {item.label}
-                </span>
-                <span className={`text-xs font-bold ${item.color}`}>
-                  {item.status}
-                </span>
-              </div>
-              <div className="h-1 bg-muted rounded-full overflow-hidden">
-                <div className={`h-full ${item.barColor} rounded-full`} style={{ width: "100%" }} />
-              </div>
-            </Card>
-          ))}
+    <div className="anpu-v6-shell">
+      <header className="anpu-v6-page-head">
+        <div>
+          <div className="anpu-v6-kicker">ANPU / COMMAND CENTER</div>
+          <h1 className="anpu-v6-title">Security operations, at a glance.</h1>
+          <p className="anpu-v6-subtitle">A focused operating view for targets, scan health, findings and report activity.</p>
         </div>
-      </Card>
-
-      {/* Threat Index Centerpiece */}
-      <div className="mb-8">
-        <ThreatIndex score={avgScore} grade={avgGrade} guardianStatus="awake" size="lg" />
-      </div>
-
-      {/* Main Dashboard Grid */}
-      <div className="grid lg:grid-cols-3 gap-6 mb-8">
-        {/* Left Column - Scan Archive */}
-        <div className="lg:col-span-2">
-          <Card className="p-6 border-border h-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-foreground">
-                SCAN ARCHIVE
-              </h2>
-              <Button size="sm" onClick={() => navigate("/scan")} className="gap-1.5">
-                <Plus className="h-3.5 w-3.5" />
-                NEW SCAN
-              </Button>
-            </div>
-            
-            {/* Search */}
-            <Card className="p-3 mb-4 border-border/50 bg-muted/20">
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-primary" />
-                <Input
-                  type="text"
-                  placeholder="Filter by domain..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 text-xs"
-                />
-              </div>
-            </Card>
-
-            {/* Scan list */}
-            <div className="space-y-2">
-              {filteredScans.length > 0 ? (
-                filteredScans.map((scan, i) => (
-                  <Card
-                    key={scan.id}
-                    className="p-3 hover:border-primary/30 transition-all cursor-pointer border-border/50 flex items-center justify-between"
-                    onClick={() => navigate(`/reports/${scan.id}`)}
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-xs text-muted-foreground/70 w-8 text-right">
-                        [{i + 1 < 10 ? `00${i + 1}` : `0${i + 1}`}]
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-foreground truncate">
-                          {scan.target}
-                        </p>
-                        <p className="text-xs text-muted-foreground">{scan.url}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-center">
-                        <p className="text-lg font-bold text-primary">{scan.score}</p>
-                        <p className="text-xs text-muted-foreground">/ 10</p>
-                      </div>
-                      <Badge variant="outline" className="text-secondary border-secondary/30 text-xs">
-                        {scan.grade}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground/70">
-                        {getTimeAgo(scan.id)}
-                      </span>
-                      <Button variant="ghost" size="xs" className="h-6 w-6 p-0" onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/reports/${scan.id}`);
-                      }}>
-                        <ArrowRight className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </Card>
-                ))
-              ) : (
-                <Card className="p-8 text-center border-border/30 bg-muted/20">
-                  <PharaohGuardian size={64} state="dormant" className="mx-auto mb-4 opacity-50" />
-                  <p className="text-primary mb-2">NO SCANS FOUND</p>
-                  <p className="text-sm text-muted-foreground">
-                    {searchQuery ? `No scans match "${searchQuery}"` : "Start by running your first scan."}
-                  </p>
-                  {searchQuery && (
-                    <Button variant="outline" size="sm" onClick={() => setSearchQuery("")} className="mt-4">
-                      CLEAR FILTER
-                    </Button>
-                  )}
-                </Card>
-              )}
-            </div>
-          </Card>
+        <div className="anpu-v6-page-actions">
+          <button className="anpu-v6-btn-secondary px-4 py-2" onClick={() => navigate("/reports")}>OPEN REPORTS</button>
+          <button className="anpu-v6-btn-primary px-4 py-2" onClick={() => navigate("/scan")}><Plus className="inline mr-2 h-4 w-4" /> NEW SCAN</button>
         </div>
+      </header>
 
-        {/* Right Column - Guardian & Active Findings */}
-        <div className="space-y-6">
-          {/* Guardian Panel */}
-          <Card className="p-6 border-border">
-            <h2 className="text-lg font-semibold text-foreground mb-4">
-              GUARDIAN STATUS
-            </h2>
-            <GuardianStatus status="awake" size={80} showLabel={true} className="mx-auto" />
-            <div className="mt-4 pt-4 border-t border-border/50 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                ANPU CORE
-              </p>
-              <p className="text-sm text-[#7CFF4F] font-semibold">
-                OPERATIONAL
-              </p>
-            </div>
-          </Card>
-
-          {/* Active Findings */}
-          <Card className="p-6 border-border">
-            <h2 className="text-lg font-semibold text-foreground mb-4">
-              ACTIVE FINDINGS
-            </h2>
-            <div className="space-y-2">
-              {mockScanHistory.length > 0 && (
-                <>
-                  {getSeverityBadge("critical", mockScanHistory[0].findingCounts.critical)}
-                  {getSeverityBadge("high", mockScanHistory[0].findingCounts.high)}
-                  {getSeverityBadge("medium", mockScanHistory[0].findingCounts.medium)}
-                  {getSeverityBadge("low", mockScanHistory[0].findingCounts.low)}
-                  {getSeverityBadge("info", mockScanHistory[0].findingCounts.info)}
-                </>
-              )}
-              {mockScanHistory.length === 0 && (
-                <Card className="p-4 text-center border-border/30 bg-muted/20">
-                  <CheckCircle className="h-6 w-6 text-[#7CFF4F] mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground">
-                    NO ACTIVE FINDINGS
-                  </p>
-                </Card>
-              )}
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      {/* Recent Targets */}
-      <Card className="p-6 mb-8 border-border">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          RECENT TARGETS
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {mockScanHistory.map((scan) => (
-            <Button
-              key={scan.id}
-              variant="outline"
-              size="sm"
-              onClick={() => navigate(`/reports/${scan.id}`)}
-              className="gap-2"
-            >
-              <ArrowRight className="h-3.5 w-3.5" />
-              {scan.target}
-            </Button>
-          ))}
-        </div>
-      </Card>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <section className="v6-metrics">
         {[
-          { label: "TOTAL SCANS", value: mockScanHistory.length, icon: "🔍" },
-          { label: "AVG SCORE", value: avgScore.toFixed(1), icon: "⭐" },
-          { label: "HIGHEST GRADE", value: avgGrade, icon: "🏆" },
-          { label: "MODULES", value: "9", icon: "📋" },
-        ].map((stat, i) => (
-          <Card key={i} className="p-4 text-center border-border">
-            <p className="text-2xl mb-2">{stat.icon}</p>
-            <p className="text-2xl font-bold text-primary">{stat.value}</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mt-1">
-              {stat.label}
-            </p>
-          </Card>
+          { label: "SYSTEM SCORE", value: avgScore.toFixed(1), note: "/ 10 average posture", icon: ShieldCheck, spark: [7,12,11,17,15,22,20,25] },
+          { label: "ACTIVE FINDINGS", value: totalFindings, note: "across current archive", icon: Activity, spark: [18,16,14,12,10,8,7,6] },
+          { label: "TOTAL TARGETS", value: mockScanHistory.length, note: "tracked in demo archive", icon: Target, spark: [4,5,5,6,6,7,8,8] },
+          { label: "CORE STATUS", value: "READY", note: "Go engine / web shell", icon: ShieldCheck, spark: [20,20,20,20,20,20,20,20] },
+        ].map(({ label, value, note, icon: Icon, spark }) => (
+          <div className="v6-metric" key={label}>
+            <div className="v6-metric-top"><span>{label}</span><Icon className="h-4 w-4 text-emerald-400" /></div>
+            <div className="v6-metric-value">{value}</div>
+            <div className="v6-metric-note">{note}</div>
+            <div className="v6-spark mt-3">{spark.map((h, i) => <span key={i} style={{ height: `${Math.max(5, h)}px` }} />)}</div>
+          </div>
         ))}
-      </div>
+      </section>
 
-      {/* System Footer Note */}
-      <Card className="p-4 border-amber/30 bg-amber/5 text-center">
-        <p className="text-amber mb-2">
-          ⚠️ DEMO MODE
-        </p>
-        <p className="text-xs text-muted-foreground">
-          This is a visualization of the ANPU Command Center. 
-          The dashboard uses mock data and does not perform live scans.
-        </p>
-      </Card>
+      <section className="v6-dashboard-top">
+        <div className="v6-v6-panel v6-score-panel anpu-v6-panel">
+          <div><div className="anpu-v6-kicker">POSTURE OVERVIEW</div><h2 className="mt-2 text-2xl font-bold text-white">Your monitored surface is stable.</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Most current targets sit inside the healthy band. Use the archive below to inspect the evidence behind each score.</p></div>
+          <div className="v6-score-ring"><div><strong>{avgScore.toFixed(1)}</strong><small>AVERAGE /10</small></div></div>
+        </div>
+        <div className="anpu-v6-panel p-5"><div className="anpu-v6-kicker">GUARDIAN</div><div className="mt-3 flex items-center justify-between"><div><div className="text-lg font-semibold text-white">WATCHING</div><div className="mt-1 text-xs text-slate-500">Telemetry nominal</div></div><span className="v6-status"><span className="v6-status-dot" /> Online</span></div><div className="mt-7 space-y-3">{["DNS / TLS","HEADERS","COOKIES","PUBLIC SURFACE"].map((label, i) => <div key={label}><div className="flex justify-between text-[10px] font-mono text-slate-500"><span>{label}</span><span>{[98,94,87,82][i]}%</span></div><div className="mt-1 h-1.5 bg-white/5"><div className="h-full bg-emerald-500" style={{ width: `${[98,94,87,82][i]}%` }} /></div></div>)}</div></div>
+      </section>
 
-      {/* Actions */}
-      <div className="mt-8 text-center">
-        <Button size="lg" onClick={() => navigate("/scan")} className="gap-2">
-          <Plus className="h-4 w-4" />
-          NEW SCAN
-        </Button>
-      </div>
+      <section className="v6-table-panel anpu-v6-panel">
+        <div className="v6-table-toolbar"><div className="flex min-w-0 flex-1 gap-2"><div className="relative max-w-md flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /><input className="v6-input h-10 pl-10" placeholder="Search by domain..." value={query} onChange={(e) => setQuery(e.target.value)} /></div><select className="v6-input h-10 w-36" value={risk} onChange={(e) => setRisk(e.target.value)}><option value="all">All risk</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>
+        <div className="v6-table-wrap"><table className="v6-table"><thead><tr><th>Target</th><th>Status</th><th>Profile</th><th>Score</th><th>Grade</th><th>Last scan</th><th /></tr></thead><tbody>{visible.map((scan) => <tr key={scan.id}><td><div className="font-semibold text-white">{scan.target}</div><div className="mt-1 font-mono text-[10px] text-slate-500">{scan.url}</div></td><td><span className="v6-status"><span className="v6-status-dot" /> Completed</span></td><td className="font-mono text-xs text-slate-400">Deep</td><td><span className="v6-score-chip">{scan.score} / 10</span></td><td><span className={`v6-grade-chip ${scan.grade === "F" ? "danger" : ""}`}>{scan.grade}</span></td><td className="font-mono text-[10px] text-slate-500">{timeAgo[scan.id] ?? "recent"}</td><td><button className="v6-action-icon" onClick={() => navigate(`/reports/${scan.id}`)} aria-label={`View ${scan.target}`}><ArrowRight className="h-4 w-4" /></button></td></tr>)}</tbody></table></div>
+      </section>
     </div>
   );
 }
