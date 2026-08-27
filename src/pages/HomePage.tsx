@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ArrowRight, Check, ChevronRight, Copy, FileText, GitBranch, LockKeyhole, Radar, ScanLine, ShieldCheck, Terminal, CheckCheck } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, ChevronRight, Copy, FileText, GitBranch, Radar, ShieldCheck, Terminal, CheckCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AnubisWireframe } from "@/components/AnubisWireframe";
 import { HorusEye } from "@/components/HorusEye";
@@ -21,34 +21,12 @@ const checks = [
   ["Public surface", "PASS", "No obvious exposure"],
 ];
 
-const scanSteps = ["Validating target", "Resolving DNS", "Inspecting TLS", "Reviewing headers", "Mapping public surface", "Preparing report"];
 const signals = [["DNS", 92], ["TLS", 96], ["HEADERS", 78], ["COOKIES", 68], ["ROBOTS", 84], ["SURFACE", 74]];
 
 export function HomePage() {
-  const [target, setTarget] = useState("https://example.com");
-  const [scanning, setScanning] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [selectedCheck, setSelectedCheck] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (!scanning) return;
-    const interval = window.setInterval(() => setProgress((current) => Math.min(current + 12, 100)), 360);
-    return () => window.clearInterval(interval);
-  }, [scanning]);
-
-  useEffect(() => {
-    if (!scanning || progress < 100) return;
-    const timeout = window.setTimeout(() => setScanning(false), 650);
-    return () => window.clearTimeout(timeout);
-  }, [scanning, progress]);
-
-  const activeStep = Math.min(Math.floor(progress / 17), scanSteps.length - 1);
-  const startDemoScan = () => {
-    if (!target.trim() || scanning) return;
-    setProgress(0);
-    setScanning(true);
-  };
   const copyCli = async () => {
     try {
       await navigator.clipboard.writeText("anpu scan https://example.com");
