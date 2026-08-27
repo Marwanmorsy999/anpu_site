@@ -1,4 +1,4 @@
-import { BookOpen, Terminal, Settings, Server, HelpCircle, ShieldCheck } from "lucide-react";
+import { BookOpen, Terminal, Server, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const sections = ["getting-started", "cli", "configuration", "integrations", "faq"];
