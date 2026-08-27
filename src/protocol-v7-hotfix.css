@@ -1,0 +1,38 @@
+/* Final protocol refinements */
+.v7-fieldset{position:relative;margin:0;padding:30px 24px 24px!important;border:1px solid #14421E!important}
+.v7-fieldset legend{padding:0 8px;color:#FFC83B;font:11px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase}
+.v7-fieldset .v6-label{display:block;color:#FFC83B;font:11px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.v7-fieldset .v6-execute{border:1px solid #22FF66;background:#22FF66;color:#001807;box-shadow:0 0 18px rgba(34,255,102,.16);font-family:'JetBrains Mono',monospace;font-weight:700}
+.v7-telemetry-panel{min-height:100%;display:flex;flex-direction:column}
+.v7-tomb-window{flex:1;background:#010401!important;border:1px solid #14421E!important;padding:12px!important}
+.v7-guardian-screen{min-height:260px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(34,255,102,.18);background:radial-gradient(circle at center,rgba(34,255,102,.07),transparent 48%),linear-gradient(rgba(34,255,102,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(34,255,102,.025) 1px,transparent 1px);background-size:auto,20px 20px;}
+.v7-ascii-anubis{margin:0;color:#22FF66;font:18px/1.05 'Share Tech Mono','JetBrains Mono',monospace;text-align:center;text-shadow:0 0 8px rgba(34,255,102,.35);z-index:2}
+.v7-ascii-anubis::first-line{color:#FFC83B}
+.v7-guardian-eye{position:absolute!important;top:18px!important;right:18px!important;width:82px!important;opacity:.72!important;z-index:3}
+.v7-sweep{position:absolute;left:0;right:0;top:-10%;height:2px;background:linear-gradient(90deg,transparent,#22FF66,transparent);box-shadow:0 0 14px rgba(34,255,102,.45);animation:v7-sweep 3.8s linear infinite;z-index:3}
+@keyframes v7-sweep{0%{transform:translateY(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(290px);opacity:0}}
+.v6-telemetry{border:1px solid #14421E!important;background:#030703!important}
+.v6-telemetry b{font-family:'Share Tech Mono',monospace!important;color:#fff!important}
+.v6-telemetry small{font-family:'JetBrains Mono',monospace!important;color:#58755f!important}
+.v6-pills{gap:8px!important}.v6-pill{border:1px solid #14421E!important;background:#040804!important;border-radius:0!important}.v6-pill.active{border-color:#22FF66!important;background:rgba(34,255,102,.06)!important;box-shadow:inset 0 0 18px rgba(34,255,102,.03)}.v6-pill b{font-family:'JetBrains Mono',monospace!important;color:#fff!important}.v6-pill.active b{color:#22FF66!important}
+
+/* ASCII pipeline */
+.anpu-process-v3{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:0!important;align-items:stretch!important;position:relative}
+.anpu-process-v3-step{min-height:108px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:16px 10px!important;border-right:1px solid rgba(20,66,30,.7)}
+.anpu-process-v3-step:last-child{border-right:0}.anpu-process-v3-step>span{position:absolute!important;top:8px!important;left:10px!important;font-size:9px!important}
+.anpu-process-v3-step:after{content:'𓋹';display:block!important;position:absolute!important;bottom:10px!important;color:#FFC83B!important;font-size:21px!important;text-shadow:0 0 8px rgba(255,200,59,.28)}
+.anpu-process-v3-step:nth-child(2):after{content:'𓁹'}.anpu-process-v3-step:nth-child(3):after{content:'𓆣'}.anpu-process-v3-step:nth-child(4):after{content:'𓇠'}.anpu-process-v3-step:nth-child(5):after{content:'𓍝'}
+.anpu-process-v3-step i{position:absolute!important;right:-13px!important;top:50%!important;width:25px!important;height:1px!important;background:#22FF66!important;box-shadow:0 0 8px rgba(34,255,102,.4)!important;z-index:3}.anpu-process-v3-step i:after{content:'>' ;position:absolute;right:-1px;top:-7px;color:#22FF66;font:14px 'JetBrains Mono',monospace}.anpu-process-v3-step strong{font-family:'Share Tech Mono',monospace!important;font-size:21px!important}.anpu-process-v3-step small{font-family:'JetBrains Mono',monospace!important;font-size:10px!important}
+
+/* Badge seal becomes a terminal talisman */
+.v6-preview{border:1px solid #14421E!important;border-radius:0!important;background:#020502!important}
+.v6-preview.light{background:#e8eee9!important;color:#061108!important}.v6-preview.dark,.v6-preview.mono{background:#020502!important}
+.v6-seal{border:1px solid #22FF66!important;box-shadow:0 0 16px rgba(34,255,102,.09);font-family:'JetBrains Mono',monospace!important;background:rgba(34,255,102,.035)!important}.v6-seal span:first-child{color:#FFC83B!important}.v6-seal strong{color:#22FF66!important;font-family:'Share Tech Mono',monospace!important}
+.v6-code-tabs{border-bottom:1px solid #14421E!important}.v6-code-tab{font-family:'JetBrains Mono',monospace!important;color:#6f9276!important;border-radius:0!important}.v6-code-tab.active{color:#22FF66!important;border-color:#22FF66!important}
+.v6-copy{color:#22FF66!important;border:1px solid #14421E!important;background:#020502!important}
+
+/* report archive table reads like a terminal */
+.v6-report-row:hover{background:rgba(34,255,102,.035)!important;border-color:#287c3d!important}
+.v6-report-domain b{font-family:'Share Tech Mono',monospace!important;color:#fff!important;font-size:18px!important;letter-spacing:.02em}.v6-report-domain small{font-family:'JetBrains Mono',monospace!important;color:#5e7965!important}
+
+@media(max-width:900px){.anpu-process-v3{grid-template-columns:1fr!important}.anpu-process-v3-step{border-right:0;border-bottom:1px solid rgba(20,66,30,.7);min-height:86px!important}.anpu-process-v3-step i{display:none}.v7-guardian-screen{min-height:230px}.v6-report-row{grid-template-columns:1fr auto!important}}

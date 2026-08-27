@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ANPUSystemHeader } from "@/components/ANPUSystemHeader";
 import { ANPUSystemFooter } from "@/components/ANPUSystemFooter";
+import { CRTOverlay } from "@/components/CRTOverlay";
 import { TerminalRain } from "@/components/TerminalRain";
 import { HomePage } from "@/pages/HomePage";
 import { ScanPage } from "@/pages/ScanPage";
@@ -18,6 +19,7 @@ export function App() {
     <BrowserRouter>
       <div className="anpu-site-stage">
         <TerminalRain />
+        <CRTOverlay />
         <ANPUSystemHeader />
         <main className="anpu-site-content min-h-[calc(100svh-4rem)]">
           <Routes>
