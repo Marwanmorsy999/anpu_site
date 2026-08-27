@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AlertTriangle, Copy, Check } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const endpoints = [
   { method: "POST", path: "/scan", desc: "Initiate a security scan.", response: `HTTP/1.1 202 Accepted\n{\n  "id": "scan-xxxxxxxx",\n  "status": "queued",\n  "profile": "standard"\n}` },
