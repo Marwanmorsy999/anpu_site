@@ -2,19 +2,15 @@ import { useMemo, useState } from "react";
 import { ArrowRight, Plus, Search, ShieldCheck, Target, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockScanHistory } from "@/lib/mockData";
+import { TerminalTitle } from "@/components/TerminalTitle";
+import { TelemetryCounter } from "@/components/TelemetryCounter";
 
-const timeAgo: Record<string, string> = {
-  "scan-001": "2h ago",
-  "scan-002": "1d ago",
-  "scan-003": "2d ago",
-  "scan-004": "4d ago",
-};
+const timeAgo: Record<string, string> = { "scan-001": "2h ago", "scan-002": "1d ago", "scan-003": "2d ago", "scan-004": "4d ago" };
 
 export function DashboardPage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [risk, setRisk] = useState("all");
-
   const avgScore = mockScanHistory.reduce((sum, scan) => sum + scan.score, 0) / mockScanHistory.length;
   const totalFindings = mockScanHistory.reduce((sum, scan) => sum + Object.values(scan.findingCounts).reduce((a, b) => a + b, 0), 0);
   const visible = useMemo(() => mockScanHistory.filter((scan) => {
@@ -26,45 +22,17 @@ export function DashboardPage() {
   return (
     <div className="anpu-v6-shell">
       <header className="anpu-v6-page-head">
-        <div>
-          <div className="anpu-v6-kicker">ANPU / COMMAND CENTER</div>
-          <h1 className="anpu-v6-title">Security operations, at a glance.</h1>
-          <p className="anpu-v6-subtitle">A focused operating view for targets, scan health, findings and report activity.</p>
-        </div>
-        <div className="anpu-v6-page-actions">
-          <button className="anpu-v6-btn-secondary px-4 py-2" onClick={() => navigate("/reports")}>OPEN REPORTS</button>
-          <button className="anpu-v6-btn-primary px-4 py-2" onClick={() => navigate("/scan")}><Plus className="inline mr-2 h-4 w-4" /> NEW SCAN</button>
-        </div>
+        <div><div className="anpu-v6-kicker">ANPU / COMMAND CENTER</div><h1 className="anpu-v6-title"><TerminalTitle text="Security operations, at a glance." /></h1><p className="anpu-v6-subtitle">A focused operating view for targets, scan health, findings and report activity.</p></div>
+        <div className="anpu-v6-page-actions"><button className="anpu-v6-btn-secondary px-4 py-2" onClick={() => navigate("/reports")}>OPEN REPORTS</button><button className="anpu-v6-btn-primary px-4 py-2" onClick={() => navigate("/scan")}><Plus className="inline mr-2 h-4 w-4" /> NEW SCAN</button></div>
       </header>
-
       <section className="v6-metrics">
-        {[
-          { label: "SYSTEM SCORE", value: avgScore.toFixed(1), note: "/ 10 average posture", icon: ShieldCheck, spark: [7,12,11,17,15,22,20,25] },
-          { label: "ACTIVE FINDINGS", value: totalFindings, note: "across current archive", icon: Activity, spark: [18,16,14,12,10,8,7,6] },
-          { label: "TOTAL TARGETS", value: mockScanHistory.length, note: "tracked in demo archive", icon: Target, spark: [4,5,5,6,6,7,8,8] },
-          { label: "CORE STATUS", value: "READY", note: "Go engine / web shell", icon: ShieldCheck, spark: [20,20,20,20,20,20,20,20] },
-        ].map(({ label, value, note, icon: Icon, spark }) => (
-          <div className="v6-metric" key={label}>
-            <div className="v6-metric-top"><span>{label}</span><Icon className="h-4 w-4 text-emerald-400" /></div>
-            <div className="v6-metric-value">{value}</div>
-            <div className="v6-metric-note">{note}</div>
-            <div className="v6-spark mt-3">{spark.map((h, i) => <span key={i} style={{ height: `${Math.max(5, h)}px` }} />)}</div>
-          </div>
-        ))}
+        <div className="v6-metric"><div className="v6-metric-top"><span>SYSTEM SCORE</span><ShieldCheck className="h-4 w-4 text-emerald-400" /></div><div className="v6-metric-value"><TelemetryCounter value={Math.round(avgScore * 10)} /><span className="v7-metric-decimal">/10</span></div><div className="v6-metric-note">average monitored posture</div><div className="v6-spark mt-3">{[7,12,11,17,15,22,20,25].map((h) => <span key={h} style={{ height: `${h}px` }} />)}</div></div>
+        <div className="v6-metric"><div className="v6-metric-top"><span>ACTIVE FINDINGS</span><Activity className="h-4 w-4 text-emerald-400" /></div><div className="v6-metric-value"><TelemetryCounter value={totalFindings} /></div><div className="v6-metric-note">across current archive</div><div className="v6-spark mt-3">{[18,16,14,12,10,8,7,6].map((h) => <span key={h} style={{ height: `${h}px` }} />)}</div></div>
+        <div className="v6-metric"><div className="v6-metric-top"><span>TOTAL TARGETS</span><Target className="h-4 w-4 text-emerald-400" /></div><div className="v6-metric-value"><TelemetryCounter value={mockScanHistory.length} /></div><div className="v6-metric-note">tracked in demo archive</div><div className="v6-spark mt-3">{[4,5,5,6,6,7,8,8].map((h) => <span key={h} style={{ height: `${h}px` }} />)}</div></div>
+        <div className="v6-metric"><div className="v6-metric-top"><span>CORE STATUS</span><ShieldCheck className="h-4 w-4 text-emerald-400" /></div><div className="v6-metric-value text-4xl"><span className="cursor-blink">READY</span></div><div className="v6-metric-note">Go engine / web shell</div><div className="v6-spark mt-3">{[20,20,20,20,20,20,20,20].map((h,i) => <span key={i} style={{ height: `${h}px` }} />)}</div></div>
       </section>
-
-      <section className="v6-dashboard-top">
-        <div className="v6-v6-panel v6-score-panel anpu-v6-panel">
-          <div><div className="anpu-v6-kicker">POSTURE OVERVIEW</div><h2 className="mt-2 text-2xl font-bold text-white">Your monitored surface is stable.</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Most current targets sit inside the healthy band. Use the archive below to inspect the evidence behind each score.</p></div>
-          <div className="v6-score-ring"><div><strong>{avgScore.toFixed(1)}</strong><small>AVERAGE /10</small></div></div>
-        </div>
-        <div className="anpu-v6-panel p-5"><div className="anpu-v6-kicker">GUARDIAN</div><div className="mt-3 flex items-center justify-between"><div><div className="text-lg font-semibold text-white">WATCHING</div><div className="mt-1 text-xs text-slate-500">Telemetry nominal</div></div><span className="v6-status"><span className="v6-status-dot" /> Online</span></div><div className="mt-7 space-y-3">{["DNS / TLS","HEADERS","COOKIES","PUBLIC SURFACE"].map((label, i) => <div key={label}><div className="flex justify-between text-[10px] font-mono text-slate-500"><span>{label}</span><span>{[98,94,87,82][i]}%</span></div><div className="mt-1 h-1.5 bg-white/5"><div className="h-full bg-emerald-500" style={{ width: `${[98,94,87,82][i]}%` }} /></div></div>)}</div></div>
-      </section>
-
-      <section className="v6-table-panel anpu-v6-panel">
-        <div className="v6-table-toolbar"><div className="flex min-w-0 flex-1 gap-2"><div className="relative max-w-md flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /><input className="v6-input h-10 pl-10" placeholder="Search by domain..." value={query} onChange={(e) => setQuery(e.target.value)} /></div><select className="v6-input h-10 w-36" value={risk} onChange={(e) => setRisk(e.target.value)}><option value="all">All risk</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>
-        <div className="v6-table-wrap"><table className="v6-table"><thead><tr><th>Target</th><th>Status</th><th>Profile</th><th>Score</th><th>Grade</th><th>Last scan</th><th /></tr></thead><tbody>{visible.map((scan) => <tr key={scan.id}><td><div className="font-semibold text-white">{scan.target}</div><div className="mt-1 font-mono text-[10px] text-slate-500">{scan.url}</div></td><td><span className="v6-status"><span className="v6-status-dot" /> Completed</span></td><td className="font-mono text-xs text-slate-400">Deep</td><td><span className="v6-score-chip">{scan.score} / 10</span></td><td><span className={`v6-grade-chip ${scan.grade === "F" ? "danger" : ""}`}>{scan.grade}</span></td><td className="font-mono text-[10px] text-slate-500">{timeAgo[scan.id] ?? "recent"}</td><td><button className="v6-action-icon" onClick={() => navigate(`/reports/${scan.id}`)} aria-label={`View ${scan.target}`}><ArrowRight className="h-4 w-4" /></button></td></tr>)}</tbody></table></div>
-      </section>
+      <section className="v6-dashboard-top"><div className="v6-v6-panel v6-score-panel anpu-v6-panel"><div><div className="anpu-v6-kicker">POSTURE OVERVIEW</div><h2 className="mt-2 text-2xl font-bold text-white">Your monitored surface is stable.</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Most current targets sit inside the healthy band. Use the archive below to inspect the evidence behind each score.</p></div><div className="v6-score-ring"><div><strong>{avgScore.toFixed(1)}</strong><small>AVERAGE /10</small></div></div></div><div className="anpu-v6-panel p-5"><div className="anpu-v6-kicker">GUARDIAN</div><div className="mt-3 flex items-center justify-between"><div><div className="text-lg font-semibold text-white">WATCHING<span className="cursor-blink ml-1">█</span></div><div className="mt-1 text-xs text-slate-500">Telemetry nominal</div></div><span className="v6-status"><span className="v6-status-dot" /> Online</span></div><div className="mt-7 space-y-3">{["DNS / TLS","HEADERS","COOKIES","PUBLIC SURFACE"].map((label, i) => <div key={label}><div className="flex justify-between text-[10px] font-mono text-slate-500"><span>{label}</span><span>{[98,94,87,82][i]}%</span></div><div className="mt-1 h-1.5 bg-white/5"><div className="h-full bg-emerald-500" style={{ width: `${[98,94,87,82][i]}%` }} /></div></div>)}</div></div></section>
+      <section className="v6-table-panel anpu-v6-panel"><div className="v6-table-toolbar"><div className="flex min-w-0 flex-1 gap-2"><div className="relative max-w-md flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /><input className="v6-input h-10 pl-10" placeholder="Search by domain..." value={query} onChange={(e) => setQuery(e.target.value)} /></div><select className="v6-input h-10 w-36" value={risk} onChange={(e) => setRisk(e.target.value)}><option value="all">All risk</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div><div className="v6-table-wrap"><table className="v6-table"><thead><tr><th>Target</th><th>Status</th><th>Profile</th><th>Score</th><th>Grade</th><th>Last scan</th><th /></tr></thead><tbody>{visible.map((scan) => <tr key={scan.id}><td><div className="font-semibold text-white">{scan.target}</div><div className="mt-1 font-mono text-[10px] text-slate-500">{scan.url}</div></td><td><span className="v6-status"><span className="v6-status-dot" /> Completed</span></td><td className="font-mono text-xs text-slate-400">Deep</td><td><span className="v6-score-chip">{scan.score} / 10</span></td><td><span className={`v6-grade-chip ${scan.grade === "F" ? "danger" : ""}`}>{scan.grade}</span></td><td className="font-mono text-[10px] text-slate-500">{timeAgo[scan.id] ?? "recent"}</td><td><button className="v6-action-icon" onClick={() => navigate(`/reports/${scan.id}`)} aria-label={`View ${scan.target}`}><ArrowRight className="h-4 w-4" /></button></td></tr>)}</tbody></table></div></section>
     </div>
   );
 }
