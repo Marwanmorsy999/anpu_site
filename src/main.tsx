@@ -9,6 +9,7 @@ import "./terminal-v5.css"
 import "./system-v6.css"
 import "./protocol-v7.css"
 import "./protocol-v7-hotfix.css"
+import "./interaction-v8.css"
 import App from "./App.tsx"
 
 createRoot(document.getElementById("root")!).render(
