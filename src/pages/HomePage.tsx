@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, ChevronRight, Copy, FileText, GitBranch, Radar, ShieldCheck, Terminal, CheckCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AnubisWireframe } from "@/components/AnubisWireframe";
-import { HorusEye } from "@/components/HorusEye";
+import { AnubisGraphic } from "@/components/AnubisGraphic";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,32 +38,29 @@ export function HomePage() {
 
   return (
     <div className="anpu-home-shell">
-      <section className="anpu-hero-terminal">
+      <section className="anpu-hero-v11 crt-terminal">
         <div className="anpu-hero-bar"><span className="anpu-hero-dot" /><span>[ANPU_SEC_TERMINAL_01.EXE]</span><span className="ml-auto">ANPU // WEB SECURITY INTELLIGENCE</span><span className="cursor-blink">█</span></div>
         <div className="anpu-hero-grid">
-          <div>
-            <span className="anpu-hero-kicker">𓂀 TERMINAL ONLINE // OPEN SOURCE SECURITY</span>
-            <h1 className="anpu-hero-title">Guard what<br />you build.<span className="cursor-blink ml-2">█</span></h1>
-            <p className="anpu-hero-copy">Continuously scan your web application perimeter. Uncover vulnerabilities hidden from plain view and turn public signals into actionable security intelligence.</p>
-            <div className="anpu-hero-actions">
-              <Button className="anpu-hero-btn" asChild><Link to="/scan">[&gt;] INITIALIZE SURFACE SCAN</Link></Button>
-              <Button variant="outline" className="anpu-hero-btn" asChild><Link to="/docs">READ OPERATOR DOCS</Link></Button>
+          <div className="anpu-copy">
+            <span className="anpu-kicker">𓋹 SYSTEM_SECURITY_TERMINAL // SESSION_01</span>
+            <h1>Guard what <br /><span>you build.</span><span className="cursor-blink ml-2">█</span></h1>
+            <p>Continuously scan your surface infrastructure. Detect exposed endpoints, SSL/TLS flaws, and misconfigurations before adversaries find them.</p>
+            <div className="anpu-actions">
+              <Link to="/scan" className="anpu-v11-btn">[&gt;] RUN SYSTEM SCAN</Link>
+              <Link to="/docs" className="anpu-v11-btn gold">[?] DOCUMENTATION</Link>
             </div>
-            <div className="anpu-hero-meta">
-              <div><span>ENGINE</span><b>GO CORE</b>CLI-FIRST</div>
-              <div><span>GUARDIAN</span><b>𓁹 WATCHING</b>PUBLIC SURFACE</div>
-              <div><span>MODE</span><b>SAFE</b>AUTHORIZED TESTING</div>
+            <div className="anpu-readouts">
+              <div className="anpu-readout"><span>ENGINE</span><strong>GO CORE</strong>CLI-FIRST</div>
+              <div className="anpu-readout"><span>GUARDIAN</span><strong>𓁹 WATCHING</strong>PUBLIC SURFACE</div>
+              <div className="anpu-readout"><span>MODE</span><strong>SAFE</strong>AUTHORIZED TESTING</div>
             </div>
             <div className="mt-6 border-t border-[#14421E] pt-4 font-mono text-[10px] text-slate-500"><span className="text-[#FFC83B]">&gt;</span> SYSTEM MESSAGE: SURFACE INTELLIGENCE READY <span className="cursor-blink text-[#22FF66]">█</span></div>
           </div>
-          <div className="anpu-hero-visual">
-            <HorusEye className="absolute right-5 top-5 z-10 w-16 opacity-70" />
-            <AnubisWireframe />
-            <div className="anpu-hero-stream"><span>𓋹 TARGET LINKED</span><b>LIVE_ACTIVE</b><span>𓆣 SIGNALS NOMINAL</span></div>
-          </div>
+          <div className="anpu-visual"><AnubisGraphic /></div>
         </div>
-        <div className="border-t border-[#14421E] px-4 py-2 font-mono text-[9px] text-[#5f8a67]"><span className="text-[#FFC83B]">𓁹</span> PHARAOH GUARD DATA STREAM // <span className="text-[#22FF66]">NODE_01</span> // CRT LINK STABLE // <span className="cursor-blink">█</span></div>
+        <div className="anpu-v11-footer"><span className="text-[#FFC83B]">𓁹</span> PHARAOH GUARD DATA STREAM // <b>NODE_01</b> // CRT LINK STABLE // <span className="cursor-blink">█</span></div>
       </section>
+
       <section className="anpu-section anpu-section-intro"><div className="anpu-section-heading"><div className="anpu-eyebrow">01 / THE WORKFLOW</div><h2>See the surface.<br />Understand the signal.</h2><p>ANPU keeps the path simple: discover what is visible, analyze security-relevant signals, and explain what needs attention.</p></div><div className="anpu-module-grid">{capabilities.map(({ title, description, icon: Icon, accent }, index) => <Card key={title} className={`anpu-module-card accent-${accent}`}><div className="anpu-module-top"><div className="anpu-module-icon"><Icon /></div><span>0{index + 1}</span></div><h3>{title}</h3><p>{description}</p><div className="anpu-module-link">Explore <ChevronRight /></div></Card>)}</div></section>
       <section className="anpu-section anpu-live-section"><div className="anpu-section-heading center"><div className="anpu-eyebrow">02 / LIVE SAMPLE</div><h2>A security report with context.</h2><p>Not just a number. ANPU keeps the evidence visible so the result is useful.</p></div><Card className="anpu-live-console"><div className="anpu-console-head"><div><span className="anpu-console-target">example.com</span><span className="anpu-console-meta">Deep profile · Demo</span></div><span className="anpu-console-score">8.7 <small>/10</small> <b>A</b></span></div><div className="anpu-console-grid"><div className="anpu-console-nav">{checks.map(([name, status], index) => <button key={name} type="button" className={selectedCheck === index ? "is-selected" : ""} onClick={() => setSelectedCheck(index)}><span className={status === "PASS" ? "dot-pass" : "dot-warn"} />{name}<ChevronRight /></button>)}</div><div className="anpu-console-detail"><div className="anpu-detail-label">{checks[selectedCheck][1]}</div><h3>{checks[selectedCheck][0]}</h3><p>{checks[selectedCheck][2]}. ANPU records the observation, explains why it matters, and points toward a practical next step.</p><div className="anpu-evidence"><span>OBSERVATION</span><code>response security policy detected</code></div><div className="anpu-detail-actions"><Button variant="outline" asChild><Link to="/reports/scan-001">Open full report <ArrowRight /></Link></Button><Badge variant="secondary">Demo data</Badge></div></div></div></Card></section>
       <section className="anpu-section anpu-process-section-v3"><div className="anpu-section-heading center"><div className="anpu-eyebrow">03 / FROM TARGET TO REPORT</div><h2>One scan. Five clear stages.</h2></div><div className="anpu-process-v3">{["Target","Discover","Analyze","Score","Report"].map((step, index) => <div className="anpu-process-v3-step" key={step}><span>0{index + 1}</span><div><strong>{step}</strong><small>{["Choose an authorized target.","Collect public signals.","Evaluate relevant controls.","Prioritize the findings.","Make the result useful."][index]}</small></div>{index < 4 && <i />}</div>)}</div></section>
