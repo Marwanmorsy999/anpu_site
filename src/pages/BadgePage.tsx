@@ -1,202 +1,29 @@
-import { useState, type ChangeEvent } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Copy, ExternalLink, ShieldCheck } from "lucide-react";
-import { PharaohGuardian } from "@/components/PharaohGuardian";
-import { GuardianStatus } from "@/components/GuardianStatus";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Check, Copy, ExternalLink, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { demoReport } from "@/lib/mockData";
 
 export function BadgePage() {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<"Markdown" | "HTML" | "Dynamic URL">("Markdown");
   const [copied, setCopied] = useState(false);
   const [url, setUrl] = useState("https://example.com");
+  const code = tab === "Markdown"
+    ? `[![ANPU Security](https://anpu.example/badge.svg?score=${demoReport.score}&grade=${demoReport.grade})](https://anpu.example/report/${demoReport.id})`
+    : tab === "HTML"
+      ? `<a href="https://anpu.example/report/${demoReport.id}"><img src="https://anpu.example/badge.svg?score=${demoReport.score}&grade=${demoReport.grade}" alt="ANPU Security Score" /></a>`
+      : `<a href="${url}"><img src="https://anpu.example/badge.svg?url=${encodeURIComponent(url)}" alt="ANPU Security Badge" /></a>`;
 
-  const badgeTypes = [
-    {
-      name: "Markdown",
-      code: `[![ANPU Security](https://img.shields.io/badge/ANPU-${demoReport.score}/10-7CFF4F?style=flat-square&logo=shield)](https://anpu.example/report/${demoReport.id})`
-    },
-    {
-      name: "HTML",
-      code: `<a href="https://anpu.example/report/${demoReport.id}"><img src="https://img.shields.io/badge/ANPU-${demoReport.score}/10-7CFF4F?style=flat-square&logo=shield" alt="ANPU Security Score" /></a>`
-    },
-    {
-      name: "Dynamic",
-      code: `<a href="https://anpu.example/report/${url}"><img src="https://anpu.example/badge/${url}" alt="ANPU Security Badge" /></a>`
-    },
-  ];
-
-  const [selectedType, setSelectedType] = useState("Dynamic");
-  const selectedCode = badgeTypes.find((t) => t.name === selectedType)?.code || "";
-
-  const copyCode = () => {
-    navigator.clipboard.writeText(selectedCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const copy = async () => { await navigator.clipboard.writeText(code); setCopied(true); window.setTimeout(() => setCopied(false), 1600); };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Back link */}
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
-        <ArrowLeft className="h-4 w-4" /> BACK HOME
-      </Link>
-
-      {/* Module Header */}
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <ShieldCheck className="h-10 w-10 text-primary" />
-          <PharaohGuardian size={48} state="stable" />
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          ANPU // SECURITY BADGE
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          Display your security score on your website or GitHub repository.
-        </p>
-      </div>
-
-      {/* Badge Preview */}
-      <Card className="p-6 mb-6 border-border">
-        <p className="text-xs uppercase tracking-wider text-secondary mb-4">
-          ANPU SECURITY SEAL
-        </p>
-        <div className="flex justify-center gap-8">
-          {[
-            { label: "LIGHT", bg: "#f0f0f0", text: "#000", score: demoReport.score, grade: demoReport.grade },
-            { label: "DARK", bg: "#1a1a1a", text: "#fff", score: demoReport.score, grade: demoReport.grade },
-          ].map((theme) => (
-            <div key={theme.label} className="p-4" style={{ background: theme.bg }}>
-              <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
-                {theme.label} THEME
-              </p>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <PharaohGuardian size={24} state="stable" />
-                <span className="text-2xl font-bold" style={{ color: theme.text }}>
-                  {theme.grade}
-                </span>
-              </div>
-              <p className="text-sm mt-1" style={{ color: theme.text }}>
-                {theme.score} / 10
-              </p>
-              <p className="text-xs mt-1 text-muted-foreground">ANPU Security</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 pt-4 border-t border-border/50 text-center">
-          <GuardianStatus status="stable" size={32} showLabel={false} />
-          <p className="text-xs text-muted-foreground uppercase tracking-wide mt-2">
-            GUARDIAN: STABLE
-          </p>
-        </div>
-      </Card>
-
-      {/* Code Generation */}
-      <Card className="p-6 mb-6 border-border">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-          <h2 className="text-lg font-semibold text-foreground">
-            GENERATE BADGE CODE
-          </h2>
-        </div>
-
-        {/* Badge type selection */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {badgeTypes.map((type) => (
-            <Button
-              key={type.name}
-              variant={selectedType === type.name ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedType(type.name)}
-            >
-              {type.name}
-            </Button>
-          ))}
-        </div>
-
-        {/* URL input for dynamic badge */}
-        {selectedType === "Dynamic" && (
-          <div className="mb-4">
-            <label className="text-sm text-secondary uppercase tracking-wider mb-2 block">
-              TARGET URL
-            </label>
-            <Input
-              type="text"
-              placeholder="https://example.com"
-              value={url}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
-              className="w-full"
-            />
-          </div>
-        )}
-
-        {/* Code display */}
-        <div className="relative">
-          <pre 
-            className="p-4 bg-[#050505] border border-border/50 text-xs text-muted-foreground font-mono overflow-x-auto whitespace-pre-wrap"
-            style={{ fontFamily: "'IBM Plex Mono', 'Courier New', monospace" }}
-          >
-{selectedCode}
-          </pre>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyCode}
-            className="absolute top-2 right-2 gap-1.5"
-          >
-            <Copy className="h-3.5 w-3.5" />
-            {copied ? "COPIED!" : "COPY CODE"}
-          </Button>
-        </div>
-      </Card>
-
-      {/* Demo Warning */}
-      <Card className="p-4 mb-6 border-amber/30 bg-amber/5">
-        <p className="text-amber mb-2">
-          ⚠️ BADGE GENERATION NOT YET IMPLEMENTED
-        </p>
-        <p className="text-xs text-muted-foreground">
-          This is a preview of the badge system. The actual badge generation API is planned for future development.
-        </p>
-      </Card>
-
-      {/* Usage instructions */}
-      <Card className="p-6 mb-8 border-border">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          HOW TO USE
-        </h2>
-        <div className="space-y-4">
-          {[
-            { step: "1", title: "ADD TO MARKDOWN", desc: "Paste the Markdown code in your README.md file." },
-            { step: "2", title: "ADD TO HTML", desc: "Paste the HTML code anywhere on your website." },
-            { step: "3", title: "COMMIT & PUSH", desc: "Commit and push the changes to see the badge live." },
-            { step: "4", title: "RUN SCANS", desc: "Run ANPU scans to update the badge automatically." },
-          ].map((step) => (
-            <div key={step.step} className="flex gap-3 p-3 border border-border/30">
-              <span className="flex h-6 w-6 items-center justify-center border border-primary/30 text-primary text-xs font-bold shrink-0">
-                {step.step}
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{step.title}</p>
-                <p className="text-xs text-muted-foreground">{step.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Actions */}
-      <div className="flex justify-center gap-4">
-        <Button size="lg" asChild>
-          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="gap-2">
-            <ExternalLink className="h-4 w-4" />
-            VIEW ON GITHUB
-          </a>
-        </Button>
-        <Button variant="outline" size="lg" onClick={() => window.history.back()}>
-          BACK
-        </Button>
-      </div>
+    <div className="anpu-v6-shell">
+      <header className="anpu-v6-page-head"><div><div className="anpu-v6-kicker">ANPU / SECURITY BADGE</div><h1 className="anpu-v6-title">Publish the proof.</h1><p className="anpu-v6-subtitle">Generate a clean ANPU badge for repositories, websites and project documentation.</p></div><button className="anpu-v6-btn-secondary px-4 py-2" onClick={() => navigate("/reports")}>VIEW REPORTS</button></header>
+      <section className="anpu-v6-panel p-5 sm:p-6 mb-4"><div className="mb-5 flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-emerald-400" /><div><h2 className="text-lg font-semibold text-white">Live badge preview</h2><p className="text-xs text-slate-500">Three render treatments using the same score data.</p></div></div><div className="v6-preview-grid">{[
+        { name: "LIGHT", className: "light" }, { name: "DARK", className: "dark" }, { name: "MONO", className: "mono" },
+      ].map(({ name, className }) => <div key={name} className={`v6-preview ${className}`}><span className="font-mono text-[9px] opacity-60">{name} THEME</span><div className="v6-seal"><span>ANPU</span><span>{demoReport.score} / 10</span><strong>{demoReport.grade}</strong></div><span className="self-center text-[10px] opacity-60">SECURITY VERIFIED</span></div>)}</div></section>
+      <section className="anpu-v6-panel p-5 sm:p-6"><div className="mb-4"><div className="anpu-v6-kicker">EXPORT</div><h2 className="mt-1 text-lg font-semibold text-white">Embed your score</h2></div><div className="v6-code-tabs">{(["Markdown", "HTML", "Dynamic URL"] as const).map((item) => <button key={item} className={`v6-code-tab ${tab === item ? "active" : ""}`} onClick={() => setTab(item)}>{item}</button>)}</div>{tab === "Dynamic URL" && <input className="v6-input mb-3" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com" /> }<div className="v6-code"><button className="v6-copy v6-code-tab" onClick={copy}>{copied ? <><Check className="mr-1 inline h-3 w-3" /> COPIED</> : <><Copy className="mr-1 inline h-3 w-3" /> COPY</>}</button>{code}</div></section>
+      <div className="mt-5 flex flex-wrap gap-2"><button className="anpu-v6-btn-primary px-4 py-2" onClick={() => navigate("/scan")}>RUN A SCAN</button><a className="anpu-v6-btn-secondary px-4 py-2" href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noreferrer"><ExternalLink className="mr-2 inline h-4 w-4" /> GITHUB</a></div>
     </div>
   );
 }
