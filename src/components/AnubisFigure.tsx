@@ -1,16 +1,12 @@
+import { AnubisGraphic } from "@/components/AnubisGraphic";
+
 export function AnubisFigure() {
   return (
     <figure className="anpu-anubis-figure">
-      <div className="anpu-anubis-scanline" />
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Anubis_standing.svg/640px-Anubis_standing.svg.png"
-        alt="Anubis, the jackal-headed ancient Egyptian god, standing with staff and ankh"
-        loading="eager"
-        decoding="async"
-      />
+      <AnubisGraphic />
       <figcaption>
-        <span>ANUBIS / ARCHIVAL REFERENCE</span>
-        <a href="https://commons.wikimedia.org/wiki/File:Anubis_standing.svg" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0 · Jeff Dahl</a>
+        <span>ANUBIS / VECTOR GUARDIAN</span>
+        <span>LOCAL INLINE SVG · NO EXTERNAL IMAGE</span>
       </figcaption>
     </figure>
   );
