@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertTriangle, Check, Clock3, Gauge, Network, Volume2 } from "lucide-react";
+import { Check, Clock3, Gauge, Network, Volume2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { scanProgressSteps, demoReport } from "@/lib/mockData";
 import type { ScanProfile } from "@/lib/types";
@@ -61,7 +61,7 @@ export function ScanPage() {
     : step === scanProgressSteps.length - 1 ? 100 : 0;
 
   return (
-    <div className="anpu-v6-shell">
+    <div className="anpu-v6-shell crt-terminal">
       <header className="anpu-v6-page-head">
         <div>
           <div className="anpu-v6-kicker">ANPU / EXECUTION CONSOLE</div>
@@ -76,11 +76,6 @@ export function ScanPage() {
       <section className="v6-scan-grid">
         <fieldset className="anpu-v6-panel v6-config v7-fieldset">
           <legend>[ TARGET SELECTION ]</legend>
-          <div className="v6-alert">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-            <p><strong>Authorization required.</strong> This browser interface is a demo; it does not dispatch a real scan to the Go engine.</p>
-          </div>
-
           <label className="v6-label" htmlFor="scan-url">Target URL <span className="cursor-blink">█</span></label>
           <input id="scan-url" className="v6-input" value={url} onChange={(e) => setUrl(e.target.value)} disabled={running} placeholder="https://example.com" />
 
@@ -104,16 +99,16 @@ export function ScanPage() {
             <button type="button" className="v7-audio-toggle" onClick={() => setSoundOn((value) => !value)}>
               <Volume2 className="mr-2 inline h-3.5 w-3.5" /> KEY CLICK: {soundOn ? "ON" : "OFF"}
             </button>
-            <span className="font-mono text-[9px] text-slate-600">AUTH REQUIRED</span>
+            <span className="font-mono text-[9px] text-slate-600">AUTHORIZED TARGETS ONLY</span>
           </div>
 
-          <button type="button" className="v6-execute v7-ascii-button mt-6" onClick={start} disabled={!url.trim() || running}>
+          <button type="button" className="v6-execute v7-ascii-button terminal-btn mt-6" onClick={start} disabled={!url.trim() || running}>
             <span className="v7-button-line">┌──────────────────────────┐</span>
             <span className="v7-button-line">│ [ RUN DEMO SCAN ]       │</span>
             <span className="v7-button-line">└──────────────────────────┘</span>
           </button>
 
-          {running && <TerminalLogFeed running={running} target={url} />}
+          <TerminalLogFeed running={running} target={url} />
         </fieldset>
 
         <section className="anpu-v6-panel v6-live v7-telemetry-panel">
@@ -128,8 +123,8 @@ export function ScanPage() {
           <div className="v6-terminal-window v7-tomb-window">
             <div className="v7-guardian-screen">
               <HorusEye className="v7-guardian-eye" />
-              <TerminalRadar />
-              <pre className="v7-ascii-anubis">{asciiAnubis.join("\\n")}</pre>
+              <TerminalRadar active={running} />
+              <pre className="v7-ascii-anubis">{asciiAnubis.join("\n")}</pre>
               <div className="v7-sweep" />
             </div>
 
@@ -159,7 +154,7 @@ export function ScanPage() {
           </div>
 
           {progress === 100 && !running && (
-            <button type="button" className="mt-3 w-full rounded-none border border-emerald-500/30 bg-emerald-500/10 py-3 font-mono text-[10px] font-semibold text-emerald-300" onClick={() => navigate("/reports/demo-scan-001")}>
+            <button type="button" className="mt-3 w-full rounded-none border border-emerald-500/30 bg-emerald-500/10 py-3 font-mono text-[10px] font-semibold text-emerald-300 terminal-btn" onClick={() => navigate("/reports/demo-scan-001")}>
               <Check className="mr-2 inline h-4 w-4" /> VIEW DEMO REPORT / SCORE {demoReport.score}
             </button>
           )}
