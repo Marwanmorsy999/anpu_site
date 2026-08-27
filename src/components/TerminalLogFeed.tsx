@@ -21,7 +21,7 @@ export function TerminalLogFeed({ running, target }: { running: boolean; target:
 
   const logs = useMemo(() => {
     const host = target.trim() || "https://example.com";
-    return BASE_LOGS.map(([kind, message], index) => {
+    return BASE_LOGS.map(([, message], index) => {
       const now = new Date();
       now.setSeconds(now.getSeconds() + index);
       const time = `[${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}]`;
