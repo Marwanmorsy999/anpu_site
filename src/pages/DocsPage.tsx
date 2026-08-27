@@ -1,38 +1,22 @@
 import { BookOpen, Terminal, Server, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TerminalTitle } from "@/components/TerminalTitle";
 
 const sections = ["getting-started", "cli", "configuration", "integrations", "faq"];
-const commands = [
-  ["anpu scan <url>", "Run a standard security scan."],
-  ["anpu scan --profile surface <url>", "Quick public-surface checks."],
-  ["anpu scan --profile deep <url>", "Broader analysis."],
-  ["anpu scan --json <url>", "Emit machine-readable JSON."],
-  ["anpu version", "Display version information."],
-];
+const commands = [["anpu scan <url>", "Run a standard security scan."],["anpu scan --profile surface <url>", "Quick public-surface checks."],["anpu scan --profile deep <url>", "Broader analysis."],["anpu scan --json <url>", "Emit machine-readable JSON."],["anpu version", "Display version information."]];
 
 export function DocsPage() {
-  return (
-    <div className="anpu-v6-shell">
-      <header className="anpu-v6-page-head"><div><div className="anpu-v6-kicker">ANPU / DOCUMENTATION</div><h1 className="anpu-v6-title">Operator documentation.</h1><p className="anpu-v6-subtitle">A practical reference for installing ANPU, running scans, configuring the CLI and understanding its reporting workflow.</p></div><Link className="anpu-v6-btn-secondary px-4 py-2" to="/api">API REFERENCE</Link></header>
-      <div className="v6-docs-layout">
-        <aside className="v6-toc">{sections.map((id, i) => <a key={id} href={`#${id}`} className="active">0{i + 1} / {id.replace("getting-started", "getting started")}</a>)}</aside>
-        <main>
-          <section id="getting-started" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">01 / BOOT</div><h2 className="mt-2">Getting started</h2><p>ANPU is a Go command-line security scanner focused on publicly exposed web signals.</p><h3>Install</h3><pre className="v6-codeblock">go install github.com/Marwanmorsy999/anpu@latest</pre><h3>Verify</h3><pre className="v6-codeblock">anpu version</pre><h3>First scan</h3><pre className="v6-codeblock">anpu scan https://example.com</pre></section>
-          <section id="cli" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">02 / TERMINAL</div><h2 className="mt-2">CLI usage</h2><p>Use profiles to control scan depth and output flags to integrate results into developer workflows.</p>{commands.map(([cmd, desc]) => <div className="v6-endpoint" key={cmd}><div className="font-mono text-xs text-emerald-300">$ {cmd}</div><p className="v6-endpoint-desc">{desc}</p></div>)}<pre className="v6-codeblock"># Profile selection
-anpu scan --profile surface https://example.com
-anpu scan --profile standard https://example.com
-anpu scan --profile deep https://example.com
-
-# Output
-anpu scan --json https://example.com
-anpu scan --markdown https://example.com</pre></section>
-          <section id="configuration" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">03 / CONFIG</div><h2 className="mt-2">Configuration</h2><div className="v6-endpoint"><div className="grid gap-3 sm:grid-cols-2"><div><b className="text-white">Timeout</b><p>Request timeout in seconds. Default: 30.</p></div><div><b className="text-white">Retries</b><p>Retry attempts for failed requests. Default: 3.</p></div><div><b className="text-white">Concurrency</b><p>Maximum concurrent requests. Default: 10.</p></div><div><b className="text-white">Verbose</b><p>Enable detailed terminal output.</p></div></div></div></section>
-          <section id="integrations" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">04 / INTEGRATIONS</div><h2 className="mt-2">Workflow integration</h2><div className="grid gap-3 sm:grid-cols-2">{[[Terminal,"CI/CD","Run ANPU in deployment workflows."],[Server,"Local development","Use the CLI before committing changes."],[ShieldCheck,"Monitoring","Track posture over time."],[BookOpen,"Exports","JSON, Markdown and text outputs."]].map(([Icon,title,desc])=>{const I=Icon as typeof Terminal; return <div className="v6-endpoint" key={title as string}><I className="h-4 w-4 text-emerald-400" /><b className="mt-3 block text-white">{title as string}</b><p className="v6-endpoint-desc">{desc as string}</p></div>})}</div></section>
-          <section id="faq" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">05 / FAQ</div><h2 className="mt-2">Questions operators ask</h2>{[["What does ANPU scan?","DNS, TLS, headers, cookies, redirects, robots.txt, sitemap.xml and public technology signals."],["Does the web UI run a real scan?","The current web UI is a demo visualization; the real scanner is the Go CLI."],["Does ANPU need an API key?","The CLI does not require an API key to run locally."]].map(([q,a])=><div className="v6-endpoint" key={q}><b className="text-white">{q}</b><p className="v6-endpoint-desc">{a}</p></div>)}</section>
-        </main>
-      </div>
+  return <div className="anpu-v6-shell">
+    <header className="anpu-v6-page-head"><div><div className="anpu-v6-kicker">ANPU / DOCUMENTATION</div><h1 className="anpu-v6-title"><TerminalTitle text="Operator documentation." /></h1><p className="anpu-v6-subtitle">A practical reference for installing ANPU, running scans, configuring the CLI and understanding its reporting workflow.</p></div><Link className="anpu-v6-btn-secondary px-4 py-2" to="/api">API REFERENCE</Link></header>
+    <div className="v6-docs-layout"><aside className="v6-toc">{sections.map((id, i) => <a key={id} href={`#${id}`} className="active">{i === sections.length - 1 ? "└──" : "├──"} 0{i + 1} / {id.replace("getting-started", "getting started")}</a>)}</aside>
+      <main>
+        <section id="getting-started" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">01 / BOOT</div><h2 className="mt-2">Getting started</h2><p>ANPU is a Go command-line security scanner focused on publicly exposed web signals.</p><h3>Install</h3><pre className="v6-codeblock">go install github.com/Marwanmorsy999/anpu@latest</pre><h3>Verify</h3><pre className="v6-codeblock">anpu version</pre><h3>First scan</h3><pre className="v6-codeblock">anpu scan https://example.com</pre></section>
+        <section id="cli" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">02 / TERMINAL</div><h2 className="mt-2">CLI usage</h2><p>Use profiles to control scan depth and output flags to integrate results into developer workflows.</p>{commands.map(([cmd, desc]) => <div className="v6-endpoint" key={cmd}><div className="font-mono text-xs text-emerald-300">$ {cmd}<span className="cursor-blink">█</span></div><p className="v6-endpoint-desc">{desc}</p></div>)}<pre className="v6-codeblock"># Profile selection{"\n"}anpu scan --profile surface https://example.com{"\n"}anpu scan --profile standard https://example.com{"\n"}anpu scan --profile deep https://example.com{"\n\n"}# Output{"\n"}anpu scan --json https://example.com{"\n"}anpu scan --markdown https://example.com</pre></section>
+        <section id="configuration" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">03 / CONFIG</div><h2 className="mt-2">Configuration</h2><div className="v6-endpoint"><div className="grid gap-3 sm:grid-cols-2"><div><b className="text-white">Timeout</b><p>Request timeout in seconds. Default: 30.</p></div><div><b className="text-white">Retries</b><p>Retry attempts for failed requests. Default: 3.</p></div><div><b className="text-white">Concurrency</b><p>Maximum concurrent requests. Default: 10.</p></div><div><b className="text-white">Verbose</b><p>Enable detailed terminal output.</p></div></div></div></section>
+        <section id="integrations" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">04 / INTEGRATIONS</div><h2 className="mt-2">Workflow integration</h2><div className="grid gap-3 sm:grid-cols-2">{[[Terminal,"CI/CD","Run ANPU in deployment workflows."],[Server,"Local development","Use the CLI before committing changes."],[ShieldCheck,"Monitoring","Track posture over time."],[BookOpen,"Exports","JSON, Markdown and text outputs."]].map(([Icon,title,desc])=>{const I=Icon as typeof Terminal; return <div className="v6-endpoint" key={title as string}><I className="h-4 w-4 text-emerald-400" /><b className="mt-3 block text-white">{title as string}</b><p className="v6-endpoint-desc">{desc as string}</p></div>})}</div></section>
+        <section id="faq" className="v6-doc-section anpu-v6-panel"><div className="anpu-v6-kicker">05 / FAQ</div><h2 className="mt-2">Questions operators ask</h2>{[["What does ANPU scan?","DNS, TLS, headers, cookies, redirects, robots.txt, sitemap.xml and public technology signals."],["Does the web UI run a real scan?","The current web UI is a demo visualization; the real scanner is the Go CLI."],["Does ANPU need an API key?","The CLI does not require an API key to run locally."]].map(([q,a])=><div className="v6-endpoint" key={q}><b className="text-white">{q}</b><p className="v6-endpoint-desc">{a}</p></div>)}</section>
+      </main>
     </div>
-  );
+  </div>;
 }
-
 export default DocsPage;
