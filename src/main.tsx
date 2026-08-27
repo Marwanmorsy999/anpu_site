@@ -11,6 +11,7 @@ import "./protocol-v7.css"
 import "./protocol-v7-hotfix.css"
 import "./interaction-v8.css"
 import "./live-terminal-v9.css"
+import "./hero-protocol-v10.css"
 import App from "./App.tsx"
 
 createRoot(document.getElementById("root")!).render(
