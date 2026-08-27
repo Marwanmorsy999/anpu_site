@@ -1,0 +1,31 @@
+/* ANPU hard terminal interaction + contrast patch */
+a,button,input { transition: none !important; }
+
+body {
+  background-color: #050805 !important;
+  color: #A3E635 !important;
+}
+
+h1,h2,h3 { color:#FFFFFF !important; text-shadow:0 0 8px rgba(255,255,255,.2); }
+
+.anpu-hard-crt { position:relative; }
+.anpu-hard-crt::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:30;
+  opacity:.32;
+  background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.34) 50%);
+  background-size:100% 4px;
+}
+
+.anpu-hard-button:hover {
+  background:#22FF66 !important;
+  color:#050805 !important;
+  border-color:#22FF66 !important;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .anpu-hard-crt::before { opacity:.18; }
+}
