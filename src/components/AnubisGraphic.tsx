@@ -1,5 +1,3 @@
-import React from "react";
-
 export function AnubisGraphic() {
   return (
     <div className="anpu-anubis-graphic">
