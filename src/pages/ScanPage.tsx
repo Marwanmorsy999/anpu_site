@@ -3,6 +3,7 @@ import { AlertTriangle, Check, Clock3, Gauge, Loader2, Network, ScanLine } from 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { scanProgressSteps, demoReport } from "@/lib/mockData";
 import type { ScanProfile } from "@/lib/types";
+import { HorusEye } from "@/components/HorusEye";
 
 const profiles: { value: ScanProfile; title: string; desc: string }[] = [
   { value: "surface", title: "Surface", desc: "Fast public exposure" },
@@ -42,24 +43,35 @@ export function ScanPage() {
 
   return (
     <div className="anpu-v6-shell">
-      <header className="anpu-v6-page-head"><div><div className="anpu-v6-kicker">ANPU / EXECUTION CONSOLE</div><h1 className="anpu-v6-title">Scan with context.</h1><p className="anpu-v6-subtitle">Configure the target on the left. Watch ANPU process the public surface on the right.</p></div><span className={`v6-status ${running ? "warn" : ""}`}><span className="v6-status-dot" /> {running ? "Analyzing" : "Demo ready"}</span></header>
+      <header className="anpu-v6-page-head"><div><div className="anpu-v6-kicker">ANPU / EXECUTION CONSOLE</div><h1 className="anpu-v6-title">Scan with context.</h1><p className="anpu-v6-subtitle">Configure the target on the left. Watch the guardian process the public surface on the right.</p></div><span className={`v6-status ${running ? "warn" : ""}`}><span className="v6-status-dot" /> {running ? "Analyzing" : "Demo ready"}</span></header>
       <section className="v6-scan-grid">
-        <div className="anpu-v6-panel v6-config">
-          <div className="v6-alert"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /><p><strong>Authorization required.</strong> The web scanner is a demo interface; it does not dispatch a real scan to the Go engine.</p></div>
+        <fieldset className="anpu-v6-panel v6-config v7-fieldset">
+          <legend>[ TARGET SELECTION ]</legend>
+          <div className="v6-alert"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /><p><strong>Authorization required.</strong> This browser interface is a demo; it does not dispatch a real scan to the Go engine.</p></div>
           <label className="v6-label" htmlFor="scan-url">Target URL</label>
           <input id="scan-url" className="v6-input" value={url} onChange={(e) => setUrl(e.target.value)} disabled={running} placeholder="https://example.com" />
-          <div className="mt-6"><span className="v6-label">Scan profile</span><div className="v6-pills">{profiles.map((item) => <button key={item.value} className={`v6-pill ${profile === item.value ? "active" : ""}`} onClick={() => setProfile(item.value)} disabled={running}><b>{item.title}</b><small>{item.desc}</small></button>)}</div></div>
-          <button className="v6-execute" onClick={start} disabled={!url.trim() || running}>{running ? <><Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> RUNNING DEMO</> : <><ScanLine className="mr-2 inline h-4 w-4" /> RUN SCAN</>}</button>
+          <div className="mt-6"><span className="v6-label">Scan profile</span><div className="v6-pills">{profiles.map((item) => <button type="button" key={item.value} className={`v6-pill ${profile === item.value ? "active" : ""}`} onClick={() => setProfile(item.value)} disabled={running}><b>{item.title}</b><small>{item.desc}</small></button>)}</div></div>
+          <button type="button" className="v6-execute" onClick={start} disabled={!url.trim() || running}>{running ? <><Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> RUNNING DEMO</> : <><ScanLine className="mr-2 inline h-4 w-4" /> RUN SCAN</>}</button>
           <div className="mt-4 grid grid-cols-2 gap-2 text-[10px] font-mono text-slate-500"><div className="border border-white/5 p-3"><span>PROFILE</span><b className="mt-1 block text-slate-200">{profile.toUpperCase()}</b></div><div className="border border-white/5 p-3"><span>AUTH</span><b className="mt-1 block text-emerald-400">REQUIRED</b></div></div>
-        </div>
+        </fieldset>
 
-        <div className="anpu-v6-panel v6-live">
-          <div className="v6-live-head"><div><div className="anpu-v6-kicker">LIVE FEEDBACK</div><h2 className="mt-1 text-xl font-semibold text-white">Guardian telemetry</h2></div><div className="font-mono text-xs text-slate-500">NODE / 01</div></div>
-          <div className="v6-terminal-window"><div className="v6-radar"><span className="v6-radar-dot" style={{ left: "31%", top: "34%" }} /><span className="v6-radar-dot" style={{ left: "66%", top: "58%" }} /><span className="v6-radar-dot" style={{ left: "53%", top: "24%" }} /></div><div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-slate-600"><span>ANPU//RADAR</span><span className="text-right">{progress.toString().padStart(3, "0")}% COMPLETE</span><span>PUBLIC SURFACE</span><span className="text-right text-emerald-400">NOMINAL</span></div><div className="mt-5 font-mono text-[10px] leading-6 text-slate-500">{scanProgressSteps.map((item, i) => <div key={item} className={i <= step ? "text-slate-200" : ""}><span className={i < step || (!running && progress === 100) ? "text-emerald-400" : i === step ? "text-amber-300" : "text-slate-700"}>{i < step || (!running && progress === 100) ? "✓" : i === step ? "›" : "·"}</span> <span className="ml-2">{item}</span></div>)}</div></div>
+        <section className="anpu-v6-panel v6-live v7-telemetry-panel">
+          <div className="v6-live-head"><div><div className="anpu-v6-kicker">GUARDIAN TELEMETRY</div><h2 className="mt-1 text-xl font-semibold text-white">𓁹 ANUBIS // NODE 01</h2></div><div className="font-mono text-xs text-slate-500">CRT LINK / ACTIVE</div></div>
+          <div className="v6-terminal-window v7-tomb-window">
+            <div className="v7-guardian-screen"><HorusEye className="v7-guardian-eye" /><pre className="v7-ascii-anubis">{`      /\\\\
+  ___/  \\\\___
+ /   𓁹   \\
+|  ANUBIS-01  |
+|  𓋹 GUARDIAN |
+ \\___  ____/_/
+     \\//`}</pre><div className="v7-sweep" /></div>
+            <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-slate-600"><span>ANPU//RADAR</span><span className="text-right">{progress.toString().padStart(3, "0")}% COMPLETE</span><span>PUBLIC SURFACE</span><span className="text-right text-emerald-400">NOMINAL</span></div>
+            <div className="mt-5 font-mono text-[10px] leading-6 text-slate-500">{scanProgressSteps.map((item, i) => <div key={item} className={i <= step ? "text-slate-200" : ""}><span className={i < step || (!running && progress === 100) ? "text-emerald-400" : i === step ? "text-amber-300" : "text-slate-700"}>{i < step || (!running && progress === 100) ? "✓" : i === step ? "›" : "·"}</span> <span className="ml-2">{item}</span></div>)}</div>
+          </div>
           <div className="v6-telemetry"><div><small>ENDPOINTS</small><b>{running ? Math.round(progress * 1.7) : progress === 100 ? 168 : 0}</b></div><div><small>REQUEST RATE</small><b>{running ? 18 : 0}<span className="ml-1 text-xs text-slate-500">/s</span></b></div><div><small>ELAPSED</small><b>{elapsed}s</b></div></div>
-          {progress === 100 && !running && <button className="mt-3 w-full rounded-[10px] border border-emerald-500/30 bg-emerald-500/10 py-3 font-mono text-[10px] font-semibold text-emerald-300" onClick={() => navigate("/reports/demo-scan-001")}><Check className="mr-2 inline h-4 w-4" /> VIEW DEMO REPORT / SCORE {demoReport.score}</button>}
+          {progress === 100 && !running && <button type="button" className="mt-3 w-full rounded-none border border-emerald-500/30 bg-emerald-500/10 py-3 font-mono text-[10px] font-semibold text-emerald-300" onClick={() => navigate("/reports/demo-scan-001")}><Check className="mr-2 inline h-4 w-4" /> VIEW DEMO REPORT / SCORE {demoReport.score}</button>}
           <div className="mt-4 grid grid-cols-3 gap-2 text-[10px] font-mono text-slate-500"><div className="border border-white/5 p-2"><Network className="mb-1 h-3.5 w-3.5 text-emerald-400" />PUBLIC</div><div className="border border-white/5 p-2"><Gauge className="mb-1 h-3.5 w-3.5 text-emerald-400" />SIGNALS</div><div className="border border-white/5 p-2"><Clock3 className="mb-1 h-3.5 w-3.5 text-emerald-400" />REALTIME</div></div>
-        </div>
+        </section>
       </section>
     </div>
   );
