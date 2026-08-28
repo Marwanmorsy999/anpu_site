@@ -28,8 +28,8 @@ export function ANPUSystemHeader() {
     <header className="header anpu-header">
       <div className="anpu-nav-shell">
         <Link to="/" className="anpu-brand" onClick={() => { setOpen(false); setMoreOpen(false); }}>
-          <span className="anpu-brand-mark">
-            <img src="/anpu-icon.svg" alt="ANPU" />
+          <span className="anpu-brand-mark anpu-brand-mark--img">
+            <img src="/anubis-logo.jpg" alt="ANPU" className="anpu-brand-logo-img" />
           </span>
           <span><strong>ANPU</strong><small>Web Security Intelligence</small></span>
         </Link>
