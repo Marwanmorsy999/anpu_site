@@ -578,3 +578,26 @@ a:hover {
     font-size: 12px;
   }
 }
+
+/* ===================================================================
+   ANPU BRAND LOGO IMAGE — NAV
+   =================================================================== */
+
+.anpu-brand-mark--img {
+  width: 36px !important;
+  height: 36px !important;
+  overflow: hidden !important;
+  background: #020502 !important;
+  border: 1px solid #1a4a1a !important;
+  box-shadow: 0 0 8px rgba(34,255,70,0.15) !important;
+  flex-shrink: 0;
+}
+
+.anpu-brand-logo-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  display: block !important;
+  filter: brightness(1.05) saturate(1.1);
+}
