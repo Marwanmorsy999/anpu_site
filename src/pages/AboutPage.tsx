@@ -1,341 +1,282 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Info, ShieldCheck, Users, Heart, Award, Clock, GitBranch, BookOpen, Code2 } from "lucide-react";
-import { PharaohGuardian } from "@/components/PharaohGuardian";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { GitBranch, Terminal, Shield, Layers, FileCode2, ArrowRight } from "lucide-react";
+
+const MODULES = [
+  { name: "Recon", scope: "All", activity: "Passive", desc: "DNS, robots.txt, sitemap.xml, redirects, source-map exposure" },
+  { name: "Technology", scope: "All", activity: "Passive", desc: "Web servers, frameworks, CMSs, CDNs, JS libraries via observed signals" },
+  { name: "TLS", scope: "All", activity: "Passive", desc: "Certificate validity, expiry, hostname match, protocol version, HTTPS redirect" },
+  { name: "Headers", scope: "All", activity: "Passive", desc: "CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, disclosure headers" },
+  { name: "Cookies", scope: "All", activity: "Passive", desc: "Secure, HttpOnly, SameSite attributes with context-aware severity" },
+  { name: "Endpoints", scope: "All", activity: "Passive", desc: "Links, forms, scripts, and API path references — normalized and deduplicated" },
+  { name: "Subdomains", scope: "Standard/Deep", activity: "Active", desc: "Certificate Transparency logs and profile-gated DNS enumeration" },
+  { name: "PortScan", scope: "Deep", activity: "Active", desc: "TCP connect scan against curated common service ports" },
+  { name: "Dirs", scope: "Standard/Deep", activity: "Active", desc: "Sensitive-path probing with soft-404 baseline filtering" },
+  { name: "Secrets", scope: "Standard/Deep", activity: "Active", desc: "API key, token, and private-key pattern detection in discovered assets" },
+  { name: "CORS", scope: "Standard/Deep", activity: "Active", desc: "Wildcard, reflection, and credential behavior analysis" },
+  { name: "Methods", scope: "Standard/Deep", activity: "Active", desc: "OPTIONS/Allow behavior and live TRACE verification" },
+  { name: "Nuclei", scope: "Standard/Deep", activity: "Active", desc: "Optional: profile-scoped external vulnerability templates when Nuclei binary is present" },
+];
+
+const ARCHITECTURE = [
+  { path: "cmd/anpu/", desc: "CLI entry point — scan, history, show, diff, tools" },
+  { path: "internal/scanner/", desc: "Scanner interface, target validation, pipeline orchestrator" },
+  { path: "internal/recon/", desc: "DNS, robots.txt, sitemap.xml, redirects" },
+  { path: "internal/tls/", desc: "Passive TLS analysis" },
+  { path: "internal/headers/", desc: "Security headers + cookie analysis" },
+  { path: "internal/technology/", desc: "Technology fingerprinting" },
+  { path: "internal/endpoints/", desc: "Endpoint discovery / normalization" },
+  { path: "internal/secrets/", desc: "Token / key pattern detection" },
+  { path: "internal/findings/", desc: "Deduplication engine" },
+  { path: "internal/scoring/", desc: "Transparent deterministic risk scoring" },
+  { path: "internal/storage/", desc: "SQLite persistence for scan history" },
+  { path: "internal/reporting/", desc: "JSON / SARIF / HTML report generation and terminal UI" },
+  { path: "pkg/models/", desc: "Shared scanner-agnostic data model" },
+];
+
+const SCORING_ROWS = [
+  { sev: "Info", base: "0.0", color: "#6a6a6a" },
+  { sev: "Low", base: "2.0", color: "#87CEEB" },
+  { sev: "Medium", base: "4.5", color: "var(--egypt-gold-1)" },
+  { sev: "High", base: "7.0", color: "#FF8C00" },
+  { sev: "Critical", base: "9.0", color: "#FF4444" },
+];
+
+const CATEGORY_WEIGHTS = [
+  ["Vulnerability", "+1.0"],
+  ["Authentication", "+0.7"],
+  ["TLS", "+0.5"],
+  ["Endpoint", "+0.3"],
+  ["Configuration", "+0.3"],
+  ["Cookies", "+0.2"],
+  ["Exposure", "+0.2"],
+  ["Headers", "+0.1"],
+  ["Technology", "+0.1"],
+];
 
 export function AboutPage() {
-  const features = [
-    { title: "OPEN SOURCE", desc: "Completely free and open-source under MIT License. No hidden costs, no paywalls, no telemetry." },
-    { title: "PRIVACY FIRST", desc: "All scans are performed locally or on your infrastructure. No data is sent to third parties." },
-    { title: "FAST & ACCURATE", desc: "Optimized for speed without sacrificing accuracy. Built in Go for performance." },
-    { title: "EASY TO USE", desc: "Simple CLI and web interface. No complex configuration required to get started." },
-    { title: "EXTENSIBLE", desc: "Modular architecture makes it easy to add new checks and features." },
-    { title: "CROSS PLATFORM", desc: "Works on Windows, macOS, and Linux. Single binary deployment." },
-  ];
-
-  const team = [
-    { name: "MARWAN MORSY", role: "CREATOR & MAINTAINER", github: "Marwanmorsy999", commits: 200 },
-  ];
-
-  const timeline = [
-    { date: "2024.01", event: "ANPU project started - initial concept and design" },
-    { date: "2024.03", event: "First public release (v1.0.0) - core scanning engine" },
-    { date: "2024.06", event: "Web interface launched - visualization layer" },
-    { date: "2025.01", event: "Reached 1000+ GitHub stars" },
-    { date: "2025.05", event: "Enterprise features added - team collaboration" },
-    { date: "2026.08", event: "Pharaoh Cyber Intelligence Terminal aesthetic - full redesign" },
-  ];
-
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Back link */}
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
-        <ArrowLeft className="h-4 w-4" /> BACK HOME
-      </Link>
+    <div className="about-shell">
 
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Info className="h-10 w-10 text-primary" />
-          <PharaohGuardian size={48} state="awake" />
+      {/* Page header */}
+      <div className="about-header">
+        <div className="about-header-inner">
+          <div className="anpu-eyebrow" style={{ marginBottom: "0.75rem" }}>𓁹 ANPU / ORIGIN &amp; ARCHITECTURE</div>
+          <h1 className="about-h1">
+            What ANPU is.<span className="anpu-cursor-blink" style={{ fontSize: "0.5em", marginLeft: "0.3em" }}>█</span>
+          </h1>
+          <p className="about-subtitle">
+            ANPU is a local-first security analysis CLI. It orchestrates passive and active analyzers,
+            normalizes findings into one evidence-backed model, deduplicates overlapping signals,
+            scores them deterministically, and produces machine-readable and human-readable reports.
+          </p>
+          <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
+            <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="anpu-btn-primary" style={{ fontSize: "0.72rem" }}>
+              <GitBranch size={13} /> SOURCE REPOSITORY
+            </a>
+            <Link to="/docs" className="anpu-btn-secondary" style={{ fontSize: "0.72rem" }}>
+              <Terminal size={13} /> DOCUMENTATION
+            </Link>
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          ANPU ARCHIVE // ORIGIN
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          The ancient Egyptian web security intelligence system.
-        </p>
+
+        {/* Status strip */}
+        <div className="about-status-strip">
+          {[
+            { label: "ENGINE", value: "Go 1.25+", color: "#00ADD8" },
+            { label: "LICENSE", value: "Apache-2.0", color: "var(--crt-green-1)" },
+            { label: "STORAGE", value: "SQLite local", color: "var(--egypt-gold-1)" },
+            { label: "TELEMETRY", value: "None", color: "var(--crt-green-1)" },
+            { label: "PLATFORMS", value: "Linux / macOS / Windows", color: "#94a3b8" },
+            { label: "OUTPUTS", value: "HTML / JSON / SARIF", color: "#94a3b8" },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="about-status-item">
+              <span className="about-status-label">{label}</span>
+              <span className="about-status-val" style={{ color }}>{value}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Project Status */}
-      <Card className="p-6 mb-6 border-border">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          PROJECT STATUS
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            { label: "STATUS", value: "ACTIVE", color: "text-[#7CFF4F]" },
-            { label: "SOURCE", value: "PUBLIC", color: "text-[#7CFF4F]" },
-            { label: "ENGINE", value: "GO", color: "text-[#FFB000]" },
-            { label: "LICENSE", value: "MIT", color: "text-muted-foreground" },
-            { label: "VERSION", value: "1.x", color: "text-muted-foreground" },
-            { label: "STARS", value: "1000+", color: "text-yellow-400" },
-            { label: "MAINTAINER", value: "1", color: "text-muted-foreground" },
-            { label: "CONTRIBUTORS", value: "5+", color: "text-muted-foreground" },
-          ].map((stat, i) => (
-            <Card key={i} className="p-4 bg-muted/20 border-border/30 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                {stat.label}
-              </p>
-              <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
-            </Card>
-          ))}
-        </div>
-      </Card>
+      <div className="about-body">
 
-      {/* Navigation */}
-      <Card className="p-4 mb-6 border-border">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {[
-            { label: "01 ORIGIN", href: "#origin" },
-            { label: "02 MISSION", href: "#mission" },
-            { label: "03 PHILOSOPHY", href: "#philosophy" },
-            { label: "04 FEATURES", href: "#features" },
-            { label: "05 TEAM", href: "#team" },
-            { label: "06 TIMELINE", href: "#timeline" },
-            { label: "07 ACKNOWLEDGEMENTS", href: "#acknowledgements" },
-          ].map((item) => (
-            <Button
-              key={item.href}
-              variant="outline"
-              size="sm"
-              asChild
-            >
-              <a href={item.href} className="text-xs">
-                {item.label}
-              </a>
-            </Button>
-          ))}
-        </div>
-      </Card>
-
-      {/* Origin */}
-      <section id="origin" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Code2 className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              01 ORIGIN
-            </h2>
+        {/* What it does */}
+        <section className="about-section">
+          <div className="about-section-head">
+            <Shield size={16} className="about-section-icon" />
+            <div className="anpu-eyebrow">// CAPABILITY MATRIX</div>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            ANPU (named after the ancient Egyptian god Anubis, guardian of the dead and protector of tombs) 
-            was created to be a modern guardian of web security. Just as Anubis protected the pharaohs' tombs 
-            from intruders and ensured safe passage to the afterlife, ANPU protects your web applications from 
-            security vulnerabilities and ensures safe operation in the digital realm.
+          <h2 className="about-h2">Engine modules</h2>
+          <p className="about-p">
+            ANPU combines its own passive analyzers with optional external scanners.
+            The orchestration layer normalizes results into one finding model regardless of source.
           </p>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-3">
-            The name ANPU is derived from the ancient Egyptian name for Anubis, connecting the ancient world's 
-            concepts of protection and judgment with modern cybersecurity needs.
-          </p>
-        </Card>
-      </section>
-
-      {/* Mission */}
-      <section id="mission" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <ShieldCheck className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              02 MISSION
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Our mission is to make web security accessible to everyone. We believe that security should not be 
-            a luxury reserved for large corporations with deep pockets and dedicated security teams. 
-            ANPU is our contribution to making the web a safer place for all developers, organizations, and users.
-          </p>
-          <p className="text-xs text-muted-foreground leading-relaxed mt-3">
-            By providing a free, open-source, and easy-to-use security scanning tool, we empower developers to 
-            identify and fix security issues before they can be exploited by malicious actors.
-          </p>
-        </Card>
-      </section>
-
-      {/* Philosophy */}
-      <section id="philosophy" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Info className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              03 PHILOSOPHY
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            We believe in transparency, privacy, and empowering developers. ANPU is built on the principles of 
-            open-source software: freedom to use, study, modify, and share. These principles are non-negotiable.
-          </p>
-          <ul className="mt-3 space-y-2">
-            {[
-              { icon: "🔓", text: "No telemetry, tracking, or data collection" },
-              { icon: "💾", text: "All scan data stays on your infrastructure" },
-              { icon: "📜", text: "Source code is always available and auditable" },
-              { icon: "🆓", text: "Free to use for any purpose, including commercial" },
-              { icon: "🤝", text: "Community-driven development and support" },
-            ].map((item, i) => (
-              <li key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>{item.icon}</span>
-                <span>{item.text}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <ShieldCheck className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              04 CORE FEATURES
-            </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((feature, i) => (
-              <Card key={i} className="p-4 bg-muted/20 border-border/30">
-                <p className="text-sm font-semibold text-primary mb-2">{feature.title}</p>
-                <p className="text-xs text-muted-foreground">{feature.desc}</p>
-              </Card>
-            ))}
-          </div>
-        </Card>
-      </section>
-
-      {/* Team */}
-      <section id="team" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Users className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              05 THE TEAM
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {team.map((member, i) => (
-              <Card key={i} className="p-4 bg-muted/20 border-border/30">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-lg font-semibold text-foreground">{member.name}</p>
-                    <p className="text-xs text-muted-foreground">{member.role}</p>
-                    <p className="text-xs text-muted-foreground/70">{member.commits} commits</p>
-                  </div>
-                  <Button variant="ghost" size="icon" asChild>
-                    <a href={`https://github.com/${member.github}`} target="_blank" rel="noopener noreferrer" className="text-primary">
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
-          <p className="text-xs text-muted-foreground/70 mt-4 text-center">
-            Contributions welcome. See CONTRIBUTING.md on GitHub.
-          </p>
-        </Card>
-      </section>
-
-      {/* Timeline */}
-      <section id="timeline" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              06 PROJECT TIMELINE
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {timeline.map((item, i) => (
-              <Card key={i} className="p-4 bg-muted/20 border-border/30">
-                <div className="flex items-center gap-4">
-                  <span className="px-2 py-1 bg-primary/20 text-primary text-xs font-semibold">
-                    {item.date}
+          <div className="about-module-grid">
+            {MODULES.map(({ name, scope, activity, desc }) => (
+              <div key={name} className="about-module-card">
+                <div className="about-module-top">
+                  <span className="about-module-name">{name}</span>
+                  <span className="about-module-scope">{scope}</span>
+                  <span
+                    className="about-module-activity"
+                    style={{ color: activity === "Passive" ? "var(--crt-green-1)" : "var(--egypt-gold-1)" }}
+                  >
+                    {activity}
                   </span>
-                  <p className="text-xs text-muted-foreground">{item.event}</p>
                 </div>
-              </Card>
+                <p className="about-module-desc">{desc}</p>
+              </div>
             ))}
           </div>
-        </Card>
-      </section>
+        </section>
 
-      {/* Statistics */}
-      <Card className="p-6 mb-8 border-border">
-        <div className="flex items-center gap-2 mb-4">
-          <Award className="h-6 w-6 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">
-            PROJECT STATISTICS
-          </h2>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            { label: "STARS", value: "1,000+", icon: <Award className="h-4 w-4" /> },
-            { label: "FORKS", value: "100+", icon: <GitBranch className="h-4 w-4" /> },
-            { label: "CONTRIBUTORS", value: "5+", icon: <Users className="h-4 w-4" /> },
-            { label: "RELEASES", value: "20+", icon: <Clock className="h-4 w-4" /> },
-          ].map((stat, i) => (
-            <Card key={i} className="p-4 bg-muted/20 border-border/30 text-center">
-              <div className="text-primary mb-1">{stat.icon}</div>
-              <p className="text-xl font-bold text-foreground">{stat.value}</p>
-              <p className="text-xs text-muted-foreground">{stat.label}</p>
-            </Card>
-          ))}
-        </div>
-      </Card>
-
-      {/* Acknowledgements */}
-      <section id="acknowledgements" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Heart className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              07 ACKNOWLEDGEMENTS
-            </h2>
+        {/* Scoring */}
+        <section className="about-section">
+          <div className="about-section-head">
+            <FileCode2 size={16} className="about-section-icon" />
+            <div className="anpu-eyebrow">// SCORING ENGINE</div>
           </div>
-          <div className="space-y-4">
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                OPEN SOURCE COMMUNITY
-              </p>
-              <p className="text-xs text-muted-foreground">
-                ANPU stands on the shoulders of giants. We would like to thank all the open-source projects 
-                that have inspired us and made this project possible. Special thanks to the Go community, 
-                React community, Vite, Tailwind CSS, and all the amazing open-source security tools that have 
-                paved the way.
-              </p>
-            </Card>
+          <h2 className="about-h2">Transparent risk scoring</h2>
+          <p className="about-p">
+            Every finding gets a deterministic score with an explanation. No opaque or AI-generated numbers.
+          </p>
 
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                CONTRIBUTORS
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Thank you to everyone who has contributed to ANPU through code, bug reports, feature requests, 
-                and feedback. Your contributions are what make ANPU better every day.
-              </p>
-            </Card>
+          <div className="about-scoring-formula">
+            <div className="about-formula-label">// FINDING SCORE FORMULA</div>
+            <pre className="about-formula-code">{`Finding Score = (Severity Base × Confidence Multiplier)
+              + Category Weight
+              + Corroboration Bonus
 
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                USERS
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Thank you to all our users for trusting ANPU with their security needs. Your feedback and 
-                support motivate us to continue improving and adding new features.
-              </p>
-            </Card>
+Capped at 10.0`}</pre>
           </div>
-        </Card>
-      </section>
 
-      {/* Actions */}
-      <div className="flex justify-center gap-4">
-        <Button size="lg" asChild>
-          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="gap-2">
-            <ExternalLink className="h-4 w-4" />
-            VIEW ON GITHUB
-          </a>
-        </Button>
-        <Button variant="outline" size="lg" asChild>
-          <Link to="/docs" className="gap-2">
-            <BookOpen className="h-4 w-4" />
-            DOCUMENTATION
+          <div className="about-scoring-grid">
+            {/* Severity */}
+            <div className="about-scoring-card">
+              <div className="about-scoring-card-title">Severity Base</div>
+              <table className="docs-table">
+                <thead><tr><th>Severity</th><th>Base</th></tr></thead>
+                <tbody>
+                  {SCORING_ROWS.map(({ sev, base, color }) => (
+                    <tr key={sev}>
+                      <td style={{ color }}>{sev}</td>
+                      <td><code>{base}</code></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Confidence */}
+            <div className="about-scoring-card">
+              <div className="about-scoring-card-title">Confidence Multiplier</div>
+              <table className="docs-table">
+                <thead><tr><th>Confidence</th><th>Multiplier</th></tr></thead>
+                <tbody>
+                  {[["Low","0.55"],["Medium","0.75"],["High","0.90"],["Confirmed","1.00"]].map(([c,m]) => (
+                    <tr key={c}><td>{c}</td><td><code>{m}</code></td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Category weights */}
+            <div className="about-scoring-card">
+              <div className="about-scoring-card-title">Category Weight</div>
+              <table className="docs-table">
+                <thead><tr><th>Category</th><th>Weight</th></tr></thead>
+                <tbody>
+                  {CATEGORY_WEIGHTS.map(([cat, w]) => (
+                    <tr key={cat}><td>{cat}</td><td><code>{w}</code></td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="about-scoring-example">
+            <div className="about-formula-label">// EXAMPLE: MISSING HSTS (MEDIUM, CONFIRMED)</div>
+            <pre className="about-formula-code">{`Severity base         = 4.5   (Medium)
+Confidence multiplier = 1.00  (Confirmed)
+Category weight       = 0.1   (Headers)
+Corroboration bonus   = 0.0   (single source)
+
+Finding score = (4.5 × 1.00) + 0.1 + 0.0 = 4.6 / 10`}</pre>
+          </div>
+
+          <div className="about-agg-box">
+            <div className="about-formula-label">// AGGREGATE SCAN SCORE</div>
+            <pre className="about-formula-code">{`Aggregate = min(Max Finding Score + Volume Bonus, 10.0)
+
+Volume Bonus = min(0.15 × count_of_medium_or_higher_findings, 1.5)
+
+→ Score is sensitive to both the most serious issue AND the breadth
+  of the problem — not dominated by low-severity volume.`}</pre>
+          </div>
+        </section>
+
+        {/* Architecture */}
+        <section className="about-section">
+          <div className="about-section-head">
+            <Layers size={16} className="about-section-icon" />
+            <div className="anpu-eyebrow">// ARCHITECTURE</div>
+          </div>
+          <h2 className="about-h2">Codebase structure</h2>
+          <p className="about-p">
+            <code>internal/scanner</code> defines the scanner boundary and pipeline orchestration.
+            Concrete analyzer packages are wired together in <code>cmd/anpu/scan.go</code>.
+            The orchestrator works with scanner interfaces rather than hard-coding analyzer internals.
+          </p>
+          <div className="about-arch-grid">
+            {ARCHITECTURE.map(({ path, desc }) => (
+              <div key={path} className="about-arch-row">
+                <code className="about-arch-path">{path}</code>
+                <span className="about-arch-desc">{desc}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Responsible use */}
+        <section className="about-section">
+          <div className="about-warning-banner">
+            <div className="about-warning-title">⚠ RESPONSIBLE USE</div>
+            <p>
+              ANPU performs network requests and, depending on the profile, may perform active discovery.
+              <strong> Only scan targets you own or are explicitly authorized to test.</strong> Built-in SSRF guardrails
+              reduce accidental harm but do not establish authorization. The default <code>safe</code> profile
+              is passive and low-impact — <code>standard</code> and <code>deep</code> enable additional active checks.
+            </p>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="about-cta-row">
+          <Link to="/docs" className="about-cta-card">
+            <Terminal size={18} />
+            <div>
+              <div className="about-cta-title">Documentation</div>
+              <div className="about-cta-sub">Install, configure, and run ANPU</div>
+            </div>
+            <ArrowRight size={14} className="about-cta-arrow" />
           </Link>
-        </Button>
-        <Button variant="outline" size="lg" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          BACK TO TOP
-        </Button>
+          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="about-cta-card">
+            <GitBranch size={18} />
+            <div>
+              <div className="about-cta-title">Source Repository</div>
+              <div className="about-cta-sub">Browse code, issues, and releases</div>
+            </div>
+            <ArrowRight size={14} className="about-cta-arrow" />
+          </a>
+          <Link to="/scan" className="about-cta-card">
+            <Shield size={18} />
+            <div>
+              <div className="about-cta-title">Run a Scan</div>
+              <div className="about-cta-sub">Initialize the scanner now</div>
+            </div>
+            <ArrowRight size={14} className="about-cta-arrow" />
+          </Link>
+        </section>
+
       </div>
     </div>
   );
