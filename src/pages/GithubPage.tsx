@@ -1,292 +1,276 @@
+import { ExternalLink, GitBranch, GitCommit, GitPullRequest, Star, Terminal, Package, Layers, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Code2, Bug, GitBranch, Star, BookOpen } from "lucide-react";
-import { PharaohGuardian } from "@/components/PharaohGuardian";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
+const REPO_STRUCTURE = [
+  { path: "cmd/anpu/", desc: "CLI entry point (scan, history, show, diff, tools)" },
+  { path: "internal/scanner/", desc: "Scanner interface, target validation, pipeline orchestrator" },
+  { path: "internal/diff/", desc: "Historical scan comparison and attack-surface change detection" },
+  { path: "internal/recon/", desc: "DNS, robots.txt, sitemap.xml, redirects" },
+  { path: "internal/http/", desc: "Shared HTTP client and SSRF/redirect guards" },
+  { path: "internal/technology/", desc: "Technology fingerprinting" },
+  { path: "internal/tls/", desc: "Passive TLS analysis" },
+  { path: "internal/headers/", desc: "Security headers + cookie analysis" },
+  { path: "internal/endpoints/", desc: "Endpoint discovery / normalization" },
+  { path: "internal/subdomains/", desc: "Subdomain enumeration" },
+  { path: "internal/portscan/", desc: "TCP connect port scanning" },
+  { path: "internal/dirs/", desc: "Sensitive-path discovery and soft-404 filtering" },
+  { path: "internal/secrets/", desc: "Token / key pattern detection" },
+  { path: "internal/cors/", desc: "CORS auditing" },
+  { path: "internal/methods/", desc: "HTTP method auditing" },
+  { path: "internal/findings/", desc: "Deduplication engine" },
+  { path: "internal/scoring/", desc: "Transparent risk scoring" },
+  { path: "internal/storage/", desc: "SQLite persistence for scan history" },
+  { path: "internal/integrations/", desc: "Nuclei integration + prepared ZAP interface" },
+  { path: "internal/reporting/", desc: "JSON / SARIF / HTML generation and terminal UI" },
+  { path: "internal/config/", desc: "YAML config loading and CLI-flag resolution" },
+  { path: "pkg/models/", desc: "Shared scanner-agnostic data model" },
+  { path: "docs/", desc: "CLI, configuration, scanner, development, release, scoring, CI/CD docs" },
+];
+
+const DOCS_LINKS = [
+  { file: "docs/cli.md", label: "CLI Reference", desc: "All commands, flags, and examples" },
+  { file: "docs/configuration.md", label: "Configuration", desc: "anpu.yaml shape and precedence rules" },
+  { file: "docs/scanners.md", label: "Scanner Reference", desc: "Engine matrix, behavior, safety boundary" },
+  { file: "docs/scoring.md", label: "Risk Scoring", desc: "Deterministic scoring formula explained" },
+  { file: "docs/ci-cd.md", label: "CI/CD Integration", desc: "GitHub Actions example and pipeline setup" },
+  { file: "docs/releases.md", label: "Releases", desc: "Install methods, verification, Docker" },
+  { file: "docs/development.md", label: "Development", desc: "Contributor workflow, testing, scanner extensions" },
+  { file: "CONTRIBUTING.md", label: "Contributing", desc: "How to contribute — start here" },
+  { file: "SECURITY.md", label: "Security Policy", desc: "Responsible disclosure and security contacts" },
+  { file: "CHANGELOG.md", label: "Changelog", desc: "Release history and migration notes" },
+];
+
+const INSTALL_METHODS = [
+  {
+    label: "Build from source",
+    badge: "RECOMMENDED",
+    color: "var(--crt-green-1)",
+    code: "git clone https://github.com/Marwanmorsy999/anpu\ncd anpu\ngo build -o anpu ./cmd/anpu\n./anpu --help",
+  },
+  {
+    label: "Docker",
+    badge: "CONTAINERIZED",
+    color: "#2496ED",
+    code: "docker build -t anpu .\ndocker run --rm -v \"$(pwd)/reports:/reports\" anpu scan https://example.com --output /reports",
+  },
+  {
+    label: "Pre-built binary",
+    badge: "RELEASES PAGE",
+    color: "var(--egypt-gold-1)",
+    code: "# Download from GitHub Releases\n# Targets: Linux, macOS, Windows — amd64 + arm64\nsha256sum anpu_<version>_linux_amd64.tar.gz\n# Compare with checksums.txt",
+  },
+];
+
+const DEV_COMMANDS = [
+  "gofmt -l $(find . -name '*.go')",
+  "go build ./...",
+  "go vet ./...",
+  "go test -v -race ./...",
+  "docker build -t anpu .",
+];
 
 export function GithubPage() {
-
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Back link */}
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
-        <ArrowLeft className="h-4 w-4" /> BACK HOME
-      </Link>
+    <div className="github-shell">
 
-      {/* Module Header */}
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Code2 className="h-10 w-10 text-primary" />
-          <PharaohGuardian size={48} state="stable" />
+      {/* Header */}
+      <div className="github-header">
+        <div className="github-header-inner">
+          <div className="anpu-eyebrow" style={{ marginBottom: "0.75rem" }}>𓂀 ANPU / SOURCE ARCHIVE</div>
+          <h1 className="github-h1">
+            Open source.<br />
+            <span style={{ color: "var(--crt-green-1)" }}>Apache-2.0.</span>
+            <span className="anpu-cursor-blink" style={{ fontSize: "0.5em", marginLeft: "0.3em" }}>█</span>
+          </h1>
+          <p className="github-subtitle">
+            ANPU is built in Go and fully open-source. All scan analysis happens locally —
+            no cloud backend, no telemetry, no mandatory account.
+          </p>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1.25rem" }}>
+            <a
+              href="https://github.com/Marwanmorsy999/anpu"
+              target="_blank" rel="noopener noreferrer"
+              className="anpu-btn-primary"
+              style={{ fontSize: "0.72rem" }}
+            >
+              <GitBranch size={13} /> VIEW ON GITHUB
+            </a>
+            <a
+              href="https://github.com/Marwanmorsy999/anpu/releases"
+              target="_blank" rel="noopener noreferrer"
+              className="anpu-btn-secondary"
+              style={{ fontSize: "0.72rem" }}
+            >
+              <Package size={13} /> RELEASES
+            </a>
+            <a
+              href="https://github.com/Marwanmorsy999/anpu/issues"
+              target="_blank" rel="noopener noreferrer"
+              className="anpu-btn-ghost"
+              style={{ fontSize: "0.72rem" }}
+            >
+              <GitPullRequest size={13} /> ISSUES
+            </a>
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          ANPU // ARCHIVE // SOURCE
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          Source code repository and development archive.
-        </p>
+
+        {/* Repo stats */}
+        <div className="github-stats-strip">
+          {[
+            { icon: <GitBranch size={14} />, label: "Repository", value: "Marwanmorsy999/anpu" },
+            { icon: <Terminal size={14} />, label: "Language", value: "Go 1.25+" },
+            { icon: <Star size={14} />, label: "License", value: "Apache-2.0" },
+            { icon: <GitCommit size={14} />, label: "Branch", value: "main" },
+            { icon: <Layers size={14} />, label: "Storage", value: "SQLite — local only" },
+          ].map(({ icon, label, value }) => (
+            <div key={label} className="github-stat-item">
+              <span className="github-stat-icon">{icon}</span>
+              <div>
+                <div className="github-stat-label">{label}</div>
+                <div className="github-stat-val">{value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Project Status Panel */}
-      <Card className="p-6 mb-6 border-border">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          PROJECT STATUS
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            { label: "SOURCE", value: "PUBLIC", color: "text-[#7CFF4F]" },
-            { label: "LANGUAGE", value: "GO", color: "text-[#FFB000]" },
-            { label: "LICENSE", value: "MIT", color: "text-muted-foreground" },
-            { label: "STATUS", value: "ACTIVE", color: "text-[#7CFF4F]" },
-          ].map((stat, i) => (
-            <Card key={i} className="p-4 bg-muted/20 border-border/30 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                {stat.label}
-              </p>
-              <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
-            </Card>
-          ))}
-        </div>
-      </Card>
+      <div className="github-body">
 
-      {/* Navigation */}
-      <Card className="p-4 mb-6 border-border">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {[
-            { label: "01 PROJECT", href: "#project" },
-            { label: "02 REPOSITORY", href: "#repository" },
-            { label: "03 TECHNOLOGY", href: "#technology" },
-            { label: "04 DEVELOPMENT", href: "#development" },
-            { label: "05 CONTRIBUTING", href: "#contributing" },
-          ].map((item) => (
-            <Button
-              key={item.href}
-              variant="outline"
-              size="sm"
-              asChild
-            >
-              <a href={item.href} className="text-xs">
-                {item.label}
-              </a>
-            </Button>
-          ))}
-        </div>
-      </Card>
-
-      {/* Project Section */}
-      <section id="project" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Code2 className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              01 PROJECT
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-            ANPU (Ancient Pharaoh Intelligence) is an open-source web security scanner 
-            built in Go. It performs reconnaissance and security analysis on publicly exposed 
-            web assets to identify vulnerabilities and misconfigurations.
-          </p>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            The name ANPU is derived from Anubis, the ancient Egyptian god who was the guardian 
-            of the dead and protector of tombs. Just as Anubis protected the pharaohs' resting places, 
-            ANPU protects your web applications from security threats.
-          </p>
-        </Card>
-      </section>
-
-      {/* Repository Section */}
-      <section id="repository" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <GitBranch className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              02 REPOSITORY
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground mb-4">
-            Repository: <span className="text-primary font-mono">github.com/Marwanmorsy999/anpu</span>
-          </p>
-          <div className="space-y-4">
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                DESCRIPTION
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Ancient Egyptian web security intelligence system. ANPU performs reconnaissance 
-                and security analysis on publicly exposed web assets.
-              </p>
-            </Card>
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                PRIMARY LANGUAGE
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Go (Golang) - High-performance, statically typed, compiled language
-              </p>
-            </Card>
-          </div>
-          <Button size="lg" asChild className="mt-4 w-full sm:w-auto">
-            <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="gap-2">
-              <ExternalLink className="h-4 w-4" />
-              VIEW ON GITHUB
-            </a>
-          </Button>
-        </Card>
-      </section>
-
-      {/* Technology Section */}
-      <section id="technology" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Code2 className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              03 TECHNOLOGY
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground mb-6">
-            ANPU is built using modern, performant technologies:
-          </p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {[
-              { name: "Go", desc: "Core scanning engine - fast, efficient, cross-platform" },
-              { name: "React", desc: "Web interface - component-based UI library" },
-              { name: "TypeScript", desc: "Type-safe JavaScript for web interface" },
-              { name: "Vite", desc: "Modern build tool for fast development" },
-              { name: "Tailwind CSS", desc: "Utility-first CSS framework for styling" },
-              { name: "shadcn/ui", desc: "Accessible, customizable UI components" },
-            ].map((tech, i) => (
-              <Card key={i} className="p-4 bg-muted/20 border-border/30">
-                <p className="text-sm font-semibold text-primary mb-1">{tech.name}</p>
-                <p className="text-xs text-muted-foreground">{tech.desc}</p>
-              </Card>
-            ))}
-          </div>
-        </Card>
-      </section>
-
-      {/* Development Section */}
-      <section id="development" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <GitBranch className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              04 DEVELOPMENT
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground mb-4">
-            ANPU is actively maintained and developed. Contributions are welcome.
-          </p>
-          <div className="space-y-4">
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                DEVELOPMENT STATUS
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Actively maintained by Marwan Morsy. New features and improvements are 
-                regularly added. The project follows semantic versioning.
-              </p>
-            </Card>
-            <Card className="p-4 bg-muted/20 border-border/30">
-              <p className="text-sm font-semibold text-secondary mb-2">
-                RELEASE CADENCE
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Regular releases with bug fixes, new features, and security improvements. 
-                Major versions may include breaking changes.
-              </p>
-            </Card>
-          </div>
-        </Card>
-      </section>
-
-      {/* Contributing Section */}
-      <section id="contributing" className="mb-8">
-        <Card className="p-6 mb-6 border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">
-              05 CONTRIBUTING
-            </h2>
-          </div>
-          <p className="text-xs text-muted-foreground mb-6">
-            We welcome contributions from the community. Here's how you can help:
-          </p>
-          <div className="space-y-4">
-            {[
-              {
-                title: "REPORT BUGS",
-                desc: "Found a bug? Please report it on GitHub Issues with as much detail as possible.",
-                icon: <Bug className="h-4 w-4" />,
-                href: "https://github.com/Marwanmorsy999/anpu/issues"
-              },
-              {
-                title: "REQUEST FEATURES",
-                desc: "Have an idea? Create a feature request on GitHub Issues.",
-                icon: <Star className="h-4 w-4" />,
-                href: "https://github.com/Marwanmorsy999/anpu/issues"
-              },
-              {
-                title: "SUBMIT CODE",
-                desc: "Want to contribute code? Fork the repo, create a branch, and submit a PR.",
-                icon: <GitBranch className="h-4 w-4" />,
-                href: "https://github.com/Marwanmorsy999/anpu/fork"
-              },
-            ].map((item, i) => (
-              <Card key={i} className="p-4 bg-muted/20 border-border/30">
-                <div className="flex items-start gap-3">
-                  <span className="text-primary">{item.icon}</span>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground mb-1">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
+        {/* Installation */}
+        <section className="github-section">
+          <div className="anpu-eyebrow">// INSTALLATION</div>
+          <h2 className="github-h2">Three ways to install</h2>
+          <div className="github-install-grid">
+            {INSTALL_METHODS.map(({ label, badge, color, code }) => (
+              <div key={label} className="github-install-card" style={{ borderColor: color + "33" }}>
+                <div className="github-install-head">
+                  <span className="github-install-label" style={{ color }}>{label}</span>
+                  <span className="docs-badge" style={{ color, borderColor: color + "55" }}>{badge}</span>
                 </div>
-                <Button variant="outline" size="xs" asChild className="mt-3">
-                  <a href={item.href} target="_blank" rel="noopener noreferrer" className="gap-1.5">
-                    <ExternalLink className="h-3 w-3" />
-                    {item.title}
-                  </a>
-                </Button>
-              </Card>
+                <pre className="github-code-block">{code}</pre>
+              </div>
             ))}
           </div>
-        </Card>
-      </section>
+        </section>
 
-      {/* Demo Warning */}
-      <Card className="p-4 mb-8 border-amber/30 bg-amber/5">
-        <p className="text-amber mb-2">
-          ⚠️ NOTE
-        </p>
-        <p className="text-xs text-muted-foreground">
-          This page provides information about the ANPU project. The web interface is a visualization 
-          layer - the actual security scanning is performed by the Go CLI.
-        </p>
-      </Card>
+        {/* Repo structure */}
+        <section className="github-section">
+          <div className="anpu-eyebrow">// REPOSITORY STRUCTURE</div>
+          <h2 className="github-h2">Codebase layout</h2>
+          <p className="github-p">
+            <code>internal/scanner</code> defines the pipeline boundary.
+            Concrete analyzers are wired together in <code>cmd/anpu/scan.go</code>.
+            The orchestrator works with scanner interfaces rather than hard-coding internals.
+          </p>
+          <div className="github-tree">
+            {REPO_STRUCTURE.map(({ path, desc }) => (
+              <div key={path} className="github-tree-row">
+                <code className="github-tree-path">
+                  <span className="github-tree-bullet">├─</span> {path}
+                </code>
+                <span className="github-tree-desc">{desc}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* Actions */}
-      <div className="flex justify-center gap-4">
-        <Button size="lg" asChild>
-          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="gap-2">
-            <Star className="h-4 w-4" />
-            STAR ON GITHUB
+        {/* Documentation index */}
+        <section className="github-section">
+          <div className="anpu-eyebrow">// DOCUMENTATION</div>
+          <h2 className="github-h2">Reference files in the repo</h2>
+          <div className="github-docs-grid">
+            {DOCS_LINKS.map(({ file, label, desc }) => (
+              <a
+                key={file}
+                href={`https://github.com/Marwanmorsy999/anpu/blob/main/${file}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="github-doc-card"
+              >
+                <div className="github-doc-top">
+                  <span className="github-doc-label">{label}</span>
+                  <ExternalLink size={11} style={{ color: "#444", flexShrink: 0 }} />
+                </div>
+                <code className="github-doc-file">{file}</code>
+                <p className="github-doc-desc">{desc}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* Development */}
+        <section className="github-section">
+          <div className="anpu-eyebrow">// DEVELOPMENT</div>
+          <h2 className="github-h2">Contributor workflow</h2>
+          <p className="github-p">
+            Read <a href="https://github.com/Marwanmorsy999/anpu/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" className="docs-link">CONTRIBUTING.md</a> and{" "}
+            <a href="https://github.com/Marwanmorsy999/anpu/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer" className="docs-link">SECURITY.md</a> first.
+            Good starter work is tracked with the <code>good first issue</code> label on GitHub.
+          </p>
+          <div className="github-dev-block">
+            <div className="github-dev-bar">// DEV COMMANDS</div>
+            {DEV_COMMANDS.map((cmd) => (
+              <div key={cmd} className="github-dev-line">
+                <span className="docs-prompt">$</span> {cmd}
+              </div>
+            ))}
+          </div>
+
+          <div className="github-ci-note">
+            <div className="anpu-eyebrow" style={{ marginBottom: "0.5rem", fontSize: "0.6rem" }}>// CI PIPELINE</div>
+            <p className="github-p" style={{ marginBottom: 0 }}>
+              The repository's CI runs <code>gofmt</code> verification → <code>go build</code> → <code>go vet</code> →{" "}
+              <code>go test -v -race</code> → Docker build on every push and pull request to <code>main</code>.
+              A separate security workflow builds ANPU, runs it against a controlled Juice Shop target,
+              validates the generated SARIF, and uploads reports as artifacts.
+            </p>
+          </div>
+        </section>
+
+        {/* Responsible use */}
+        <section className="github-section">
+          <div className="about-warning-banner">
+            <div className="about-warning-title">⚠ RESPONSIBLE USE</div>
+            <p>
+              ANPU performs network requests and may perform active discovery depending on the profile.
+              <strong> Only scan targets you own or are explicitly authorized to test.</strong>
+              Built-in SSRF guardrails reduce accidental harm but do not establish authorization.
+            </p>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="github-cta-row">
+          <a
+            href="https://github.com/Marwanmorsy999/anpu"
+            target="_blank" rel="noopener noreferrer"
+            className="about-cta-card"
+          >
+            <GitBranch size={18} />
+            <div>
+              <div className="about-cta-title">View Repository</div>
+              <div className="about-cta-sub">Marwanmorsy999/anpu on GitHub</div>
+            </div>
+            <ExternalLink size={13} className="about-cta-arrow" />
           </a>
-        </Button>
-        <Button variant="outline" size="lg" asChild>
-          <a href="https://github.com/Marwanmorsy999/anpu/fork" target="_blank" rel="noopener noreferrer" className="gap-2">
-            <GitBranch className="h-4 w-4" />
-            FORK REPOSITORY
-          </a>
-        </Button>
-        <Button variant="outline" size="lg" asChild>
-          <Link to="/about" className="gap-2">
-            <BookOpen className="h-4 w-4" />
-            PROJECT ARCHIVE
+          <Link to="/docs" className="about-cta-card">
+            <Terminal size={18} />
+            <div>
+              <div className="about-cta-title">Documentation</div>
+              <div className="about-cta-sub">Install, configure, and integrate</div>
+            </div>
+            <ArrowRight size={13} className="about-cta-arrow" />
           </Link>
-        </Button>
-        <Button variant="outline" size="lg" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          BACK TO TOP
-        </Button>
+          <Link to="/scan" className="about-cta-card">
+            <Star size={18} />
+            <div>
+              <div className="about-cta-title">Run a Scan</div>
+              <div className="about-cta-sub">Try the web scanner now</div>
+            </div>
+            <ArrowRight size={13} className="about-cta-arrow" />
+          </Link>
+        </section>
+
       </div>
     </div>
   );
