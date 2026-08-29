@@ -1,0 +1,620 @@
+/* =====================================================
+   ANPU — COMPLETE MOBILE RESPONSIVE SYSTEM
+   Covers: Navbar, Hero, Scan, Docs, About, API, GitHub,
+           Dashboard, Reports, Badge, and all shared UI
+   ===================================================== */
+
+/* ─────────────────────────────────────────────────────
+   0. GLOBAL TOUCH & FONT FOUNDATION
+   ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Prevent horizontal scroll everywhere */
+body, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Minimum tap target */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ─────────────────────────────────────────────────────
+   1. NAVBAR — full mobile treatment
+   ───────────────────────────────────────────────────── */
+.anpu-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+}
+
+.anpu-nav-shell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  height: 56px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Brand shrinks gracefully */
+.anpu-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none !important;
+  flex-shrink: 0;
+  min-height: 44px;
+}
+
+.anpu-brand strong {
+  font-family: 'VT323', monospace;
+  font-size: 1.3rem;
+  color: var(--crt-green-1) !important;
+  letter-spacing: 0.06em;
+}
+
+.anpu-brand small {
+  display: none; /* hide subtitle on mobile */
+}
+
+/* Desktop nav — hidden on small screens */
+.anpu-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.anpu-desktop-nav a,
+.anpu-desktop-nav button {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: #6a6a6a !important;
+  text-decoration: none !important;
+  padding: 0.4rem 0.6rem;
+  letter-spacing: 0.04em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 44px;
+}
+
+.anpu-desktop-nav a:hover,
+.anpu-desktop-nav button:hover,
+.anpu-desktop-nav a.is-active,
+.anpu-desktop-nav button.is-active {
+  color: var(--crt-green-1) !important;
+}
+
+/* More dropdown */
+.anpu-more-wrap { position: relative; }
+.anpu-more-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #050805;
+  border: 1px solid #1a4a1a;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  z-index: 200;
+}
+.anpu-more-menu a {
+  padding: 0.55rem 0.85rem !important;
+  border-bottom: 1px solid #0e200e;
+  display: block !important;
+  min-height: 44px;
+}
+.anpu-more-menu a:last-child { border-bottom: none; }
+.anpu-more-wrap button svg.rotate { transform: rotate(180deg); }
+
+/* Nav actions */
+.anpu-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.anpu-ready {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  color: #3a5a3a;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.anpu-ready i {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--crt-green-1);
+  box-shadow: 0 0 6px var(--crt-green-1);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.anpu-github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #1a4a1a;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: #6a6a6a !important;
+  text-decoration: none !important;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  min-height: 36px;
+}
+.anpu-github-link:hover { color: var(--crt-green-2) !important; border-color: var(--crt-green-dim); }
+
+.anpu-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--crt-green-1);
+  color: #020502 !important;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none !important;
+  white-space: nowrap;
+  min-height: 36px;
+  transition: background 0.15s;
+}
+.anpu-nav-cta:hover { background: #a8ff70; }
+
+/* Hamburger */
+.anpu-mobile-menu {
+  display: none;
+  background: none;
+  border: 1px solid #1a4a1a;
+  color: var(--crt-green-2);
+  padding: 0.35rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile slide-down panel */
+.anpu-mobile-panel {
+  display: none;
+  flex-direction: column;
+  background: #020502;
+  border-bottom: 1px solid #1a4a1a;
+  padding: 0.5rem 0 1rem;
+}
+.anpu-mobile-panel nav {
+  display: flex;
+  flex-direction: column;
+}
+.anpu-mobile-panel nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.25rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: #6a6a6a !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid #0e200e;
+  min-height: 48px;
+  transition: color 0.15s, background 0.15s;
+}
+.anpu-mobile-panel nav a:hover,
+.anpu-mobile-panel nav a.is-active {
+  color: var(--crt-green-1) !important;
+  background: rgba(34,255,70,0.03);
+}
+.anpu-mobile-cta {
+  margin: 0.75rem 1.25rem 0;
+  justify-content: center;
+  min-height: 48px !important;
+  font-size: 0.78rem !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   2. HERO PAGE
+   ───────────────────────────────────────────────────── */
+
+/* Hero inner: 3-col → 1-col */
+.anpu-hero-v2-inner {
+  padding: 2rem 1.25rem 4rem !important;
+}
+
+/* Live script terminal: always hidden on mobile */
+.anpu-hero-v2-terminal {
+  display: none !important;
+}
+
+/* Ticker: smaller text */
+.anpu-ticker-track {
+  font-size: 0.6rem !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   3. SCAN PAGE
+   ───────────────────────────────────────────────────── */
+
+/* Steps: 2-col → 1-col */
+.scan-steps-list {
+  grid-template-columns: 1fr !important;
+}
+
+/* Module grid: 3-col → 2-col */
+.scan-module-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+.scan-module-chip:nth-child(3n) {
+  border-right: 1px solid #1a4a1a !important;
+}
+.scan-module-chip:nth-child(2n) {
+  border-right: none !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   4. DOCS / ABOUT / API / GITHUB PAGES
+   ───────────────────────────────────────────────────── */
+
+/* Hide TOC sidebar on mobile — use anchor scroll instead */
+.docs-toc { display: none !important; }
+.docs-layout { grid-template-columns: 1fr !important; }
+.docs-main { padding: 1.5rem 1.25rem !important; max-width: 100% !important; }
+
+/* Headers */
+.docs-header, .about-header, .github-header {
+  padding: 1.75rem 1.25rem 0 !important;
+}
+.docs-header-inner, .about-header-inner, .github-header-inner {
+  max-width: 100% !important;
+}
+
+/* Page titles */
+.docs-h1, .about-h1, .github-h1 {
+  font-size: clamp(2.2rem, 9vw, 3.5rem) !important;
+}
+
+/* Subtitles */
+.docs-subtitle, .about-subtitle, .github-subtitle {
+  font-size: 0.8rem !important;
+  max-width: 100% !important;
+}
+
+/* About body / github body */
+.about-body, .github-body {
+  padding: 1.5rem 1.25rem !important;
+  max-width: 100% !important;
+}
+
+/* Status strips: scroll horizontally */
+.about-status-strip, .github-stats-strip {
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  scrollbar-width: none !important;
+}
+.about-status-strip::-webkit-scrollbar,
+.github-stats-strip::-webkit-scrollbar { display: none !important; }
+
+.about-status-item, .github-stat-item {
+  min-width: 130px !important;
+  flex-shrink: 0 !important;
+  border-right: 1px solid #1a4a1a !important;
+  border-bottom: none !important;
+}
+
+/* Module grid: 2-col on mobile */
+.about-module-grid {
+  grid-template-columns: 1fr !important;
+}
+
+/* Scoring grid: 1-col */
+.about-scoring-grid { grid-template-columns: 1fr !important; }
+
+/* Architecture tree: single col */
+.about-arch-row {
+  grid-template-columns: 1fr !important;
+  gap: 0.25rem !important;
+}
+.about-arch-path { font-size: 0.65rem !important; }
+
+/* GitHub tree: single col */
+.github-tree-row {
+  grid-template-columns: 1fr !important;
+  gap: 0.2rem !important;
+}
+.github-tree-desc { margin-left: 0.8rem !important; }
+
+/* GitHub docs grid: 2-col → 1-col */
+.github-docs-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+/* GitHub install: 1-col */
+.github-install-grid { grid-template-columns: 1fr !important; }
+
+/* CTA rows: 1-col */
+.about-cta-row, .github-cta-row {
+  grid-template-columns: 1fr !important;
+}
+
+/* Output cards: 1-col */
+.docs-output-grid { grid-template-columns: 1fr !important; }
+
+/* Command grid: stack */
+.docs-cmd-row {
+  grid-template-columns: 1fr !important;
+  gap: 0.2rem !important;
+}
+.docs-cmd-desc { text-align: left !important; color: #4a6a4a !important; }
+
+/* Code blocks: scrollable */
+.docs-code-block pre, .github-code-block {
+  font-size: 0.68rem !important;
+  overflow-x: auto !important;
+  white-space: pre !important;
+}
+
+/* Profile cards: 1-col */
+.docs-profile-grid { grid-template-columns: 1fr !important; }
+
+/* Tables: scrollable */
+.docs-table-wrap { overflow-x: auto !important; }
+.docs-table { font-size: 0.7rem !important; min-width: 400px !important; }
+
+/* API endpoints */
+.api-endpoint-head { flex-wrap: wrap !important; gap: 0.5rem !important; }
+.api-path { font-size: 0.7rem !important; word-break: break-all !important; }
+
+/* ─────────────────────────────────────────────────────
+   5. DASHBOARD PAGE
+   ───────────────────────────────────────────────────── */
+.v6-metrics {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+.v6-metric-value { font-size: 1.6rem !important; }
+
+/* ─────────────────────────────────────────────────────
+   6. REPORTS PAGE
+   ───────────────────────────────────────────────────── */
+.anpu-report-row,
+.v6-report-row {
+  grid-template-columns: 1fr !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   7. GLOBAL TEXT SIZES — ensure nothing clips
+   ───────────────────────────────────────────────────── */
+.anpu-v6-title {
+  font-size: clamp(1.8rem, 8vw, 3rem) !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   8. BREAKPOINT: ≤ 1024px (tablet landscape)
+   ───────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Hero: 3-col → logo + copy */
+  .anpu-hero-v2-inner {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .anpu-hero-v2-logo {
+    order: -1 !important;
+    grid-column: 1 / -1 !important;
+  }
+  .anpu-logo-frame { width: 200px !important; }
+  .anpu-hero-v2-terminal { display: none !important; }
+
+  /* Scan: side-by-side → stack */
+  .scan-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .scan-config-panel {
+    border-right: none !important;
+    border-bottom: 1px solid #1a4a1a !important;
+  }
+
+  /* Nav: hide some items */
+  .anpu-ready { display: none !important; }
+  .anpu-github-link { display: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────
+   9. BREAKPOINT: ≤ 768px (mobile landscape / tablet portrait)
+   ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* NAV: switch to hamburger */
+  .anpu-desktop-nav { display: none !important; }
+  .anpu-nav-actions { display: none !important; }
+  .anpu-mobile-menu { display: inline-flex !important; }
+  .anpu-mobile-panel { display: flex !important; }
+
+  .anpu-brand small { display: none !important; }
+
+  /* HERO: single column */
+  .anpu-hero-v2-inner {
+    grid-template-columns: 1fr !important;
+    padding: 1.75rem 1.25rem 3rem !important;
+    gap: 2rem !important;
+  }
+  .anpu-hero-v2-logo {
+    order: -1 !important;
+    grid-column: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .anpu-logo-frame { width: 200px !important; }
+
+  .anpu-hero-v2-h1 {
+    font-size: clamp(3rem, 12vw, 4.5rem) !important;
+  }
+  .anpu-hero-v2-desc {
+    font-size: 0.82rem !important;
+    max-width: 100% !important;
+  }
+  .anpu-hero-v2-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .anpu-btn-primary, .anpu-btn-secondary, .anpu-btn-ghost {
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 0.78rem !important;
+  }
+  .anpu-hero-v2-cmd {
+    font-size: 0.7rem !important;
+    word-break: break-all !important;
+  }
+  .anpu-hero-v2-stats { flex-wrap: wrap !important; gap: 1rem !important; }
+
+  /* SCAN: stack */
+  .scan-page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 1.5rem 1.25rem 1.25rem !important;
+    gap: 0.75rem !important;
+  }
+  .scan-h1 { font-size: clamp(2rem, 10vw, 3rem) !important; }
+  .scan-config-panel, .scan-telemetry-panel {
+    padding: 1.25rem !important;
+  }
+  .scan-profiles {
+    grid-template-columns: 1fr !important;
+  }
+  .scan-profile-btn {
+    border-right: none !important;
+    border-bottom: 1px solid #1a4a1a !important;
+  }
+  .scan-profile-btn:last-child { border-bottom: none !important; }
+  .scan-idle-stats { grid-template-columns: repeat(2, 1fr) !important; }
+  .scan-idle-stat:nth-child(2) { border-right: none !important; }
+  .scan-live-chips { grid-template-columns: repeat(2, 1fr) !important; }
+  .scan-chip:nth-child(2n) { border-right: none !important; }
+  .scan-finding-counts { flex-wrap: wrap !important; }
+  .scan-finding-chip { min-width: 60px !important; flex: 1 !important; }
+  .scan-module-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .scan-module-chip:nth-child(2n) { border-right: 1px solid #1a4a1a !important; }
+  .scan-module-chip:nth-child(3n) { border-right: none !important; }
+  .scan-radar-wrap { height: 180px !important; }
+
+  /* DOCS: full-width */
+  .docs-section-h2 { font-size: 1.6rem !important; }
+  .docs-h3 { font-size: 0.78rem !important; }
+  .docs-p { font-size: 0.78rem !important; }
+
+  /* About */
+  .about-h2 { font-size: 1.8rem !important; }
+  .about-p { font-size: 0.78rem !important; }
+  .about-scoring-formula pre,
+  .about-formula-code { font-size: 0.65rem !important; }
+
+  /* GitHub */
+  .github-h2 { font-size: 1.8rem !important; }
+  .github-docs-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ─────────────────────────────────────────────────────
+   10. BREAKPOINT: ≤ 480px (small phones)
+   ───────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Hero */
+  .anpu-hero-v2-h1 {
+    font-size: clamp(2.6rem, 14vw, 3.8rem) !important;
+    letter-spacing: -0.02em !important;
+  }
+  .anpu-hero-kicker {
+    font-size: 0.58rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.3rem !important;
+  }
+  .anpu-hero-v2-stats {
+    gap: 0.75rem !important;
+  }
+  .anpu-stat-val { font-size: 1.5rem !important; }
+  .anpu-logo-frame { width: 170px !important; }
+
+  /* Scan */
+  .scan-h1 { font-size: clamp(1.8rem, 11vw, 2.6rem) !important; }
+  .scan-module-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .scan-chip-val { font-size: 1.2rem !important; }
+  .scan-steps-list { grid-template-columns: 1fr !important; }
+  .scan-live-chips { grid-template-columns: repeat(4, 1fr) !important; }
+  .scan-chip-label { font-size: 0.48rem !important; }
+
+  /* Docs / About / Github */
+  .docs-h1 { font-size: clamp(2rem, 11vw, 3rem) !important; }
+  .about-h1 { font-size: clamp(2.2rem, 12vw, 3.2rem) !important; }
+  .github-h1 { font-size: clamp(2.2rem, 12vw, 3.2rem) !important; }
+
+  /* Nav brand */
+  .anpu-nav-shell { padding: 0 0.75rem !important; }
+
+  /* Boot terminal */
+  .anpu-boot-body { font-size: 0.7rem !important; padding: 14px !important; }
+
+  /* v6 metrics: 1-col on very small screens */
+  .v6-metrics { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Code blocks: smaller */
+  .docs-code-block pre { font-size: 0.63rem !important; }
+  .scan-log-line { font-size: 0.62rem !important; }
+  .scan-log-tag { min-width: 42px !important; }
+}
+
+/* ─────────────────────────────────────────────────────
+   11. SAFE TOUCH SCROLLING
+   ───────────────────────────────────────────────────── */
+.scan-log-body,
+.about-status-strip,
+.github-stats-strip,
+.docs-table-wrap,
+.docs-code-block pre,
+.github-code-block,
+.about-formula-code,
+.anpu-live-script {
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   12. REDUCED MOTION — respect user preference
+   ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .anpu-cursor-blink,
+  .anpu-live-dot,
+  .anpu-matrix-col,
+  .anpu-logo-scanbar,
+  .anpu-logo-glitch,
+  .anpu-logo-hieroglyphs,
+  .anpu-ticker-track,
+  .scan-spinner,
+  .scan-step-spinner,
+  .anpu-boot-line {
+    animation: none !important;
+    transition: none !important;
+  }
+  .anpu-matrix-col { display: none !important; }
+}
