@@ -14,6 +14,7 @@ import "./live-terminal-v9.css"
 import "./styles/hero-v11.css"
 import "./hard-terminal.css"
 import "./exact-anubis-hero.css"
+import "./mobile-responsive.css"
 import App from "./App.tsx"
 
 createRoot(document.getElementById("root")!).render(
