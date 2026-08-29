@@ -1,307 +1,389 @@
 import { useState } from "react";
-import { Copy, CheckCheck, Terminal, ChevronRight } from "lucide-react";
+import { Copy, CheckCheck, Terminal, BookOpen, GitBranch, Layers, ExternalLink, Shield, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const TOC = [
-  { id: "install",  label: "01 / INSTALLATION" },
-  { id: "quickstart", label: "02 / QUICK START" },
-  { id: "cli",     label: "03 / CLI REFERENCE" },
-  { id: "profiles", label: "04 / SCAN PROFILES" },
-  { id: "config",  label: "05 / CONFIGURATION" },
-  { id: "output",  label: "06 / OUTPUT FORMATS" },
-  { id: "cicd",    label: "07 / CI/CD" },
+type Tab = "docs" | "api" | "about" | "github";
+
+const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: "docs",   label: "Docs",    icon: <BookOpen size={13} /> },
+  { id: "api",    label: "API",     icon: <Terminal size={13} /> },
+  { id: "about",  label: "About",   icon: <Layers size={13} /> },
+  { id: "github", label: "Source",  icon: <GitBranch size={13} /> },
 ];
 
-const SCAN_PROFILES = [
-  { name: "safe", badge: "DEFAULT", desc: "Passive and low-impact baseline. DNS, TLS, headers, cookies, endpoints. No active probing.", color: "var(--crt-green-1)" },
-  { name: "standard", badge: "RECOMMENDED", desc: "Adds broader active checks: subdomains, secrets, CORS, HTTP methods, Nuclei when available.", color: "var(--egypt-gold-1)" },
-  { name: "deep", badge: "ADVANCED", desc: "Adds deeper discovery: DNS brute-force, TCP port scanning, sensitive paths, full active analysis.", color: "#FF8C00" },
-];
-
-const CLI_COMMANDS = [
-  { cmd: "anpu scan https://example.com", desc: "Run safe profile scan (default)" },
-  { cmd: "anpu scan https://example.com --profile standard", desc: "Standard profile with active checks" },
-  { cmd: "anpu scan https://example.com --profile deep", desc: "Deep discovery and full active analysis" },
-  { cmd: "anpu scan https://example.com --json --sarif", desc: "Machine-readable JSON + SARIF 2.1.0 output" },
-  { cmd: "anpu scan https://example.com --fail-on high", desc: "Exit non-zero if high/critical findings found" },
-  { cmd: "anpu history", desc: "List previous local scans" },
-  { cmd: "anpu history --limit 50", desc: "List up to 50 previous scans" },
-  { cmd: "anpu show scan-1234567890-1", desc: "Display a past scan from local history" },
-  { cmd: "anpu diff scan-old scan-new", desc: "Compare two historical scans" },
-  { cmd: "anpu diff scan-old scan-new --json", desc: "Machine-readable diff output" },
-  { cmd: "anpu tools", desc: "Show available engines and integrations" },
-];
-
-const SCAN_FLAGS = [
-  ["--profile <name>", "safe", "Select safe, standard, or deep"],
-  ["--html", "true", "Write HTML report"],
-  ["--json", "false", "Write JSON report"],
-  ["--sarif", "false", "Write SARIF 2.1.0 report"],
-  ["--output <dir>", "./reports", "Output directory for reports"],
-  ["--fail-on <severity>", "none", "Exit non-zero at low / medium / high / critical"],
-  ["--no-nuclei", "false", "Disable Nuclei for this run"],
-  ["--skip-pre-check", "false", "Skip initial connectivity check"],
-];
-
-function CodeBlock({ code, copyable = true }: { code: string; copyable?: boolean }) {
+function CodeBlock({ code, lang = "sh" }: { code: string; lang?: string }) {
   const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    await navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
+  const copy = async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1500); };
   return (
     <div className="docs-code-block">
-      {copyable && (
-        <button className="docs-copy-btn" onClick={copy}>
-          {copied ? <CheckCheck size={12} /> : <Copy size={12} />}
-          {copied ? "COPIED" : "COPY"}
-        </button>
-      )}
+      <div className="docs-code-lang">{lang}</div>
+      <button className="docs-copy-btn" onClick={copy}>
+        {copied ? <CheckCheck size={12} /> : <Copy size={12} />}
+        {copied ? "COPIED" : "COPY"}
+      </button>
       <pre>{code}</pre>
     </div>
   );
 }
 
+/* ─── DOCS TAB ─── */
+function DocsTab() {
+  return (
+    <div className="dtab-body">
+      <section className="docs-section">
+        <div className="anpu-eyebrow">01 / INSTALLATION</div>
+        <h2 className="docs-section-h2">Get ANPU running</h2>
+        <h3 className="docs-h3">Build from source <span className="docs-badge green">RECOMMENDED</span></h3>
+        <CodeBlock code={`git clone https://github.com/Marwanmorsy999/anpu\ncd anpu\ngo build -o anpu ./cmd/anpu\n./anpu --help`} />
+        <p className="docs-p">Requires Go 1.25+. Dependencies locked in <code>go.mod</code> / <code>go.sum</code>.</p>
+        <h3 className="docs-h3">Docker</h3>
+        <CodeBlock code={`docker build -t anpu .\ndocker run --rm -v "$(pwd)/reports:/reports" anpu scan https://example.com --output /reports`} />
+        <h3 className="docs-h3">Verify</h3>
+        <CodeBlock code={`./anpu --version\n./anpu tools`} />
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">02 / QUICK START</div>
+        <h2 className="docs-section-h2">First scan</h2>
+        <CodeBlock code={`# Default safe profile — passive\n./anpu scan https://example.com\n\n# Standard — adds active checks\n./anpu scan https://example.com --profile standard\n\n# Deep — full analysis\n./anpu scan https://example.com --profile deep`} />
+        <div className="docs-terminal-output">
+          <div className="docs-terminal-bar">// SAMPLE OUTPUT</div>
+          <pre>{`ANPU Web Security Intelligence\n\nTarget: https://example.com\n\nRecon ✓  TLS ✓  Headers ✓  Cookies ✓  Endpoints ✓\n\nCRITICAL 0  HIGH 0  MEDIUM 2  LOW 5  INFO 11\n\nRisk Score: 3.4/10  Grade: A\nReport: ./reports/example.com-2026-01-01.html`}</pre>
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">03 / CLI REFERENCE</div>
+        <h2 className="docs-section-h2">Commands &amp; flags</h2>
+        <div className="docs-cmd-grid">
+          {[
+            ["anpu scan https://example.com",                    "Run safe profile (default)"],
+            ["anpu scan <url> --profile standard",              "Standard — adds active checks"],
+            ["anpu scan <url> --profile deep",                  "Deep — full discovery"],
+            ["anpu scan <url> --json --sarif",                  "JSON + SARIF 2.1.0 output"],
+            ["anpu scan <url> --fail-on high",                  "Exit non-zero on high/critical"],
+            ["anpu scan <url> --output ./reports",              "Set output directory"],
+            ["anpu history",                                     "List previous scans"],
+            ["anpu show scan-1234567890-1",                     "Display a past scan"],
+            ["anpu diff scan-old scan-new",                     "Compare two scans"],
+            ["anpu tools",                                       "Show integrations status"],
+          ].map(([cmd, desc]) => (
+            <div key={cmd} className="docs-cmd-row">
+              <div className="docs-cmd-code"><span className="docs-prompt">$</span> {cmd}</div>
+              <div className="docs-cmd-desc">{desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">04 / CONFIGURATION</div>
+        <h2 className="docs-section-h2">anpu.yaml</h2>
+        <CodeBlock lang="yaml" code={`target:\n  url: https://example.com\n\nscan:\n  profile: safe   # safe | standard | deep\n\nreport:\n  html: true\n  json: true\n  sarif: false`} />
+        <p className="docs-p">CLI flags override config file values. Config overrides profile defaults.</p>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">05 / CI/CD</div>
+        <h2 className="docs-section-h2">GitHub Actions</h2>
+        <CodeBlock lang="yaml" code={`name: ANPU Security Scan\non:\n  push:\n    branches: [main]\njobs:\n  scan:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-go@v5\n        with:\n          go-version: '1.25'\n      - run: go build -o anpu ./cmd/anpu\n      - run: |\n          ./anpu scan https://staging.example.com \\\n            --profile standard \\\n            --fail-on high \\\n            --sarif --output ./reports\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: anpu-sarif\n          path: ./reports/*.sarif`} />
+      </section>
+    </div>
+  );
+}
+
+/* ─── API TAB ─── */
+const ENDPOINTS = [
+  { method: "POST",   path: "/api/v1/scan",           desc: "Start a scan. Returns scan ID.", body: `{"url":"https://example.com","profile":"standard"}`, response: `202 Accepted\n{"id":"scan-1748291837-1","status":"queued"}` },
+  { method: "GET",    path: "/api/v1/scan/:id/status", desc: "Poll scan progress.",             body: null, response: `200 OK\n{"id":"...","status":"running","progress":65,"stage":"headers"}` },
+  { method: "GET",    path: "/api/v1/scan/:id",        desc: "Get full scan result.",           body: null, response: `200 OK\n{"score":3.4,"grade":"A","findings":{"critical":0,"high":0,"medium":2}}` },
+  { method: "GET",    path: "/api/v1/scans",           desc: "List scan history.",              body: null, response: `200 OK\n{"total":42,"scans":[...]}` },
+  { method: "DELETE", path: "/api/v1/scan/:id",        desc: "Delete a scan from history.",     body: null, response: `204 No Content` },
+];
+const METHOD_COLOR: Record<string, string> = { GET: "var(--crt-green-1)", POST: "var(--egypt-gold-1)", DELETE: "#FF4444" };
+
+function ApiTab() {
+  const [open, setOpen] = useState<string | null>("POST /api/v1/scan");
+  return (
+    <div className="dtab-body">
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// STATUS</div>
+        <h2 className="docs-section-h2">REST Interface</h2>
+        <div className="api-status-badge">
+          <span style={{ color: "#FF8C00" }}>⚠</span>
+          API not yet externally available — documenting the intended interface.
+        </div>
+        <p className="docs-p" style={{ marginTop: "1rem" }}>
+          ANPU is CLI-first. Use <Link to="/scan" className="docs-link">the web scanner</Link> or the CLI directly.
+          This documents the planned programmatic HTTP layer.
+        </p>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// ENDPOINTS</div>
+        <h2 className="docs-section-h2">HTTP Reference</h2>
+        <CodeBlock code="https://anpu.example/api/v1" lang="base url" />
+        <div className="api-endpoints-list" style={{ marginTop: "1rem" }}>
+          {ENDPOINTS.map(ep => {
+            const key = `${ep.method} ${ep.path}`;
+            const isOpen = open === key;
+            return (
+              <div key={key} className={`api-endpoint-card ${isOpen ? "is-open" : ""}`}>
+                <button className="api-endpoint-head" onClick={() => setOpen(isOpen ? null : key)}>
+                  <span className="api-method" style={{ color: METHOD_COLOR[ep.method] }}>{ep.method}</span>
+                  <code className="api-path">{ep.path}</code>
+                  <span className="api-chevron">{isOpen ? "▲" : "▼"}</span>
+                </button>
+                {isOpen && (
+                  <div className="api-endpoint-body">
+                    <p className="docs-p" style={{ marginBottom: "0.75rem" }}>{ep.desc}</p>
+                    {ep.body && <><div className="anpu-eyebrow" style={{ fontSize: "0.58rem", marginBottom: "0.3rem" }}>BODY</div><CodeBlock code={ep.body} lang="json" /></>}
+                    <div className="anpu-eyebrow" style={{ fontSize: "0.58rem", marginBottom: "0.3rem", marginTop: ep.body ? "0.75rem" : 0 }}>RESPONSE</div>
+                    <CodeBlock code={ep.response} lang="http" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// STATUS CODES</div>
+        <h2 className="docs-section-h2">HTTP Status Reference</h2>
+        <div className="docs-table-wrap">
+          <table className="docs-table">
+            <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+            <tbody>
+              {[["200","Success"],["202","Scan queued"],["204","Deleted"],["400","Bad request / invalid URL"],["404","Scan ID not found"],["409","Scan already running for this target"],["429","Too many concurrent scans"],["500","Internal scanner failure"]].map(([c, m]) => (
+                <tr key={c}><td><code style={{ color: c.startsWith("2") ? "var(--crt-green-1)" : "#FF8C00" }}>{c}</code></td><td style={{ color: "#94a3b8" }}>{m}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ─── ABOUT TAB ─── */
+const MODULES = [
+  { name: "Recon",      scope: "All",          active: "Passive", desc: "DNS, robots.txt, sitemap, redirects, source-map exposure" },
+  { name: "Technology", scope: "All",          active: "Passive", desc: "Web servers, frameworks, CDNs, JS libraries" },
+  { name: "TLS",        scope: "All",          active: "Passive", desc: "Certificate, protocol version, HSTS, HTTPS redirect" },
+  { name: "Headers",    scope: "All",          active: "Passive", desc: "CSP, X-Frame-Options, Referrer-Policy, disclosure headers" },
+  { name: "Cookies",    scope: "All",          active: "Passive", desc: "Secure, HttpOnly, SameSite attribute analysis" },
+  { name: "Endpoints",  scope: "All",          active: "Passive", desc: "Links, forms, scripts, API paths — normalized" },
+  { name: "Subdomains", scope: "Standard+",    active: "Active",  desc: "Certificate Transparency + DNS enumeration" },
+  { name: "Secrets",    scope: "Standard+",    active: "Active",  desc: "API key and token pattern detection" },
+  { name: "CORS",       scope: "Standard+",    active: "Active",  desc: "Wildcard, reflection, credential behavior" },
+  { name: "PortScan",   scope: "Deep",         active: "Active",  desc: "TCP connect scan on common service ports" },
+  { name: "Dirs",       scope: "Standard+",    active: "Active",  desc: "Sensitive-path probing with soft-404 filtering" },
+  { name: "Methods",    scope: "Standard+",    active: "Active",  desc: "HTTP method auditing — OPTIONS, TRACE" },
+  { name: "Nuclei",     scope: "Standard+",    active: "Active",  desc: "Optional external vulnerability templates" },
+];
+
+function AboutTab() {
+  return (
+    <div className="dtab-body">
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// WHAT ANPU IS</div>
+        <h2 className="docs-section-h2">Local-first security scanner</h2>
+        <p className="docs-p">
+          ANPU orchestrates passive and active analyzers, normalizes findings into one evidence-backed model,
+          deduplicates overlapping signals, scores deterministically, and produces HTML/JSON/SARIF reports.
+          No cloud backend. No telemetry. No account required.
+        </p>
+        <div className="about-status-strip" style={{ marginTop: "1rem", border: "1px solid #1a4a1a" }}>
+          {[["ENGINE","Go 1.25+"],["LICENSE","Apache-2.0"],["STORAGE","SQLite local"],["TELEMETRY","None"],["OUTPUTS","HTML / JSON / SARIF"]].map(([l, v]) => (
+            <div key={l} className="about-status-item">
+              <span className="about-status-label">{l}</span>
+              <span className="about-status-val" style={{ color: "var(--crt-green-2)" }}>{v}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// ENGINE MODULES</div>
+        <h2 className="docs-section-h2">13 analyzer modules</h2>
+        <div className="about-module-grid">
+          {MODULES.map(({ name, scope, active, desc }) => (
+            <div key={name} className="about-module-card">
+              <div className="about-module-top">
+                <span className="about-module-name">{name}</span>
+                <span className="about-module-scope">{scope}</span>
+                <span className="about-module-activity" style={{ color: active === "Passive" ? "var(--crt-green-1)" : "var(--egypt-gold-1)" }}>{active}</span>
+              </div>
+              <p className="about-module-desc">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// SCORING</div>
+        <h2 className="docs-section-h2">Transparent risk scoring</h2>
+        <div className="about-scoring-formula">
+          <div className="about-formula-label">// FORMULA</div>
+          <pre className="about-formula-code">{`Score = (Severity Base × Confidence) + Category Weight\n\nSeverity:   Critical=9.0  High=7.0  Medium=4.5  Low=2.0  Info=0\nConfidence: Confirmed=1.0  High=0.9  Medium=0.75  Low=0.55\nCategory:   Vulnerability+1.0  Auth+0.7  TLS+0.5  Headers+0.1\n\nAggregate = max_finding + volume_bonus (capped at 10.0)`}</pre>
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="about-warning-banner">
+          <div className="about-warning-title">⚠ RESPONSIBLE USE</div>
+          <p>Only scan targets you own or are explicitly authorized to test. Standard and Deep profiles perform active network requests.</p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ─── GITHUB TAB ─── */
+const TREE = [
+  ["cmd/anpu/",              "CLI entry point (scan, history, show, diff, tools)"],
+  ["internal/scanner/",     "Pipeline orchestrator and scanner interface"],
+  ["internal/recon/",       "DNS, robots.txt, sitemap, redirects"],
+  ["internal/tls/",         "Passive TLS analysis"],
+  ["internal/headers/",     "Security headers + cookie analysis"],
+  ["internal/endpoints/",   "Endpoint discovery and normalization"],
+  ["internal/secrets/",     "Token and key pattern detection"],
+  ["internal/scoring/",     "Transparent risk scoring engine"],
+  ["internal/storage/",     "SQLite local scan history"],
+  ["internal/reporting/",   "HTML / JSON / SARIF report generation"],
+  ["pkg/models/",           "Shared scanner-agnostic data model"],
+  ["docs/",                 "CLI, config, scanners, scoring, CI/CD docs"],
+];
+
+const DOCS_LINKS = [
+  ["docs/cli.md",           "CLI Reference"],
+  ["docs/configuration.md", "Configuration"],
+  ["docs/scanners.md",      "Scanner Reference"],
+  ["docs/scoring.md",       "Risk Scoring"],
+  ["docs/ci-cd.md",         "CI/CD Integration"],
+  ["docs/releases.md",      "Releases & Install"],
+  ["CONTRIBUTING.md",       "Contributing"],
+  ["SECURITY.md",           "Security Policy"],
+];
+
+function GithubTab() {
+  return (
+    <div className="dtab-body">
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// REPOSITORY</div>
+        <h2 className="docs-section-h2">Marwanmorsy999/anpu</h2>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="anpu-btn-primary" style={{ fontSize: "0.72rem" }}>
+            <GitBranch size={13} /> VIEW ON GITHUB
+          </a>
+          <a href="https://github.com/Marwanmorsy999/anpu/releases" target="_blank" rel="noopener noreferrer" className="anpu-btn-secondary" style={{ fontSize: "0.72rem" }}>
+            Releases <ExternalLink size={11} />
+          </a>
+          <a href="https://github.com/Marwanmorsy999/anpu/issues" target="_blank" rel="noopener noreferrer" className="anpu-btn-ghost" style={{ fontSize: "0.72rem" }}>
+            Issues <ExternalLink size={11} />
+          </a>
+        </div>
+        <h3 className="docs-h3">Install</h3>
+        <CodeBlock code={`git clone https://github.com/Marwanmorsy999/anpu\ncd anpu && go build -o anpu ./cmd/anpu`} />
+        <CodeBlock code={`docker build -t anpu .\ndocker run --rm -v "$(pwd)/reports:/reports" anpu scan https://example.com --output /reports`} lang="docker" />
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// CODEBASE</div>
+        <h2 className="docs-section-h2">Repository structure</h2>
+        <div className="github-tree">
+          {TREE.map(([path, desc]) => (
+            <div key={path} className="github-tree-row">
+              <code className="github-tree-path"><span className="github-tree-bullet">├─</span> {path}</code>
+              <span className="github-tree-desc">{desc}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// DOCUMENTATION FILES</div>
+        <h2 className="docs-section-h2">Reference docs in the repo</h2>
+        <div className="github-docs-grid">
+          {DOCS_LINKS.map(([file, label]) => (
+            <a key={file} href={`https://github.com/Marwanmorsy999/anpu/blob/main/${file}`} target="_blank" rel="noopener noreferrer" className="github-doc-card">
+              <div className="github-doc-top">
+                <span className="github-doc-label">{label}</span>
+                <ExternalLink size={10} style={{ color: "#444" }} />
+              </div>
+              <code className="github-doc-file">{file}</code>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="anpu-eyebrow">// DEVELOPMENT</div>
+        <h2 className="docs-section-h2">Contributor workflow</h2>
+        <div className="github-dev-block">
+          <div className="github-dev-bar">// BUILD + TEST</div>
+          {["go build ./...","go vet ./...","go test -v -race ./...","docker build -t anpu ."].map(cmd => (
+            <div key={cmd} className="github-dev-line"><span className="docs-prompt">$</span> {cmd}</div>
+          ))}
+        </div>
+        <p className="docs-p" style={{ marginTop: "1rem" }}>
+          Read <a href="https://github.com/Marwanmorsy999/anpu/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" className="docs-link">CONTRIBUTING.md</a> and{" "}
+          <a href="https://github.com/Marwanmorsy999/anpu/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer" className="docs-link">SECURITY.md</a> before contributing.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+/* ─── PAGE SHELL ─── */
 export function DocsPage() {
-  const [active, setActive] = useState("install");
+  const [tab, setTab] = useState<Tab>("docs");
 
   return (
     <div className="docs-shell">
+      {/* Header */}
       <div className="docs-header">
         <div className="docs-header-inner">
-          <div className="anpu-eyebrow" style={{ marginBottom: "0.75rem" }}>ANPU / DOCUMENTATION</div>
-          <h1 className="docs-h1">Operator Reference<span className="anpu-cursor-blink" style={{ fontSize: "0.6em", marginLeft: "0.25em" }}>█</span></h1>
-          <p className="docs-subtitle">
-            Install ANPU, run your first scan, configure profiles, and integrate into CI/CD pipelines.
-          </p>
-          <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
-            <a
-              href="https://github.com/Marwanmorsy999/anpu/releases"
-              target="_blank" rel="noopener noreferrer"
-              className="anpu-btn-primary" style={{ fontSize: "0.72rem" }}
-            >
-              <Terminal size={13} /> GET RELEASES
-            </a>
-            <Link to="/api" className="anpu-btn-secondary" style={{ fontSize: "0.72rem" }}>
-              API REFERENCE <ChevronRight size={13} />
-            </Link>
-          </div>
+          <div className="anpu-eyebrow" style={{ marginBottom: "0.5rem" }}>𓁹 ANPU / INTELLIGENCE CENTER</div>
+          <h1 className="docs-h1">
+            {tab === "docs"   ? "Documentation" :
+             tab === "api"    ? "API Reference" :
+             tab === "about"  ? "About ANPU" :
+             "Source Archive"}
+            <span className="anpu-cursor-blink" style={{ fontSize: "0.5em", marginLeft: "0.25em" }}>█</span>
+          </h1>
+        </div>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap", marginTop: "0.75rem" }}>
+          <Link to="/scan" className="anpu-btn-primary" style={{ fontSize: "0.72rem" }}>
+            <Shield size={13} /> Run Scanner <ArrowRight size={12} />
+          </Link>
+          <a href="https://github.com/Marwanmorsy999/anpu" target="_blank" rel="noopener noreferrer" className="anpu-btn-secondary" style={{ fontSize: "0.72rem" }}>
+            <GitBranch size={13} /> GitHub
+          </a>
         </div>
       </div>
 
-      <div className="docs-layout">
-        {/* TOC */}
-        <aside className="docs-toc">
-          <div className="docs-toc-label">// CONTENTS</div>
-          {TOC.map(({ id, label }) => (
-            <a
-              key={id}
-              href={`#${id}`}
-              className={`docs-toc-link ${active === id ? "is-active" : ""}`}
-              onClick={() => setActive(id)}
-            >
-              <span className="docs-toc-arrow">›</span> {label}
-            </a>
-          ))}
-          <div style={{ marginTop: "2rem", padding: "1rem", border: "1px solid #1a4a1a", background: "#020502" }}>
-            <div className="anpu-eyebrow" style={{ marginBottom: "0.5rem", fontSize: "0.58rem" }}>// QUICK INSTALL</div>
-            <code style={{ display: "block", fontSize: "0.68rem", color: "var(--crt-green-1)", lineHeight: 1.8 }}>
-              git clone github.com/<br />
-              Marwanmorsy999/anpu<br />
-              cd anpu<br />
-              go build -o anpu ./cmd/anpu
-            </code>
-          </div>
-        </aside>
+      {/* Tab bar */}
+      <div className="docs-tabbar">
+        {TABS.map(({ id, label, icon }) => (
+          <button
+            key={id}
+            type="button"
+            className={`docs-tab-btn ${tab === id ? "is-active" : ""}`}
+            onClick={() => setTab(id)}
+          >
+            {icon} {label}
+          </button>
+        ))}
+      </div>
 
-        {/* Main content */}
-        <main className="docs-main">
-
-          {/* INSTALLATION */}
-          <section id="install" className="docs-section">
-            <div className="anpu-eyebrow">01 / INSTALLATION</div>
-            <h2 className="docs-section-h2">Get ANPU running</h2>
-
-            <h3 className="docs-h3">Build from source <span className="docs-badge green">RECOMMENDED</span></h3>
-            <CodeBlock code={`git clone https://github.com/Marwanmorsy999/anpu\ncd anpu\ngo build -o anpu ./cmd/anpu\n./anpu --help`} />
-            <p className="docs-p">Requires Go 1.25+. Dependencies are locked in <code>go.mod</code> / <code>go.sum</code>.</p>
-
-            <h3 className="docs-h3">Pre-built binaries</h3>
-            <p className="docs-p">
-              Release archives for Linux, Windows, and macOS (amd64 + arm64) are published via GoReleaser on the{" "}
-              <a href="https://github.com/Marwanmorsy999/anpu/releases" target="_blank" rel="noopener noreferrer" className="docs-link">
-                Releases page
-              </a>. Each release includes <code>checksums.txt</code> for verification.
-            </p>
-            <CodeBlock code={`# Linux amd64 example\nsha256sum anpu_<version>_linux_amd64.tar.gz\n# Compare with checksums.txt`} />
-
-            <h3 className="docs-h3">Docker</h3>
-            <CodeBlock code={`docker build -t anpu .\ndocker run --rm -v "$(pwd)/reports:/reports" anpu scan https://example.com --output /reports`} />
-
-            <h3 className="docs-h3">Verify installation</h3>
-            <CodeBlock code={`./anpu --version\n./anpu tools`} />
-          </section>
-
-          {/* QUICK START */}
-          <section id="quickstart" className="docs-section">
-            <div className="anpu-eyebrow">02 / QUICK START</div>
-            <h2 className="docs-section-h2">First scan</h2>
-            <CodeBlock code={`# Default safe profile — passive, low-impact\n./anpu scan https://example.com`} />
-            <div className="docs-terminal-output">
-              <div className="docs-terminal-bar">// SAMPLE OUTPUT</div>
-              <pre>{`        ▄▀█ █▄░█ █▀█ █░█
-        █▀█ █░▀█ █▀▀ █▄█
-   Web Security Intelligence
-
-Target: https://example.com
-
-Recon              ✓
-Technology         ✓
-TLS                ✓
-Headers            ✓
-Cookies            ✓
-Endpoints          ✓
-
-Results
-CRITICAL     0
-HIGH         0
-MEDIUM       2
-LOW          5
-INFO         11
-
-Risk Score: 3.4/10
-Report: ./reports/example.com-2026-01-01-120000.html`}</pre>
-            </div>
-            <p className="docs-p">ANPU stores scan history locally at <code>~/.anpu/anpu.db</code> — no cloud backend required.</p>
-          </section>
-
-          {/* CLI REFERENCE */}
-          <section id="cli" className="docs-section">
-            <div className="anpu-eyebrow">03 / CLI REFERENCE</div>
-            <h2 className="docs-section-h2">Commands &amp; flags</h2>
-            <p className="docs-p">ANPU exposes five subcommands: <code>scan</code>, <code>history</code>, <code>show</code>, <code>diff</code>, and <code>tools</code>.</p>
-
-            <div className="docs-cmd-grid">
-              {CLI_COMMANDS.map(({ cmd, desc }) => (
-                <div key={cmd} className="docs-cmd-row">
-                  <div className="docs-cmd-code">
-                    <span className="docs-prompt">$</span> {cmd}
-                  </div>
-                  <div className="docs-cmd-desc">{desc}</div>
-                </div>
-              ))}
-            </div>
-
-            <h3 className="docs-h3" style={{ marginTop: "1.5rem" }}>Scan flags</h3>
-            <div className="docs-table-wrap">
-              <table className="docs-table">
-                <thead><tr><th>Flag</th><th>Default</th><th>Purpose</th></tr></thead>
-                <tbody>
-                  {SCAN_FLAGS.map(([flag, def, purpose]) => (
-                    <tr key={flag}>
-                      <td><code>{flag}</code></td>
-                      <td><code>{def}</code></td>
-                      <td>{purpose}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <h3 className="docs-h3" style={{ marginTop: "1.5rem" }}>Global flags</h3>
-            <div className="docs-table-wrap">
-              <table className="docs-table">
-                <thead><tr><th>Flag</th><th>Purpose</th></tr></thead>
-                <tbody>
-                  <tr><td><code>--config &lt;path&gt;</code></td><td>Use a specific YAML config file</td></tr>
-                  <tr><td><code>--verbose</code></td><td>Show per-stage finding and warning counts</td></tr>
-                  <tr><td><code>--version</code></td><td>Print ANPU version</td></tr>
-                  <tr><td><code>--help</code></td><td>Show command help</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {/* PROFILES */}
-          <section id="profiles" className="docs-section">
-            <div className="anpu-eyebrow">04 / SCAN PROFILES</div>
-            <h2 className="docs-section-h2">Safe · Standard · Deep</h2>
-            <p className="docs-p">
-              Only use <code>standard</code> and <code>deep</code> profiles against systems you own or are explicitly authorized to test.
-            </p>
-            <div className="docs-profile-grid">
-              {SCAN_PROFILES.map(({ name, badge, desc, color }) => (
-                <div key={name} className="docs-profile-card" style={{ borderColor: color + "44" }}>
-                  <div className="docs-profile-top">
-                    <code className="docs-profile-name" style={{ color }}>{name}</code>
-                    <span className="docs-badge" style={{ borderColor: color + "66", color }}>{badge}</span>
-                  </div>
-                  <p className="docs-p" style={{ marginBottom: 0 }}>{desc}</p>
-                </div>
-              ))}
-            </div>
-            <CodeBlock code={`# Profile examples\nanpu scan https://example.com                          # safe (default)\nanpu scan https://example.com --profile standard       # standard\nanpu scan https://example.com --profile deep           # deep\nanpu scan https://example.com --profile deep --no-nuclei  # deep, skip Nuclei`} />
-          </section>
-
-          {/* CONFIGURATION */}
-          <section id="config" className="docs-section">
-            <div className="anpu-eyebrow">05 / CONFIGURATION</div>
-            <h2 className="docs-section-h2">anpu.yaml</h2>
-            <p className="docs-p">
-              ANPU loads <code>anpu.yaml</code> from the current directory, or from a path supplied with <code>--config</code>.
-              CLI flags always take precedence over config file values.
-            </p>
-            <CodeBlock code={`target:\n  url: https://example.com\n\nscan:\n  profile: safe\n\nmodules:\n  recon: true\n  technology: true\n  tls: true\n  headers: true\n  cookies: true\n  endpoints: true\n  subdomains: false   # standard/deep\n  portscan: false     # deep only\n  dirs: false         # standard/deep\n  secrets: false      # standard/deep\n  cors: false         # standard/deep\n  methods: false      # standard/deep\n  nuclei: false       # optional, standard/deep\n\nreport:\n  html: true\n  json: true\n  sarif: false`} />
-            <p className="docs-p">Precedence: <code>CLI flags → resolved config → profile defaults → built-in defaults</code></p>
-          </section>
-
-          {/* OUTPUT */}
-          <section id="output" className="docs-section">
-            <div className="anpu-eyebrow">06 / OUTPUT FORMATS</div>
-            <h2 className="docs-section-h2">HTML · JSON · SARIF</h2>
-            <p className="docs-p">ANPU can write three report formats per scan. Reports include observed evidence and score explanations — no manufactured data.</p>
-            <div className="docs-output-grid">
-              {[
-                { fmt: "HTML", flag: "--html", desc: "Human-readable security review. Includes evidence, scoring breakdowns, and findings with context.", default: "ON" },
-                { fmt: "JSON", flag: "--json", desc: "Machine-readable format for automation, downstream processing, and diff comparisons.", default: "OFF" },
-                { fmt: "SARIF", flag: "--sarif", desc: "SARIF 2.1.0 compatible with GitHub Code Scanning, security tooling, and CI artifact upload.", default: "OFF" },
-              ].map(({ fmt, flag, desc, default: def }) => (
-                <div key={fmt} className="docs-output-card">
-                  <div className="docs-output-top">
-                    <span className="docs-output-fmt">{fmt}</span>
-                    <code className="docs-output-flag">{flag}</code>
-                    <span className="docs-badge" style={{ color: def === "ON" ? "var(--crt-green-1)" : "#6a6a6a", borderColor: def === "ON" ? "var(--crt-green-dim)" : "#333" }}>{def}</span>
-                  </div>
-                  <p className="docs-p" style={{ marginBottom: 0, fontSize: "0.8rem" }}>{desc}</p>
-                </div>
-              ))}
-            </div>
-            <CodeBlock code={`# Report filenames include target host + timestamp\nreports/example.com-2026-01-01-120000.html\nreports/example.com-2026-01-01-120000.json\nreports/example.com-2026-01-01-120000.sarif\n\n# In CI, glob for the exact name:\nfind ./reports -name "*.sarif"`} />
-          </section>
-
-          {/* CI/CD */}
-          <section id="cicd" className="docs-section">
-            <div className="anpu-eyebrow">07 / CI/CD</div>
-            <h2 className="docs-section-h2">Pipeline integration</h2>
-            <p className="docs-p">
-              ANPU is local-first: no cloud backend, no API key required. Run it directly in any CI runner.
-              Use <code>--fail-on high</code> as your security gate.
-            </p>
-            <h3 className="docs-h3">GitHub Actions</h3>
-            <CodeBlock code={`name: ANPU Security Scan\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\npermissions:\n  contents: read\n\njobs:\n  security-scan:\n    runs-on: ubuntu-latest\n    timeout-minutes: 20\n\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-go@v5\n        with:\n          go-version: '1.25'\n\n      - name: Build ANPU\n        run: go build -o anpu ./cmd/anpu\n\n      - name: Run ANPU\n        run: |\n          mkdir -p reports\n          ./anpu scan https://staging.example.com \\\\\n            --profile standard \\\\\n            --fail-on high \\\\\n            --sarif \\\\\n            --output ./reports\n\n      - name: Upload SARIF\n        if: always()\n        uses: actions/upload-artifact@v4\n        with:\n          name: anpu-sarif\n          path: ./reports/*.sarif\n          if-no-files-found: error`} />
-            <p className="docs-p">
-              Replace the target URL with a system you own or are explicitly authorized to test.
-              The same pattern works in GitLab CI, Azure Pipelines, and Jenkins.
-            </p>
-            <div className="docs-warning-box">
-              <span style={{ color: "#FF8C00" }}>⚠</span>
-              {" "}Only scan systems you own or are explicitly authorized to test.
-              Built-in SSRF guardrails reduce accidental harm but do not establish authorization.
-            </div>
-          </section>
-
-        </main>
+      {/* Tab content */}
+      <div className="docs-tab-content">
+        {tab === "docs"   && <DocsTab />}
+        {tab === "api"    && <ApiTab />}
+        {tab === "about"  && <AboutTab />}
+        {tab === "github" && <GithubTab />}
       </div>
     </div>
   );
