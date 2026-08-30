@@ -241,11 +241,11 @@ function LiveScript() {
 }
 
 export function AnubisHero() {
-  const [booted, setBooted] = useState(false);
+  const [booted, setBooted] = useState(() => sessionStorage.getItem('anpu_booted') === '1');
 
   return (
     <>
-      {!booted && <BootSequence onDone={() => setBooted(true)} />}
+      {!booted && <BootSequence onDone={() => { sessionStorage.setItem('anpu_booted','1'); setBooted(true); }} />}
       <section className={`anpu-hero-v2 ${booted ? "is-live" : ""}`}>
         {/* Scanline overlay */}
         <div className="anpu-hero-scanlines" aria-hidden="true" />
