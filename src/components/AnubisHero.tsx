@@ -33,10 +33,12 @@ function PharaohPixelArt() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.imageSmoothingEnabled = false;
+    const c = ctx!;
+    const cv = canvas!;
+    c.imageSmoothingEnabled = false;
     const W = 48, H = 56, Z = 7;
-    canvas.width = W * Z;
-    canvas.height = H * Z;
+    cv.width = W * Z;
+    cv.height = H * Z;
     let screenLines: {t:string,c:string}[] = [];
     let lineIdx = 0, charIdx = 0, tick = 0, frame = 0;
     function addChar() {
@@ -51,33 +53,33 @@ function PharaohPixelArt() {
     }
     function drawScreen() {
       const sx=5*Z,sy=2*Z,sw=37*Z,sh=15*Z;
-      ctx.fillStyle='#040804'; ctx.fillRect(sx,sy,sw,sh);
+      c.fillStyle='#040804'; c.fillRect(sx,sy,sw,sh);
       const fsize=Math.max(7,Math.floor(Z*0.95));
-      ctx.font=`bold ${fsize}px "Courier New",monospace`;
-      ctx.textBaseline='top';
+      c.font=`bold ${fsize}px "Courier New",monospace`;
+      c.textBaseline='top';
       const lineH=fsize*1.6;
       screenLines.forEach((ln,i)=>{
-        ctx.fillStyle=ln.c;
+        c.fillStyle=ln.c;
         let txt=ln.t;
-        while(txt.length>0 && ctx.measureText(txt).width>sw-Z)txt=txt.slice(0,-1);
-        ctx.fillText(txt,sx+4,sy+3+i*lineH);
+        while(txt.length>0 && c.measureText(txt).width>sw-Z)txt=txt.slice(0,-1);
+        c.fillText(txt,sx+4,sy+3+i*lineH);
       });
       if(frame%2===0 && screenLines.length>0){
         const last=screenLines[screenLines.length-1];
-        const tw=ctx.measureText(last.t).width;
-        ctx.fillStyle='#00ff55';
-        ctx.fillRect(sx+4+tw,sy+3+(screenLines.length-1)*lineH,Math.floor(Z*0.55),fsize);
+        const tw=c.measureText(last.t).width;
+        c.fillStyle='#00ff55';
+        c.fillRect(sx+4+tw,sy+3+(screenLines.length-1)*lineH,Math.floor(Z*0.55),fsize);
       }
-      ctx.fillStyle='rgba(0,0,0,0.15)';
-      for(let r=sy;r<sy+sh;r+=2)ctx.fillRect(sx,r,sw,1);
+      c.fillStyle='rgba(0,0,0,0.15)';
+      for(let r=sy;r<sy+sh;r+=2)c.fillRect(sx,r,sw,1);
     }
     function render() {
       const fr = frame%10<5 ? FRAME_A : FRAME_B;
-      ctx.fillStyle='#060c06'; ctx.fillRect(0,0,canvas.width,canvas.height);
-      for(const [x,y,col] of fr){ ctx.fillStyle=col as string; ctx.fillRect((x as number)*Z,(y as number)*Z,Z,Z); }
+      c.fillStyle='#060c06'; c.fillRect(0,0,cv.width,cv.height);
+      for(const [x,y,col] of fr){ c.fillStyle=col as string; c.fillRect((x as number)*Z,(y as number)*Z,Z,Z); }
       drawScreen();
-      ctx.fillStyle='rgba(0,5,0,0.05)';
-      for(let r=0;r<canvas.height;r+=3)ctx.fillRect(0,r,canvas.width,1);
+      c.fillStyle='rgba(0,5,0,0.05)';
+      for(let r=0;r<cv.height;r+=3)c.fillRect(0,r,cv.width,1);
       tick++; if(tick%2===0)addChar(); frame++;
     }
     const id = setInterval(render, 110);
