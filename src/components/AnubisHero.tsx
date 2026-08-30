@@ -27,8 +27,8 @@ const CODE_LINES = [
 ];
 
 function PharaohPixelArt() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  React.useEffect(() => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
