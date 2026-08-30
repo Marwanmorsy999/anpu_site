@@ -7,7 +7,7 @@
    FONT IMPORTS
    =================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;800;900&family=VT323&display=swap');
 
 /* ===================================================================
    TAILWIND IMPORTS
@@ -107,6 +107,188 @@
   --sidebar-border: #2A5A2A;
   --sidebar-ring: #7CFF4F;
 }
+
+/* ===================================================================
+   GLOBAL TYPOGRAPHY & READABILITY
+   =================================================================== */
+
+/* Display headers — Orbitron gives that retro-tech military look */
+h1, h2, .anpu-v6-title, .docs-h1, .scan-h1, .anpu-hero-v2-h1 {
+  font-family: 'Orbitron', 'IBM Plex Mono', monospace !important;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+
+/* Section eyebrows / labels — VT323 for authentic CRT feel */
+.anpu-eyebrow, .anpu-v6-kicker, .scan-field-label,
+.scan-log-header span, .scan-steps-header, .docs-code-lang,
+.about-status-label, .github-tree-bullet, .api-method,
+.v6-metric-top span, .v6-metric-note, .scan-chip-label,
+.scan-idle-stat-label, .scan-profile-label, .scan-profile-depth,
+.about-module-activity, .about-module-scope {
+  font-family: 'VT323', 'IBM Plex Mono', monospace !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.12em !important;
+}
+
+/* Body + UI text — Share Tech Mono: wider, more readable than IBM Plex at small sizes */
+body, p, .docs-p, .anpu-v6-subtitle, .scan-subtitle,
+.scan-profile-desc, .scan-profile-modules, .scan-field-hint,
+.about-module-desc, .github-tree-desc, .api-endpoint-body p,
+.docs-table td, .docs-table th, .v6-report-row b, .v6-report-row small,
+.about-warning-banner p {
+  font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace !important;
+}
+
+/* Code blocks — IBM Plex Mono stays */
+code, pre, .docs-code-block pre, .github-dev-line,
+.docs-cmd-code, .api-path, .github-tree-path,
+.scan-log-text, .scan-log-tag, .scan-log-ts {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace !important;
+}
+
+/* Score / grade numbers — Orbitron for impact */
+.scan-score-num, .scan-score-grade, .v6-metric-value,
+.v6-score-chip, .v6-grade-chip, .v6-seal span,
+.scan-results-score, .about-status-val {
+  font-family: 'Orbitron', monospace !important;
+}
+
+/* ===================================================================
+   IMPROVED READABILITY — CONTRAST & SPACING
+   =================================================================== */
+
+/* Body text — warm off-white, never pure white (eye strain) */
+body { color: #c8d4c8; }
+
+p, .docs-p, .anpu-v6-subtitle, .scan-subtitle,
+.scan-field-hint, .about-module-desc, .github-tree-desc {
+  color: #a8b8a8 !important;
+  line-height: 1.75 !important;
+  font-size: 0.875rem !important;
+}
+
+/* Headings — bright but not pure white */
+h1, .anpu-v6-title, .docs-h1, .scan-h1 {
+  color: #e8f0e8 !important;
+}
+
+h2, .docs-section-h2 {
+  color: #d0e0d0 !important;
+  font-size: 1.1rem !important;
+}
+
+h3, .docs-h3 {
+  color: #b8ccb8 !important;
+  font-size: 0.85rem !important;
+}
+
+/* Eyebrow labels — gold */
+.anpu-eyebrow, .anpu-v6-kicker {
+  color: var(--egypt-gold-2) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.18em !important;
+}
+
+/* Terminal / code text — CRT green */
+code { color: var(--crt-green-2) !important; background: rgba(0,40,0,0.3) !important; padding: 0.1em 0.35em !important; border-radius: 2px !important; }
+
+/* Links */
+.docs-link, a.docs-link { color: var(--crt-green-1) !important; text-decoration: underline; text-underline-offset: 3px; }
+.docs-link:hover { color: var(--egypt-gold-1) !important; }
+
+/* Section heading spacing */
+.docs-section { margin-bottom: 2.5rem !important; }
+.docs-section-h2 { margin: 0.5rem 0 1rem !important; }
+.docs-h3 { margin: 1.25rem 0 0.5rem !important; }
+
+/* Metric values readable */
+.v6-metric-value { color: #e8f0e8 !important; }
+.v6-metric-note { color: #5a7a5a !important; }
+
+/* Table readability */
+.docs-table th { color: var(--egypt-gold-2) !important; font-family: 'VT323', monospace !important; font-size: 0.9rem !important; letter-spacing: 0.1em !important; }
+.docs-table td { color: #a8b8a8 !important; font-size: 0.8rem !important; }
+
+/* Scan log text */
+.scan-log-text { font-size: 0.72rem !important; line-height: 1.6 !important; }
+.scan-log-ts { color: #3a5a3a !important; }
+
+/* About module cards */
+.about-module-name { color: #d0e0d0 !important; font-family: 'Orbitron', monospace !important; font-size: 0.7rem !important; }
+
+/* Module card descriptions */
+.about-module-card { padding: 0.75rem !important; }
+.about-module-desc { color: #7a9a7a !important; font-size: 0.75rem !important; line-height: 1.6 !important; }
+
+/* Status strip */
+.about-status-item { padding: 0.5rem 0.75rem !important; }
+.about-status-val { font-size: 0.85rem !important; }
+
+/* Github tree */
+.github-tree-path { color: var(--crt-green-2) !important; font-size: 0.78rem !important; }
+.github-tree-desc { color: #7a9a7a !important; font-size: 0.78rem !important; }
+
+/* API endpoints */
+.api-path { color: #d0e0d0 !important; font-size: 0.8rem !important; }
+.api-endpoint-head { gap: 0.75rem !important; }
+
+/* Score chips */
+.v6-score-chip { font-size: 0.75rem !important; letter-spacing: 0.05em !important; }
+.v6-grade-chip { font-size: 0.85rem !important; font-weight: 700 !important; }
+
+/* Scan page labels */
+.scan-chip-label { font-size: 0.68rem !important; color: #4a6a4a !important; }
+.scan-chip-val { font-size: 0.9rem !important; color: var(--crt-green-1) !important; font-family: 'Orbitron', monospace !important; }
+
+/* Profile buttons */
+.scan-profile-label { font-family: 'Orbitron', monospace !important; font-size: 0.7rem !important; color: #d0e0d0 !important; }
+.scan-profile-desc { color: #7a9a7a !important; font-size: 0.72rem !important; }
+
+/* Warning / notice banners */
+.about-warning-banner { border: 1px solid #4a2a00 !important; background: rgba(74,42,0,0.2) !important; padding: 1rem !important; border-radius: 2px !important; }
+.about-warning-title { color: var(--egypt-gold-1) !important; font-family: 'VT323', monospace !important; font-size: 1rem !important; letter-spacing: 0.1em !important; margin-bottom: 0.5rem !important; }
+
+/* API status badge */
+.api-status-badge { background: rgba(74,42,0,0.25) !important; border: 1px solid #4a3000 !important; color: var(--egypt-gold-1) !important; padding: 0.6rem 1rem !important; font-size: 0.8rem !important; font-family: 'Share Tech Mono', monospace !important; }
+
+/* Hero description */
+.anpu-hero-v2-desc { color: #8aaa8a !important; line-height: 1.8 !important; font-family: 'Share Tech Mono', monospace !important; }
+
+/* Hero stats */
+.anpu-hero-v2-stat-val { font-family: 'Orbitron', monospace !important; color: var(--egypt-gold-1) !important; }
+.anpu-hero-v2-stat-label { font-family: 'VT323', monospace !important; color: #4a6a4a !important; font-size: 0.8rem !important; letter-spacing: 0.1em !important; }
+
+/* Docs terminal output */
+.docs-terminal-output pre { color: #8aaa8a !important; font-size: 0.75rem !important; line-height: 1.7 !important; }
+.docs-terminal-bar { color: var(--egypt-gold-2) !important; font-family: 'VT323', monospace !important; font-size: 0.9rem !important; letter-spacing: 0.12em !important; }
+
+/* Command grid */
+.docs-cmd-code { color: var(--crt-green-2) !important; font-size: 0.75rem !important; }
+.docs-cmd-desc { color: #7a9a7a !important; font-size: 0.75rem !important; font-family: 'Share Tech Mono', monospace !important; }
+.docs-prompt { color: var(--egypt-gold-1) !important; }
+
+/* Scoring formula */
+.about-formula-code { color: #8aaa8a !important; font-size: 0.72rem !important; line-height: 1.8 !important; }
+.about-formula-label { font-family: 'VT323', monospace !important; color: var(--egypt-gold-2) !important; font-size: 0.9rem !important; letter-spacing: 0.1em !important; }
+
+/* Dashboard table */
+.v6-table th { font-family: 'VT323', monospace !important; font-size: 0.85rem !important; color: var(--egypt-gold-2) !important; letter-spacing: 0.1em !important; }
+.v6-table td { font-size: 0.8rem !important; }
+
+/* Report rows */
+.v6-report-domain b { color: #d0e0d0 !important; font-size: 0.85rem !important; font-family: 'Share Tech Mono', monospace !important; }
+.v6-report-domain small { color: #4a6a4a !important; font-size: 0.7rem !important; }
+
+/* Badge page */
+.v6-seal span:first-child { font-family: 'Orbitron', monospace !important; font-size: 0.65rem !important; color: var(--egypt-gold-1) !important; }
+
+/* Scrollbar — thinner, on-brand */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #050905; }
+::-webkit-scrollbar-thumb { background: #1a3a1a; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--crt-green-3); }
+
 
 .dark {
   --background: #050505;
